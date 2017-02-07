@@ -1,0 +1,6 @@
+[local]
+user =
+host =
+projectdir = /srv/kunden/XXXPROJECT_TOKENXXX/www/
+webdir = /srv/kunden/XXXPROJECT_TOKENXXX/www/web/
+rsync[options]=-razce 'ssh -p 22'
