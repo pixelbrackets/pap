@@ -6,6 +6,6 @@ PHP Deployment
   * Run »./robo.phar« to see all available tasks
     * e.g. »./robo.phar deploy -s test« to deploy to the test stage
   * If you have a local development environment, then copy
-    »build.local.properties.template«, rename it to »build.local.properties«
+    »build.local.properties.template.yml«, rename it to »build.local.properties.yml«
     and change the parameters as desired
   * Done

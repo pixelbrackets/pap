@@ -9,34 +9,27 @@
  *   /some/path/robo.phar --load-from ~/git/repository/build/ sync
  *
  */
+use Robo\Robo;
+
 class RoboFile extends \Robo\Tasks
 {
-    private $buildProperties = [];
-
-    function getBuildPropertiesFromFile() {
-        $localBuildProperties = [];
-        if(file_exists('build.local.properties')) {
-            $localBuildProperties = parse_ini_file('build.local.properties', true, INI_SCANNER_RAW);
-        }
-
-        $commonBuildProperties = parse_ini_file('build.common.properties', true, INI_SCANNER_RAW);
-        if(false === $commonBuildProperties) {
-            $this->yell('Can not load build properties file');
-            return;
-        }
+    public function __construct() {
+        Robo::loadConfiguration(['build.common.properties.yml','build.local.properties.yml']);
 
         // Repository path is always relative,
         // even if Robo is called from another directory
-        $commonBuildProperties['repositoryPath'] = '../';
-        $this->buildProperties = array_merge($localBuildProperties, $commonBuildProperties);
-        //$this->say(var_dump($this->buildProperties, true));
+        Robo::Config()->set('repositoryPath', '../');
+
     }
 
-    function getBuildProperties() {
-        if(true === empty($this->buildProperties)) {
-            $this->getBuildPropertiesFromFile();
-        }
-        return $this->buildProperties;
+    /**
+     * Wrapper method for Robo Configuration Reader
+     *
+     * @param string $key
+     * @return string | array Configuration value as defined in YML file
+     */
+    private function getBuildProperty($key = '') {
+        return Robo::Config()->get($key);
     }
 
     /**
@@ -46,20 +39,20 @@ class RoboFile extends \Robo\Tasks
      * @option $stage Target stage (eg. local or live)
      *
      */
-    function sync($options = ['stage|s' => 'local'])
+    public function sync($options = ['stage|s' => 'local'])
     {
-        $properties = $this->getBuildProperties();
-        if(true === empty($properties[$options['stage']])) {
+        $stageProperties = $this->getBuildProperty($options['stage']);
+        if(true === empty($stageProperties)) {
             $this->io()->error('Stage not configured');
             return;
         }
 
         $rsync = $this->taskRsync()
-            ->rawArg($properties[$options['stage']]['rsync']['options'])
-            ->fromPath($properties['repositoryPath'] . $properties['src'])
-            ->toUser($properties[$options['stage']]['user'])
-            ->toHost($properties[$options['stage']]['host'])
-            ->toPath($properties[$options['stage']]['webdir'])
+            ->rawArg($stageProperties['rsync']['options'])
+            ->fromPath($this->getBuildProperty('repositoryPath') . $this->getBuildProperty('src'))
+            ->toUser($stageProperties['user'])
+            ->toHost($stageProperties['host'])
+            ->toPath($stageProperties['webdir'])
             ->verbose();
 
         // @todo no real sync yet (with deletions), only copy
@@ -68,7 +61,7 @@ class RoboFile extends \Robo\Tasks
         $rsync->run();
     }
 
-    function deploy($options = ['stage|s' => 'local'])
+    public function deploy($options = ['stage|s' => 'local'])
     {
         // @todo build assets
         $this->sync(['stage' => $options['stage']]);
@@ -78,14 +71,14 @@ class RoboFile extends \Robo\Tasks
      * Sync changed files automatically to local stage
      *
      */
-    function watch()
+    public function watch()
     {
-        $properties = $this->getBuildProperties();
+        $properties = $this->getBuildProperty();
 
         $this->taskWatch()
-            ->monitor($properties['repositoryPath'] . $properties['src'], function() {
-                $this->sync(['stage' => 'local']);
-            })
+            ->monitor($this->getBuildProperty('repositoryPath') . $this->getBuildProperty('src'), function() {
+                $this->sync(['stage' => 'local']);}
+            )
             ->run();
     }
 }
