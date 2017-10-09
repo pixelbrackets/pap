@@ -8,4 +8,5 @@ PHP Deployment
   * If you have a local development environment, then copy
     »build.local.properties.template.yml«, rename it to »build.local.properties.yml«
     and change the parameters as desired
+  * Any task may be run in dry-mode first by adding »--simulate« to the command
   * Done
