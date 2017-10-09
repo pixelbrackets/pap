@@ -4,8 +4,8 @@ settings:
     - source: content/
       target: web/content/
       #target: ${settings.web-dir}content/
-    - source: themes/
-      target: themes/
+    - source: themes/theclassy/
+      target: themes/theclassy/
 
 live:
   user: johndoe

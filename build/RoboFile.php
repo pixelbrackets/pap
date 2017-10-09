@@ -57,10 +57,10 @@ class RoboFile extends \Robo\Tasks
                 ->toPath($stageProperties['working-directory'] . $syncPath['target'])
                 ->verbose();
 
-                // @todo no real sync yet (with deletions), only copy
-                //$rsync->delete();
+            // real sync: delete files as well!
+            $rsync->delete();
 
-                $rsync->run();
+            $rsync->run();
         }
     }
 
