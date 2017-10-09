@@ -1,9 +1,15 @@
-src: content/
+settings:
+  web-dir: web/
+  sync-paths:
+    - source: content/
+      target: web/content/
+      #target: ${settings.web-dir}content/
+    - source: themes/
+      target: themes/
 
 live:
   user: johndoe
   host: example.com
-  projectdir: /var/www
-  webdir: /var/www/web/
+  working-directory: /var/www/
   rsync:
     options: -razce 'ssh -p 22'

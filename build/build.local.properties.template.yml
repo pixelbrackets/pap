@@ -1,7 +1,6 @@
 local:
   user:
   host:
-  projectdir: /srv/kunden/XXXPROJECT_TOKENXXX/www/
-  webdir: /srv/kunden/XXXPROJECT_TOKENXXX/www/web/
+  working-directory: /srv/kunden/XXXPROJECT_TOKENXXX/www/web/notes/
   rsync:
     options: -razce 'ssh -p 22'

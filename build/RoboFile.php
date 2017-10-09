@@ -47,18 +47,21 @@ class RoboFile extends \Robo\Tasks
             return;
         }
 
-        $rsync = $this->taskRsync()
-            ->rawArg($stageProperties['rsync']['options'])
-            ->fromPath($this->getBuildProperty('repositoryPath') . $this->getBuildProperty('src'))
-            ->toUser($stageProperties['user'])
-            ->toHost($stageProperties['host'])
-            ->toPath($stageProperties['webdir'])
-            ->verbose();
+        $syncPaths = $this->getBuildProperty('settings.sync-paths');
+        foreach ($syncPaths as $syncPath) {
+            $rsync = $this->taskRsync()
+                ->rawArg($stageProperties['rsync']['options'])
+                ->fromPath($this->getBuildProperty('repositoryPath') . $syncPath['source'])
+                ->toUser($stageProperties['user'])
+                ->toHost($stageProperties['host'])
+                ->toPath($stageProperties['working-directory'] . $syncPath['target'])
+                ->verbose();
 
-        // @todo no real sync yet (with deletions), only copy
-        //$rsync->delete();
+                // @todo no real sync yet (with deletions), only copy
+                //$rsync->delete();
 
-        $rsync->run();
+                $rsync->run();
+        }
     }
 
     public function deploy($options = ['stage|s' => 'local'])
