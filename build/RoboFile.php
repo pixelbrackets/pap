@@ -51,6 +51,7 @@ class RoboFile extends \Robo\Tasks
         foreach ($syncPaths as $syncPath) {
             $rsync = $this->taskRsync()
                 ->rawArg($stageProperties['rsync']['options'])
+                ->exclude($syncPath['exclude'] ?? '')
                 ->fromPath($this->getBuildProperty('repositoryPath') . $syncPath['source'])
                 ->toUser($stageProperties['user'])
                 ->toHost($stageProperties['host'])

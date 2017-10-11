@@ -4,6 +4,7 @@ settings:
     - source: content/
       target: web/content/
       #target: ${settings.web-dir}content/
+      #exclude: ['web/temp/', 'web/uploads/']
     - source: themes/theclassy/
       target: themes/theclassy/
 
