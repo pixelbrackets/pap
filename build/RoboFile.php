@@ -66,6 +66,67 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
+     * Delete and recreate the autoloader file with Composer
+     *
+     * @param array $options
+     * @option $stage Target stage (eg. local or live)
+     */
+    public function composerDumpAutoload($options = ['stage|s' => 'local'])
+    {
+        $stageProperties = $this->getBuildProperty($options['stage']);
+        if(true === empty($stageProperties)) {
+            $this->io()->error('Stage not configured');
+            return;
+        }
+        if(true === empty($this->getBuildProperty('settings.composer'))) {
+            $this->say('Nothing to do!');
+            return;
+        }
+
+        $composer = $this->taskComposerDumpAutoload();
+        if($options['stage'] === 'local') {
+            $composer->workingDir($stageProperties['working-directory'])->run();
+        }
+        else {
+            $this->taskSshExec($stageProperties['host'], $stageProperties['user'])
+                ->remoteDir($stageProperties['working-directory'])
+                ->exec($composer)
+                ->run();
+        }
+    }
+
+    /**
+     * Install packages with Composer
+     *
+     * @param array $options
+     * @option $stage Target stage (eg. local or live)
+     */
+    public function composerInstall($options = ['stage|s' => 'local'])
+    {
+        $stageProperties = $this->getBuildProperty($options['stage']);
+        if(true === empty($stageProperties)) {
+            $this->io()->error('Stage not configured');
+            return;
+        }
+        if(true === empty($this->getBuildProperty('settings.composer'))) {
+            $this->say('Nothing to do!');
+            return;
+        }
+
+        $composer = $this->taskComposerInstall();
+        if($options['stage'] === 'local') {
+            $composer->workingDir($stageProperties['working-directory'])->run();
+        }
+        else {
+            $composer->noDev();
+            $this->taskSshExec($stageProperties['host'], $stageProperties['user'])
+                ->remoteDir($stageProperties['working-directory'])
+                ->exec($composer)
+                ->run();
+        }
+    }
+
+    /**
      * Sync files between repository and stage folder
      *
      * @param array $options
@@ -95,6 +156,8 @@ class RoboFile extends \Robo\Tasks
 
             $rsync->run();
         }
+
+        $this->composerDumpAutoload(['stage' => $options['stage']]);
     }
 
     /**
@@ -107,6 +170,7 @@ class RoboFile extends \Robo\Tasks
     {
         $this->buildassets();
         $this->sync(['stage' => $options['stage']]);
+        $this->composerInstall(['stage' => $options['stage']]);
     }
 
     /**

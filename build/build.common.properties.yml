@@ -10,6 +10,8 @@ settings:
   #grunt:
   #  working-directory: src/html/
   #  task: live
+  #composer:
+  #  working-directory: www/
 
 live:
   user: johndoe
