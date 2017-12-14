@@ -19,7 +19,6 @@ class RoboFile extends \Robo\Tasks
         // Repository path is always relative,
         // even if Robo is called from another directory
         Robo::Config()->set('repositoryPath', '../');
-
     }
 
     /**
@@ -33,11 +32,44 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
+     * Build assets (Convert, concat, minify)
+     *
+     * Uses existing task runners like Grunt
+     */
+    public function buildassets()
+    {
+        $gruntDirectory = $this->getBuildProperty('settings.grunt.working-directory');
+        if(true === empty($gruntDirectory)) {
+            $this->say('Nothing to do!');
+            return;
+        }
+        else {
+            $gruntDirectory = $this->getBuildProperty('repositoryPath') . $gruntDirectory;
+        }
+
+        $this->say('Install/Update Node Packages');
+        $this->taskExec('npm --silent --no-spin --no-progress install')
+            ->dir($gruntDirectory)
+            ->run();
+
+        if(true === file_exists($gruntDirectory . 'gems.rb')) {
+            $this->say('Manage Ruby gems');
+            $this->taskExec('bundle install --quiet')
+                ->dir($gruntDirectory)
+                ->run();
+        }
+
+        $this->say('Execute Grunt Tasks');
+        $this->taskExec('grunt -q ' . $this->getBuildProperty('settings.grunt.task'))
+            ->dir($gruntDirectory)
+            ->run();
+    }
+
+    /**
      * Sync files between repository and stage folder
      *
      * @param array $options
      * @option $stage Target stage (eg. local or live)
-     *
      */
     public function sync($options = ['stage|s' => 'local'])
     {
@@ -65,9 +97,15 @@ class RoboFile extends \Robo\Tasks
         }
     }
 
+    /**
+     * Run full deployment stack (build, sync, cache warmup)
+     *
+     * @param array $options
+     * @option $stage Target stage (eg. local or live)
+     */
     public function deploy($options = ['stage|s' => 'local'])
     {
-        // @todo build assets
+        $this->buildassets();
         $this->sync(['stage' => $options['stage']]);
     }
 

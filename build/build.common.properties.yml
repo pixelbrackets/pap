@@ -7,6 +7,9 @@ settings:
       #exclude: ['web/temp/', 'web/uploads/']
     - source: themes/theclassy/
       target: themes/theclassy/
+  #grunt:
+  #  working-directory: src/html/
+  #  task: live
 
 live:
   user: johndoe
