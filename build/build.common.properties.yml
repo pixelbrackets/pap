@@ -10,6 +10,7 @@ settings:
       #exclude: ['web/temp/', 'web/uploads/']
     - source: themes/theclassy/
       target: themes/theclassy/
+  #watch-directory: src/
   #grunt:
   #  working-directory: src/html/
   #  task: live

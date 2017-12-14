@@ -210,7 +210,7 @@ class RoboFile extends \Robo\Tasks
         $properties = $this->getBuildProperty();
 
         $this->taskWatch()
-            ->monitor($this->getBuildProperty('repositoryPath') . $this->getBuildProperty('src'), function() {
+            ->monitor($this->getBuildProperty('repositoryPath') . $this->getBuildProperty('settings.watch-directory'), function() {
                 $this->sync(['stage' => 'local']);}
             )
             ->run();
