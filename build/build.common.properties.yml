@@ -1,5 +1,8 @@
 settings:
   web-dir: web/
+  #prepare-sync-paths:
+  #  - source: src/html/build/assets/
+  #    target: www/web/assets/
   sync-paths:
     - source: content/
       target: web/content/

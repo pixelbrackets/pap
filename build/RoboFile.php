@@ -127,6 +127,30 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
+     * Move directories in repository to prepare a working sync task
+     * (move build assets to desired target etc.)
+     *
+     */
+    protected function prepareSyncPaths()
+    {
+        $syncPaths = $this->getBuildProperty('settings.prepare-sync-paths');
+        if(true === empty($syncPaths)) {
+            return;
+        }
+
+        foreach ($syncPaths as $syncPath) {
+            $this->taskRsync()
+                ->recursive()
+                ->archive()
+                ->exclude($syncPath['exclude'] ?? [])
+                ->fromPath($this->getBuildProperty('repositoryPath') . $syncPath['source'])
+                ->toPath($this->getBuildProperty('repositoryPath') . $syncPath['target'])
+                ->delete()
+                ->run();
+        }
+    }
+
+    /**
      * Sync files between repository and stage folder
      *
      * @param array $options
@@ -140,6 +164,10 @@ class RoboFile extends \Robo\Tasks
             return;
         }
 
+        // prepare files in repository
+        $this->prepareSyncPaths();
+
+        // rsync files to stage
         $syncPaths = $this->getBuildProperty('settings.sync-paths');
         foreach ($syncPaths as $syncPath) {
             $rsync = $this->taskRsync()
