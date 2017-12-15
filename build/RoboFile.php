@@ -16,9 +16,17 @@ class RoboFile extends \Robo\Tasks
     public function __construct() {
         Robo::loadConfiguration(['build.common.properties.yml','build.local.properties.yml']);
 
-        // Repository path is always relative,
-        // even if Robo is called from another directory
-        Robo::Config()->set('repositoryPath', '../');
+        // Calculate absolute path to repository if not set already
+        if(true === empty(Robo::Config()->get('repositoryPath'))) {
+            $repositoryPath = exec('git rev-parse --show-toplevel', $output, $resultCode);
+            if($resultCode === 0)
+            {
+                Robo::Config()->set('repositoryPath', $repositoryPath . '/');
+            }
+            else {
+                throw new \Robo\Exception\TaskException($this, 'Missing repository path');
+            }
+        }
     }
 
     /**
