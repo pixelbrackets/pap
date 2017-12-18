@@ -186,7 +186,7 @@ class RoboFile extends \Robo\Tasks
             return;
         }
 
-        foreach ($syncPaths as $syncPath) {
+        foreach ((array)$syncPaths as $syncPath) {
             $this->taskRsync()
                 ->recursive()
                 ->archive()
@@ -217,7 +217,7 @@ class RoboFile extends \Robo\Tasks
 
         // rsync files to stage
         $syncPaths = $this->getBuildProperty('settings.sync-paths');
-        foreach ($syncPaths as $syncPath) {
+        foreach ((array)$syncPaths as $syncPath) {
             $rsync = $this->taskRsync()
                 ->rawArg($stageProperties['rsync']['options'])
                 ->exclude($syncPath['exclude'] ?? [])
