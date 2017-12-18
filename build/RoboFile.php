@@ -40,6 +40,46 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
+     * Lint PHP files (Check only)
+     *
+     */
+    public function lintCheck()
+    {
+        $repositoryPath = $this->getBuildProperty('repositoryPath');
+        $lintPaths = (array)$this->getBuildProperty('settings.lint.lint-paths');
+
+        $lint = $this->taskExecStack()
+            ->dir('./vendor/bin/');
+        foreach ($lintPaths as $lintPath) {
+            $lint
+                ->exec('./php-cs-fixer -vvv fix ' . $repositoryPath . $lintPath . ' --dry-run --diff --using-cache=no --rules=' . escapeshellarg($this->getBuildProperty('php-cs-rules') ?? '@PSR2'))
+                ->exec('./parallel-lint --exclude vendor ' . $repositoryPath . $lintPath)
+                ->exec('./editorconfig-checker -e \'\.(png|jpg|gif|ico|svg|js|css|ttf|eot|woff|woff2|lock|git)$\' ' . $repositoryPath . $lintPath . '/*')
+                ->exec('./phploc -n ' . $repositoryPath . $lintPath);
+        }
+        $lint->run();
+    }
+
+    /**
+     * Lint PHP files (Fix)
+     *
+     */
+    public function lintFix()
+    {
+        $repositoryPath = $this->getBuildProperty('repositoryPath');
+        $lintPaths = $this->getBuildProperty('settings.lint.lint-paths');
+
+        $lint = $this->taskExecStack()
+            ->dir('./vendor/bin/');
+        foreach ((array)$lintPaths as $lintPath) {
+            $lint
+                ->exec('./php-cs-fixer -vvv fix ' . $repositoryPath . $lintPath . ' --using-cache=no --rules=' . escapeshellarg($this->getBuildProperty('php-cs-rules') ?? '@PSR2'))
+                ->exec('./editorconfig-checker -a -e \'\.(png|jpg|gif|ico|svg|js|css|ttf|eot|woff|woff2|lock|git)$\' ' . $repositoryPath . $lintPath . '/*');
+        }
+        $lint->run();
+    }
+
+    /**
      * Build assets (Convert, concat, minify)
      *
      * Uses existing task runners like Grunt

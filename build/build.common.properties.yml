@@ -16,6 +16,10 @@ settings:
   #  task: live
   #composer:
   #  working-directory: www/
+  #lint:
+  #  php-cs-rules: '@PSR2'
+  #  lint-paths:
+  #    - src/typo3/
 
 live:
   user: johndoe
