@@ -13,17 +13,16 @@ use Robo\Robo;
 
 class RoboFile extends \Robo\Tasks
 {
-    public function __construct() {
+    public function __construct()
+    {
         Robo::loadConfiguration(['build.common.properties.yml','build.local.properties.yml']);
 
         // Calculate absolute path to repository if not set already
-        if(true === empty(Robo::Config()->get('repositoryPath'))) {
+        if (true === empty(Robo::Config()->get('repositoryPath'))) {
             $repositoryPath = exec('git rev-parse --show-toplevel', $output, $resultCode);
-            if($resultCode === 0)
-            {
+            if ($resultCode === 0) {
                 Robo::Config()->set('repositoryPath', $repositoryPath . '/');
-            }
-            else {
+            } else {
                 throw new \Robo\Exception\TaskException($this, 'Missing repository path');
             }
         }
@@ -35,7 +34,8 @@ class RoboFile extends \Robo\Tasks
      * @param string $key
      * @return string | array Configuration value as defined in YML file
      */
-    private function getBuildProperty($key = '') {
+    private function getBuildProperty($key = '')
+    {
         return Robo::Config()->get($key);
     }
 
@@ -87,20 +87,18 @@ class RoboFile extends \Robo\Tasks
     public function buildassets()
     {
         $gruntDirectory = $this->getBuildProperty('settings.grunt.working-directory');
-        if(true === empty($gruntDirectory)) {
+        if (true === empty($gruntDirectory)) {
             $this->say('Nothing to do!');
             return;
         }
-        else {
-            $gruntDirectory = $this->getBuildProperty('repositoryPath') . $gruntDirectory;
-        }
+        $gruntDirectory = $this->getBuildProperty('repositoryPath') . $gruntDirectory;
 
         $this->say('Install/Update Node Packages');
         $this->taskExec('npm --silent --no-spin --no-progress install')
             ->dir($gruntDirectory)
             ->run();
 
-        if(true === file_exists($gruntDirectory . 'gems.rb')) {
+        if (true === file_exists($gruntDirectory . 'gems.rb')) {
             $this->say('Manage Ruby gems');
             $this->taskExec('bundle install --quiet')
                 ->dir($gruntDirectory)
@@ -119,23 +117,22 @@ class RoboFile extends \Robo\Tasks
      * @param array $options
      * @option $stage Target stage (eg. local or live)
      */
-    public function composerDumpAutoload($options = ['stage|s' => 'local'])
+    public function composerDumpAutoload(array $options = ['stage|s' => 'local'])
     {
         $stageProperties = $this->getBuildProperty($options['stage']);
-        if(true === empty($stageProperties)) {
+        if (true === empty($stageProperties)) {
             $this->io()->error('Stage not configured');
             return;
         }
-        if(true === empty($this->getBuildProperty('settings.composer'))) {
+        if (true === empty($this->getBuildProperty('settings.composer'))) {
             $this->say('Nothing to do!');
             return;
         }
 
         $composer = $this->taskComposerDumpAutoload();
-        if($options['stage'] === 'local') {
+        if ($options['stage'] === 'local') {
             $composer->workingDir($stageProperties['working-directory'])->run();
-        }
-        else {
+        } else {
             $this->taskSshExec($stageProperties['host'], $stageProperties['user'])
                 ->remoteDir($stageProperties['working-directory'])
                 ->exec($composer)
@@ -149,23 +146,22 @@ class RoboFile extends \Robo\Tasks
      * @param array $options
      * @option $stage Target stage (eg. local or live)
      */
-    public function composerInstall($options = ['stage|s' => 'local'])
+    public function composerInstall(array $options = ['stage|s' => 'local'])
     {
         $stageProperties = $this->getBuildProperty($options['stage']);
-        if(true === empty($stageProperties)) {
+        if (true === empty($stageProperties)) {
             $this->io()->error('Stage not configured');
             return;
         }
-        if(true === empty($this->getBuildProperty('settings.composer'))) {
+        if (true === empty($this->getBuildProperty('settings.composer'))) {
             $this->say('Nothing to do!');
             return;
         }
 
         $composer = $this->taskComposerInstall();
-        if($options['stage'] === 'local') {
+        if ($options['stage'] === 'local') {
             $composer->workingDir($stageProperties['working-directory'])->run();
-        }
-        else {
+        } else {
             $composer->noDev();
             $this->taskSshExec($stageProperties['host'], $stageProperties['user'])
                 ->remoteDir($stageProperties['working-directory'])
@@ -182,7 +178,7 @@ class RoboFile extends \Robo\Tasks
     protected function prepareSyncPaths()
     {
         $syncPaths = $this->getBuildProperty('settings.prepare-sync-paths');
-        if(true === empty($syncPaths)) {
+        if (true === empty($syncPaths)) {
             return;
         }
 
@@ -204,10 +200,10 @@ class RoboFile extends \Robo\Tasks
      * @param array $options
      * @option $stage Target stage (eg. local or live)
      */
-    public function sync($options = ['stage|s' => 'local'])
+    public function sync(array $options = ['stage|s' => 'local'])
     {
         $stageProperties = $this->getBuildProperty($options['stage']);
-        if(true === empty($stageProperties)) {
+        if (true === empty($stageProperties)) {
             $this->io()->error('Stage not configured');
             return;
         }
@@ -242,7 +238,7 @@ class RoboFile extends \Robo\Tasks
      * @param array $options
      * @option $stage Target stage (eg. local or live)
      */
-    public function deploy($options = ['stage|s' => 'local'])
+    public function deploy(array $options = ['stage|s' => 'local'])
     {
         $this->buildassets();
         $this->sync(['stage' => $options['stage']]);
@@ -258,8 +254,9 @@ class RoboFile extends \Robo\Tasks
         $properties = $this->getBuildProperty();
 
         $this->taskWatch()
-            ->monitor($this->getBuildProperty('repositoryPath') . $this->getBuildProperty('settings.watch-directory'), function() {
-                $this->sync(['stage' => 'local']);}
+            ->monitor($this->getBuildProperty('repositoryPath') . $this->getBuildProperty('settings.watch-directory'), function () {
+                $this->sync(['stage' => 'local']);
+            }
             )
             ->run();
     }
