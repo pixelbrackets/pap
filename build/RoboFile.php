@@ -18,10 +18,10 @@ class RoboFile extends \Robo\Tasks
         Robo::loadConfiguration(['build.common.properties.yml','build.local.properties.yml']);
 
         // Calculate absolute path to repository if not set already
-        if (true === empty(Robo::Config()->get('repositoryPath'))) {
+        if (true === empty(Robo::Config()->get('repository-path'))) {
             $repositoryPath = exec('git rev-parse --show-toplevel', $output, $resultCode);
             if ($resultCode === 0) {
-                Robo::Config()->set('repositoryPath', $repositoryPath . '/');
+                Robo::Config()->set('repository-path', $repositoryPath . '/');
             } else {
                 throw new \Robo\Exception\TaskException($this, 'Missing repository path');
             }
@@ -45,7 +45,7 @@ class RoboFile extends \Robo\Tasks
      */
     public function lintCheck()
     {
-        $repositoryPath = $this->getBuildProperty('repositoryPath');
+        $repositoryPath = $this->getBuildProperty('repository-path');
         $lintPaths = (array)$this->getBuildProperty('settings.lint.lint-paths');
 
         $lint = $this->taskExecStack()
@@ -66,7 +66,7 @@ class RoboFile extends \Robo\Tasks
      */
     public function lintFix()
     {
-        $repositoryPath = $this->getBuildProperty('repositoryPath');
+        $repositoryPath = $this->getBuildProperty('repository-path');
         $lintPaths = $this->getBuildProperty('settings.lint.lint-paths');
 
         $lint = $this->taskExecStack()
@@ -91,7 +91,7 @@ class RoboFile extends \Robo\Tasks
             $this->say('Nothing to do!');
             return;
         }
-        $gruntDirectory = $this->getBuildProperty('repositoryPath') . $gruntDirectory;
+        $gruntDirectory = $this->getBuildProperty('repository-path') . $gruntDirectory;
 
         $this->say('Install/Update Node Packages');
         $this->taskExec('npm --silent --no-spin --no-progress install')
@@ -189,8 +189,8 @@ class RoboFile extends \Robo\Tasks
                 ->recursive()
                 ->archive()
                 ->exclude($syncPath['exclude'] ?? [])
-                ->fromPath($this->getBuildProperty('repositoryPath') . $syncPath['source'])
-                ->toPath($this->getBuildProperty('repositoryPath') . $syncPath['target'])
+                ->fromPath($this->getBuildProperty('repository-path') . $syncPath['source'])
+                ->toPath($this->getBuildProperty('repository-path') . $syncPath['target'])
                 ->delete()
                 ->run();
         }
@@ -219,7 +219,7 @@ class RoboFile extends \Robo\Tasks
             $rsync = $this->taskRsync()
                 ->rawArg($stageProperties['rsync']['options'])
                 ->exclude($syncPath['exclude'] ?? [])
-                ->fromPath($this->getBuildProperty('repositoryPath') . $syncPath['source'])
+                ->fromPath($this->getBuildProperty('repository-path') . $syncPath['source'])
                 ->toUser($stageProperties['user'])
                 ->toHost($stageProperties['host'])
                 ->toPath($stageProperties['working-directory'] . $syncPath['target'])
@@ -256,7 +256,7 @@ class RoboFile extends \Robo\Tasks
         $properties = $this->getBuildProperty();
 
         $this->taskWatch()
-            ->monitor($this->getBuildProperty('repositoryPath') . $this->getBuildProperty('settings.watch-directory'), function () {
+            ->monitor($this->getBuildProperty('repository-path') . $this->getBuildProperty('settings.watch.working-directory'), function () {
                 $this->sync(['stage' => 'local']);
             }
             )
