@@ -2,7 +2,7 @@
     "name": "pixelbrackets/deployment",
     "description": "pixelbrackets Deployment Script",
     "type": "project",
-    "license": "GPL-2.0+",
+    "license": "GPL-2.0-or-later",
     "version": "3.3.0",
     "require-dev": {
         "consolidation/robo": "^1.1.3",
