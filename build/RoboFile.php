@@ -119,7 +119,7 @@ class RoboFile extends \Robo\Tasks
      */
     public function composerDumpAutoload(array $options = ['stage|s' => 'local'])
     {
-        $stageProperties = $this->getBuildProperty($options['stage']);
+        $stageProperties = $this->getBuildProperty('stages.' . $options['stage']);
         if (true === empty($stageProperties)) {
             $this->io()->error('Stage not configured');
             return;
@@ -129,7 +129,7 @@ class RoboFile extends \Robo\Tasks
             return;
         }
 
-        $composerPath = $this->getBuildProperty($options['stage'] . '.composer.phar');
+        $composerPath = $this->getBuildProperty('stages.' . $options['stage'] . '.composer.phar');
         $composer = $this->taskComposerDumpAutoload($composerPath);
         if ($options['stage'] === 'local') {
             $composer->workingDir($stageProperties['working-directory'])->run();
@@ -149,7 +149,7 @@ class RoboFile extends \Robo\Tasks
      */
     public function composerInstall(array $options = ['stage|s' => 'local'])
     {
-        $stageProperties = $this->getBuildProperty($options['stage']);
+        $stageProperties = $this->getBuildProperty('stages.' . $options['stage']);
         if (true === empty($stageProperties)) {
             $this->io()->error('Stage not configured');
             return;
@@ -159,7 +159,7 @@ class RoboFile extends \Robo\Tasks
             return;
         }
 
-        $composerPath = $this->getBuildProperty($options['stage'] . '.composer.phar');
+        $composerPath = $this->getBuildProperty('stages.' . $options['stage'] . '.composer.phar');
         $composer = $this->taskComposerInstall($composerPath);
         if ($options['stage'] === 'local') {
             $composer->workingDir($stageProperties['working-directory'])->run();
@@ -204,7 +204,7 @@ class RoboFile extends \Robo\Tasks
      */
     public function sync(array $options = ['stage|s' => 'local'])
     {
-        $stageProperties = $this->getBuildProperty($options['stage']);
+        $stageProperties = $this->getBuildProperty('stages.' . $options['stage']);
         if (true === empty($stageProperties)) {
             $this->io()->error('Stage not configured');
             return;
