@@ -21,6 +21,13 @@ settings:
   #  lint-paths:
   #    - src/typo3/
 
+test:
+  user: johndoe
+  host: test.example.com
+  working-directory: /var/dev/
+  rsync:
+    options: -razce 'ssh -p 22'
+
 live:
   user: johndoe
   host: example.com
