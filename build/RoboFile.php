@@ -129,7 +129,8 @@ class RoboFile extends \Robo\Tasks
             return;
         }
 
-        $composer = $this->taskComposerDumpAutoload();
+        $composerPath = $this->getBuildProperty($options['stage'] . '.composer.phar');
+        $composer = $this->taskComposerDumpAutoload($composerPath);
         if ($options['stage'] === 'local') {
             $composer->workingDir($stageProperties['working-directory'])->run();
         } else {
@@ -158,7 +159,8 @@ class RoboFile extends \Robo\Tasks
             return;
         }
 
-        $composer = $this->taskComposerInstall();
+        $composerPath = $this->getBuildProperty($options['stage'] . '.composer.phar');
+        $composer = $this->taskComposerInstall($composerPath);
         if ($options['stage'] === 'local') {
             $composer->workingDir($stageProperties['working-directory'])->run();
         } else {

@@ -34,3 +34,5 @@ live:
   working-directory: /var/www/
   rsync:
     options: -razce 'ssh -p 22'
+  composer:
+    phar: ${live.working-directory}composer.phar
