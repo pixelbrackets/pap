@@ -94,7 +94,7 @@ class RoboFile extends \Robo\Tasks
             return $this->buildassetsGrunt();
         }
         if (empty($assetSettings)) {
-            $this->say('Nothing to do!');
+            $this->say('Assets not configured - Nothing to do');
             return;
         }
 
@@ -173,7 +173,7 @@ class RoboFile extends \Robo\Tasks
             return;
         }
         if (true === empty($this->getBuildProperty('settings.composer'))) {
-            $this->say('Nothing to do!');
+            $this->say('Composer not configured');
             return;
         }
 
@@ -203,7 +203,7 @@ class RoboFile extends \Robo\Tasks
             return;
         }
         if (true === empty($this->getBuildProperty('settings.composer'))) {
-            $this->say('Nothing to do!');
+            $this->say('Composer not configured');
             return;
         }
 
