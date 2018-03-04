@@ -80,15 +80,63 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
-     * Build assets (Convert, concat, minify)
+     * Build assets (Convert, concat, minify…)
      *
-     * Uses existing task runners like Grunt
+     * Switches to external task runner Grunt if configured
      */
     public function buildassets()
     {
+        $repositoryPath = $this->getBuildProperty('repository-path');
         $gruntDirectory = $this->getBuildProperty('settings.grunt.working-directory');
-        if (true === empty($gruntDirectory)) {
+        $assetSettings = $this->getBuildProperty('settings.assets');
+        if (false === empty($gruntDirectory)) {
+            // use external task runner instead
+            return $this->buildassetsGrunt();
+        }
+        if (empty($assetSettings)) {
             $this->say('Nothing to do!');
+            return;
+        }
+
+        $this->taskMirrorDir([
+            $repositoryPath . $assetSettings['mirror']['source'] => $repositoryPath . $assetSettings['mirror']['target']
+        ])->run();
+
+        if (false === empty($assetSettings['minify-css'])) {
+            foreach ($assetSettings['minify-css'] as $minifyPaths) {
+                $this->taskMinify($repositoryPath . $minifyPaths['source'])
+                    ->to($repositoryPath . $minifyPaths['target'])
+                    ->run();
+            }
+        }
+
+        if (false === empty($assetSettings['minify-js'])) {
+            foreach ($assetSettings['minify-js'] as $minifyPaths) {
+                $this->taskMinify($repositoryPath . $minifyPaths['source'])
+                    ->to($repositoryPath . $minifyPaths['target'])
+                    ->run();
+            }
+        }
+
+        if (false === empty($assetSettings['minify-img'])) {
+            foreach ($assetSettings['minify-img'] as $minifyPaths) {
+                $this->taskImageMinify($repositoryPath . $minifyPaths['source'])
+                    ->to($repositoryPath . $minifyPaths['target'])
+                    ->run();
+            }
+        }
+    }
+
+    /**
+     * Build assets using external task runner Grunt
+     *
+     */
+    protected function buildassetsGrunt()
+    {
+        $gruntDirectory = $this->getBuildProperty('settings.grunt.working-directory');
+        $gruntTask = $this->getBuildProperty('settings.grunt.task');
+        if (empty($gruntDirectory) && empty($gruntTask)) {
+            $this->io()->error('Grunt not configured');
             return;
         }
         $gruntDirectory = $this->getBuildProperty('repository-path') . $gruntDirectory;
@@ -106,7 +154,7 @@ class RoboFile extends \Robo\Tasks
         }
 
         $this->say('Execute Grunt Tasks');
-        $this->taskExec('grunt -q ' . $this->getBuildProperty('settings.grunt.task'))
+        $this->taskExec('grunt -q ' . $gruntTask)
             ->dir($gruntDirectory)
             ->run();
     }

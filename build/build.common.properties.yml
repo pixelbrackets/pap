@@ -12,6 +12,20 @@ settings:
       target: web/themes/theclassy/
   #watch:
   #  working-directory: src/
+  assets:
+    mirror:
+      source: src/html/assets/
+      target: src/html/build/assets/
+    minify-css:
+      - source: src/html/build/assets/css/stylesheet.css
+        target: src/html/build/assets/css/stylesheet.css
+    minify-js:
+      - source: src/html/build/assets/js/bootstrap.js
+        target: src/html/build/assets/js/bootstrap.js
+    minify-img:
+      - source: src/html/build/assets/img/*
+        target: src/html/build/assets/img/
+  ### or use Grunt task runner instead
   #grunt:
   #  working-directory: src/html/
   #  task: live
