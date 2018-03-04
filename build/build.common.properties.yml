@@ -7,9 +7,9 @@ settings:
     - source: content/
       target: web/content/
       #target: ${settings.web-directory}content/
-      #exclude: ['web/temp/', 'web/uploads/']
+      #exclude: ['content-subfolder-1/', 'content-subfolder-2/']
     - source: themes/theclassy/
-      target: themes/theclassy/
+      target: web/themes/theclassy/
   #watch:
   #  working-directory: src/
   #grunt:
