@@ -2,6 +2,6 @@ stages:
   local:
     user:
     host:
-    working-directory: /srv/kunden/XXXPROJECT_TOKENXXX/www/web/notes/
+    working-directory: /srv/kunden/XXXPROJECT_TOKENXXX/www/
     rsync:
       options: -razce 'ssh -p 22'
