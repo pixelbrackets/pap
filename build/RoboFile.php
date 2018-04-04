@@ -98,9 +98,11 @@ class RoboFile extends \Robo\Tasks
             return;
         }
 
-        $this->taskMirrorDir([
-            $repositoryPath . $assetSettings['mirror']['source'] => $repositoryPath . $assetSettings['mirror']['target']
-        ])->run();
+        if (false === empty($assetSettings['mirror'])) {
+            $this->taskMirrorDir([
+                $repositoryPath . $assetSettings['mirror']['source'] => $repositoryPath . $assetSettings['mirror']['target']
+            ])->run();
+        }
 
         if (false === empty($assetSettings['minify-css'])) {
             foreach ($assetSettings['minify-css'] as $minifyPaths) {
