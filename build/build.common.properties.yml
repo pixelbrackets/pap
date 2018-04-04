@@ -10,6 +10,8 @@ settings:
       #exclude: ['content-subfolder-1/', 'content-subfolder-2/']
     - source: themes/theclassy/
       target: web/themes/theclassy/
+    #- source: composer.json
+    #  target:
   #watch:
   #  working-directory: src/
   assets:
