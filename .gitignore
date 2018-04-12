@@ -10,3 +10,4 @@ node_modules
 *.sublime-*
 npm-debug.log
 /composer.phar
+/build/composer.lock
