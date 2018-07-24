@@ -18,6 +18,6 @@ Installation
 Update
 ------
 
-* Òverwrite `build` directory with latest release
+* Overwrite `build` directory with latest release
 * Merge `build.common.properties.yml` with latest structure changes
 * Run `composer update`

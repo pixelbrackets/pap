@@ -57,7 +57,10 @@ class RoboFile extends \Robo\Tasks
                 ->exec('./editorconfig-checker -e \'\.(png|jpg|gif|ico|svg|js|css|ttf|eot|woff|woff2|lock|git)$\' ' . $repositoryPath . $lintPath . '/*')
                 ->exec('./phploc -n ' . $repositoryPath . $lintPath);
         }
-        $lint->run();
+
+        if($lint->run()->wasSuccessful() !== true) {
+            throw new \Robo\Exception\TaskException($this, 'Check failed');
+        }
     }
 
     /**
