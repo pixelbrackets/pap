@@ -227,7 +227,6 @@ class RoboFile extends \Robo\Tasks
 
     /**
      * Move directories in repository to prepare a working sync task
-     * (move build assets to desired target etc.)
      *
      */
     protected function prepareSyncPaths()
@@ -252,6 +251,33 @@ class RoboFile extends \Robo\Tasks
     /**
      * Sync files between repository and stage folder
      *
+     */
+    protected function syncStage(array $options = ['stage|s' => 'local'])
+    {
+        $stageProperties = $this->getBuildProperty('stages.' . $options['stage']);
+        if (true === empty($stageProperties)) {
+            $this->io()->error('Stage not configured');
+            return;
+        }
+
+        $syncPaths = $this->getBuildProperty('settings.sync-paths');
+        foreach ((array)$syncPaths as $syncPath) {
+            $rsync = $this->taskRsync()
+                ->rawArg($stageProperties['rsync']['options'])
+                ->exclude($syncPath['exclude'] ?? [])
+                ->fromPath($this->getBuildProperty('repository-path') . $syncPath['source'])
+                ->toUser($stageProperties['user'])
+                ->toHost($stageProperties['host'])
+                ->toPath($stageProperties['working-directory'] . $syncPath['target'])
+                ->delete()
+                ->verbose()
+                ->run();
+        }
+    }
+
+    /**
+     * Run downgraded deploy stack (sync only)
+     *
      * @param array $options
      * @option $stage Target stage (eg. local or live)
      */
@@ -263,27 +289,8 @@ class RoboFile extends \Robo\Tasks
             return;
         }
 
-        // prepare files in repository
         $this->prepareSyncPaths();
-
-        // rsync files to stage
-        $syncPaths = $this->getBuildProperty('settings.sync-paths');
-        foreach ((array)$syncPaths as $syncPath) {
-            $rsync = $this->taskRsync()
-                ->rawArg($stageProperties['rsync']['options'])
-                ->exclude($syncPath['exclude'] ?? [])
-                ->fromPath($this->getBuildProperty('repository-path') . $syncPath['source'])
-                ->toUser($stageProperties['user'])
-                ->toHost($stageProperties['host'])
-                ->toPath($stageProperties['working-directory'] . $syncPath['target'])
-                ->verbose();
-
-            // real sync: delete files as well!
-            $rsync->delete();
-
-            $rsync->run();
-        }
-
+        $this->syncStage(['stage' => $options['stage']]);
         $this->composerDumpAutoload(['stage' => $options['stage']]);
     }
 
