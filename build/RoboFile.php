@@ -329,8 +329,12 @@ class RoboFile extends \Robo\Tasks
     public function deploy(array $options = ['stage|s' => 'local'])
     {
         $this->buildassets();
-        $this->sync(['stage' => $options['stage']]);
-        $this->composerInstall(['stage' => $options['stage']]);
+        $this->buildapp(['stage' => $options['stage']]);
+
+        $this->syncStage(['stage' => $options['stage']]);
+
+        // run composer install on stage as well to update tables etc.
+        $this->composerInstall(['stage' => $options['stage'], 'remote' => true]);
     }
 
     /**
