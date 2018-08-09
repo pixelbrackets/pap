@@ -306,7 +306,6 @@ class RoboFile extends \Robo\Tasks
 
         $this->prepareSyncPaths();
         $this->syncStage(['stage' => $options['stage']]);
-        $this->composerDumpAutoload(['stage' => $options['stage']]);
     }
 
     /**
