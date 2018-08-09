@@ -165,6 +165,18 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
+     * Build app for desired target stage
+     *
+     * @param array $options
+     * @option $stage Target stage (eg. local or live)
+     */
+    public function buildapp(array $options = ['stage|s' => 'local'])
+    {
+        $this->prepareSyncPaths();
+        $this->composerInstall(['stage' => $options['stage'], 'remote' => false]);
+    }
+
+    /**
      * Delete and recreate the autoloader file with Composer
      *
      * @param array $options
