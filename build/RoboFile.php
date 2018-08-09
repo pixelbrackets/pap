@@ -172,13 +172,13 @@ class RoboFile extends \Robo\Tasks
      */
     public function composerDumpAutoload(array $options = ['stage|s' => 'local'])
     {
+        if (true === empty($this->getBuildProperty('settings.composer'))) {
+            $this->say('Composer not configured');
+            return;
+        }
         $stageProperties = $this->getBuildProperty('stages.' . $options['stage']);
         if (true === empty($stageProperties)) {
             $this->io()->error('Stage not configured');
-            return;
-        }
-        if (true === empty($this->getBuildProperty('settings.composer'))) {
-            $this->say('Composer not configured');
             return;
         }
 
@@ -199,25 +199,40 @@ class RoboFile extends \Robo\Tasks
      *
      * @param array $options
      * @option $stage Target stage (eg. local or live)
+     * @option $remote Execute composer localy for a stage or remote on a stage (eg. true)
      */
-    public function composerInstall(array $options = ['stage|s' => 'local'])
+    public function composerInstall(array $options = ['stage|s' => 'local', 'remote' => true])
     {
+        $composerSettings = $this->getBuildProperty('settings.composer');
+        if (true === empty($composerSettings)) {
+            $this->say('Composer not configured');
+            return;
+        }
         $stageProperties = $this->getBuildProperty('stages.' . $options['stage']);
         if (true === empty($stageProperties)) {
             $this->io()->error('Stage not configured');
             return;
         }
-        if (true === empty($this->getBuildProperty('settings.composer'))) {
-            $this->say('Composer not configured');
-            return;
+
+        if ((bool)$options['remote'] !== true) {
+            $composerPath = $composerSettings['phar'] ?? '';
+            $composerWorkingDirectory = $this->getBuildProperty('repository-path') . $composerSettings['working-directory'];
+        }
+        else {
+            $composerPath = $this->getBuildProperty('stages.' . $options['stage'] . '.composer.phar');
+            $composerWorkingDirectory = $stageProperties['working-directory'];
         }
 
-        $composerPath = $this->getBuildProperty('stages.' . $options['stage'] . '.composer.phar');
         $composer = $this->taskComposerInstall($composerPath);
-        if ($options['stage'] === 'local') {
-            $composer->workingDir($stageProperties['working-directory'])->run();
-        } else {
+        $composer->workingDir($composerWorkingDirectory);
+        if ($options['stage'] !== 'local') {
             $composer->noDev();
+        }
+
+        if ((bool)$options['remote'] !== true) {
+            $composer->run();
+        }
+        else {
             $this->taskSshExec($stageProperties['host'], $stageProperties['user'])
                 ->remoteDir($stageProperties['working-directory'])
                 ->exec($composer)
