@@ -18,10 +18,10 @@ class RoboFile extends \Robo\Tasks
         Robo::loadConfiguration(['build.common.properties.yml','build.local.properties.yml']);
 
         // Calculate absolute path to repository if not set already
-        if (true === empty(Robo::Config()->get('repository-path'))) {
+        if (true === empty(Robo::config()->get('repository-path'))) {
             $repositoryPath = exec('git rev-parse --show-toplevel', $output, $resultCode);
             if ($resultCode === 0) {
-                Robo::Config()->set('repository-path', $repositoryPath . '/');
+                Robo::config()->set('repository-path', $repositoryPath . '/');
             } else {
                 throw new \Robo\Exception\TaskException($this, 'Missing repository path');
             }
@@ -36,7 +36,7 @@ class RoboFile extends \Robo\Tasks
      */
     private function getBuildProperty($key = '')
     {
-        return Robo::Config()->get($key);
+        return Robo::config()->get($key);
     }
 
     /**
@@ -58,7 +58,7 @@ class RoboFile extends \Robo\Tasks
                 ->exec('./phploc -n ' . $repositoryPath . $lintPath);
         }
 
-        if($lint->run()->wasSuccessful() !== true) {
+        if ($lint->run()->wasSuccessful() !== true) {
             throw new \Robo\Exception\TaskException($this, 'Check failed');
         }
     }
@@ -230,8 +230,7 @@ class RoboFile extends \Robo\Tasks
             // run composer in locally in repository
             $composerPath = $composerSettings['phar'] ?? '';
             $composerWorkingDirectory = $this->getBuildProperty('repository-path') . $composerSettings['working-directory'];
-        }
-        else {
+        } else {
             $composerPath = $this->getBuildProperty('stages.' . $options['stage'] . '.composer.phar');
             $composerWorkingDirectory = $stageProperties['working-directory'];
         }
@@ -244,8 +243,7 @@ class RoboFile extends \Robo\Tasks
 
         if ((bool)$options['remote'] !== true || $options['stage'] === 'local') {
             $composer->run();
-        }
-        else {
+        } else {
             $this->taskSshExec($stageProperties['host'], $stageProperties['user'])
                 ->remoteDir($stageProperties['working-directory'])
                 ->exec($composer)
@@ -347,9 +345,11 @@ class RoboFile extends \Robo\Tasks
         $properties = $this->getBuildProperty();
 
         $this->taskWatch()
-            ->monitor($this->getBuildProperty('repository-path') . $this->getBuildProperty('settings.watch.working-directory'), function () {
-                $this->sync(['stage' => 'local']);
-            }
+            ->monitor(
+                $this->getBuildProperty('repository-path') . $this->getBuildProperty('settings.watch.working-directory'),
+                function () {
+                    $this->sync(['stage' => 'local']);
+                }
             )
             ->run();
     }
