@@ -211,7 +211,7 @@ class RoboFile extends \Robo\Tasks
      *
      * @param array $options
      * @option $stage Target stage (eg. local or live)
-     * @option $remote Execute composer localy for a stage or remote on a stage (eg. true)
+     * @option $remote Execute composer locally for a stage or remote on a stage (eg. true)
      */
     public function composerInstall(array $options = ['stage|s' => 'local', 'remote' => true])
     {
@@ -227,6 +227,7 @@ class RoboFile extends \Robo\Tasks
         }
 
         if ((bool)$options['remote'] !== true) {
+            // run composer in locally in repository
             $composerPath = $composerSettings['phar'] ?? '';
             $composerWorkingDirectory = $this->getBuildProperty('repository-path') . $composerSettings['working-directory'];
         }
@@ -241,7 +242,7 @@ class RoboFile extends \Robo\Tasks
             $composer->noDev();
         }
 
-        if ((bool)$options['remote'] !== true) {
+        if ((bool)$options['remote'] !== true || $options['stage'] === 'local') {
             $composer->run();
         }
         else {
