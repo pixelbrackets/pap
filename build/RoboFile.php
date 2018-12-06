@@ -194,7 +194,7 @@ class RoboFile extends \Robo\Tasks
             return;
         }
 
-        $composerPath = $this->getBuildProperty('stages.' . $options['stage'] . '.composer.phar');
+        $composerPath = $this->getBuildProperty('stages.' . $options['stage'] . '.composer.phar') ?? 'composer';
         $composer = $this->taskComposerDumpAutoload($composerPath);
         if ($options['stage'] === 'local') {
             $composer->workingDir($stageProperties['working-directory'])->run();
@@ -228,10 +228,10 @@ class RoboFile extends \Robo\Tasks
 
         if ((bool)$options['remote'] !== true) {
             // run composer in locally in repository
-            $composerPath = $composerSettings['phar'] ?? '';
+            $composerPath = $composerSettings['phar'] ?? 'composer';
             $composerWorkingDirectory = $this->getBuildProperty('repository-path') . $composerSettings['working-directory'];
         } else {
-            $composerPath = $this->getBuildProperty('stages.' . $options['stage'] . '.composer.phar');
+            $composerPath = $this->getBuildProperty('stages.' . $options['stage'] . '.composer.phar') ?? 'composer';
             $composerWorkingDirectory = $stageProperties['working-directory'];
         }
 
