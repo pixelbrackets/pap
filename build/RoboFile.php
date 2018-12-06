@@ -252,6 +252,52 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
+     * Execute Composer commands on a target stage
+     *
+     * e.g. Run »composer dump-autoload« on test stage
+     *     robo composer:command -s test -c dump-autoload
+     *
+     * @param array $options
+     * @option $stage Target stage (eg. local or live), leave empty to run in repository working directory
+     * @option $command Name of the Command to execute (eg. dump-autoload)
+     */
+    public function composerCommand(array $options = ['stage|s' => null, 'command|c' => null])
+    {
+        if (true === empty($this->getBuildProperty('settings.composer'))) {
+            $this->say('Composer not configured');
+            return;
+        }
+
+        // Missing stage = Use Composer Working Directory in Repository
+        if ($options['stage'] === null) {
+            $this->taskExec('composer')
+                ->rawArg($options['command'])
+                ->dir($this->getBuildProperty('repository-path') . $this->getBuildProperty('settings.composer.working-directory'))
+                ->run();
+            return;
+        }
+
+        $stageProperties = $this->getBuildProperty('stages.' . $options['stage']);
+        if (true === empty($stageProperties)) {
+            $this->io()->error('Stage not configured');
+            return;
+        }
+
+        $composerPath = $this->getBuildProperty('stages.' . $options['stage'] . '.composer.phar') ?? 'composer';
+        $composer = $this->taskExec($composerPath)
+            ->rawArg($options['command'])
+            ->dir($stageProperties['working-directory']);
+        if ($options['stage'] === 'local') {
+            $composer->run();
+        } else {
+            $this->taskSshExec($stageProperties['host'], $stageProperties['user'])
+                ->remoteDir($stageProperties['working-directory'])
+                ->exec($composer)
+                ->run();
+        }
+    }
+
+    /**
      * Move directories in repository to prepare a working sync task
      *
      */
