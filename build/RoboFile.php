@@ -277,6 +277,8 @@ class RoboFile extends \Robo\Tasks
     /**
      * Sync files between repository and stage folder
      *
+     * @param array $options
+     * @option $stage Target stage (eg. local or live)
      */
     protected function syncStage(array $options = ['stage|s' => 'local'])
     {
@@ -288,7 +290,7 @@ class RoboFile extends \Robo\Tasks
 
         $syncPaths = $this->getBuildProperty('settings.sync-paths');
         foreach ((array)$syncPaths as $syncPath) {
-            $rsync = $this->taskRsync()
+            $this->taskRsync()
                 ->rawArg($stageProperties['rsync']['options'])
                 ->exclude($syncPath['exclude'] ?? [])
                 ->fromPath($this->getBuildProperty('repository-path') . $syncPath['source'])
