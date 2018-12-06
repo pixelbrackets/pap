@@ -179,31 +179,14 @@ class RoboFile extends \Robo\Tasks
     /**
      * Delete and recreate the autoloader file with Composer
      *
+     * @deprecated Will be removed in next mayor release
      * @param array $options
      * @option $stage Target stage (eg. local or live)
      */
     public function composerDumpAutoload(array $options = ['stage|s' => 'local'])
     {
-        if (true === empty($this->getBuildProperty('settings.composer'))) {
-            $this->say('Composer not configured');
-            return;
-        }
-        $stageProperties = $this->getBuildProperty('stages.' . $options['stage']);
-        if (true === empty($stageProperties)) {
-            $this->io()->error('Stage not configured');
-            return;
-        }
-
-        $composerPath = $this->getBuildProperty('stages.' . $options['stage'] . '.composer.phar') ?? 'composer';
-        $composer = $this->taskComposerDumpAutoload($composerPath);
-        if ($options['stage'] === 'local') {
-            $composer->workingDir($stageProperties['working-directory'])->run();
-        } else {
-            $this->taskSshExec($stageProperties['host'], $stageProperties['user'])
-                ->remoteDir($stageProperties['working-directory'])
-                ->exec($composer)
-                ->run();
-        }
+        $this->io()->note('Task is deprecated!');
+        $this->composerCommand(['stage' => $options['stage'], 'command' => 'dump-autoload']);
     }
 
     /**
