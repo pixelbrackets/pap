@@ -52,13 +52,15 @@ settings:
 stages:
   test:
     user: johndoe
-    host: test.example.com
+    host: example.com
+    origin: https://test.example.com
     working-directory: /var/dev/
     rsync:
       options: -razce 'ssh -p 22'
   live:
     user: johndoe
     host: example.com
+    origin: https://www.example.com
     working-directory: /var/www/
     rsync:
       options: -razce 'ssh -p 22'

@@ -2,6 +2,7 @@ stages:
   local:
     user:
     host:
+    origin: http://local.hob:8001
     working-directory: /srv/kunden/XXXPROJECT_TOKENXXX/www/
     rsync:
       options: -razce 'ssh -p 22'
