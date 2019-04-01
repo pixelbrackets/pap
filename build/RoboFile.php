@@ -368,6 +368,29 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
+     * Open the project URL on configured stages in the default browser
+     *
+     * @param array $options
+     * @option $stage Target stage (eg. local or live)
+     */
+    public function view(array $options = ['stage|s' => 'local'])
+    {
+        $stageProperties = $this->getBuildProperty('stages.' . $options['stage']);
+        if (true === empty($stageProperties)) {
+            $this->io()->error('Stage not configured');
+            return;
+        }
+
+        $url = $stageProperties['origin'] ?? '';
+        if (true === empty($url)) {
+            $this->say('No origin configured');
+            return;
+        }
+
+        $this->taskOpenBrowser($url)->run();
+    }
+
+    /**
      * Sync changed files automatically to local stage
      *
      */
