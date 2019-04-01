@@ -48,6 +48,8 @@ settings:
   #  php-cs-rules: '@PSR2'
   #  lint-paths:
   #    - src/typo3/
+  view:
+    open-browser-after-deployment: true
 
 stages:
   test:

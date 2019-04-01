@@ -365,6 +365,10 @@ class RoboFile extends \Robo\Tasks
 
         // run composer install on stage as well to update tables etc.
         $this->composerInstall(['stage' => $options['stage'], 'remote' => true]);
+
+        if ($options['stage'] !== 'local' && false === empty($this->getBuildProperty('settings.view.open-browser-after-deployment'))) {
+            $this->view(['stage' => $options['stage']]);
+        }
     }
 
     /**
