@@ -47,6 +47,10 @@ class RoboFile extends \Robo\Tasks
     {
         $repositoryPath = $this->getBuildProperty('repository-path');
         $lintPaths = (array)$this->getBuildProperty('settings.lint.lint-paths');
+        if (true === empty($lintPaths)) {
+            $this->say('Lint not configured');
+            return;
+        }
 
         $lint = $this->taskExecStack()
             ->dir('./vendor/bin/');
@@ -71,6 +75,10 @@ class RoboFile extends \Robo\Tasks
     {
         $repositoryPath = $this->getBuildProperty('repository-path');
         $lintPaths = $this->getBuildProperty('settings.lint.lint-paths');
+        if (true === empty($lintPaths)) {
+            $this->say('Lint not configured');
+            return;
+        }
 
         $lint = $this->taskExecStack()
             ->dir('./vendor/bin/');
