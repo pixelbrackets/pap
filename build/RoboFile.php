@@ -109,9 +109,13 @@ class RoboFile extends \Robo\Tasks
             ->workingDir($repositoryPath . $codeceptionDirectory)
             ->run();
 
-        $this->taskCodecept()
+        $codeception = $this->taskCodecept()
             ->dir($repositoryPath . $codeceptionDirectory)
             ->run();
+
+        if ($codeception->wasSuccessful() !== true) {
+            throw new \Robo\Exception\TaskException($this, 'Test failed');
+        }
     }
 
     /**
