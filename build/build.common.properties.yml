@@ -24,6 +24,8 @@ settings:
     #  target: vendor/
   #watch:
   #  working-directory: src/
+  view:
+    open-browser-after-deployment: true
   assets:
     mirror:
       source: src/html/assets/
@@ -37,7 +39,6 @@ settings:
     minify-img:
       - source: src/html/build/assets/img/*
         target: src/html/build/assets/img/
-  ### or use Grunt task runner instead
   #grunt:
   #  working-directory: src/html/
   #  task: live
@@ -48,8 +49,6 @@ settings:
   #  php-cs-rules: '@PSR2'
   #  lint-paths:
   #    - src/typo3/
-  view:
-    open-browser-after-deployment: true
 
 stages:
   test:
