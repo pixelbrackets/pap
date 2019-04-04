@@ -49,6 +49,9 @@ settings:
   #  php-cs-rules: '@PSR2'
   #  lint-paths:
   #    - src/typo3/
+  #test:
+  #  codeception:
+  #    working-directory: test/
 
 stages:
   test:

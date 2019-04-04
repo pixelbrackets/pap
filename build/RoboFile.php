@@ -83,6 +83,30 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
+     * Run Codeception test suites
+     *
+     */
+    public function test()
+    {
+        $codeceptionDirectory = $this->getBuildProperty('settings.test.codeception.working-directory');
+        if (true === empty($codeceptionDirectory)) {
+            $this->say('Test framework not configured');
+            return;
+        }
+        $repositoryPath = $this->getBuildProperty('repository-path');
+        $composerPath = $this->getBuildProperty('settings.composer.phar') ?? 'composer';
+
+        $this->taskComposerInstall($composerPath)
+            ->ignorePlatformRequirements()
+            ->workingDir($repositoryPath . $codeceptionDirectory)
+            ->run();
+
+        $this->taskCodecept()
+            ->dir($repositoryPath . $codeceptionDirectory)
+            ->run();
+    }
+
+    /**
      * Build assets (Convert, concat, minify…)
      *
      * Switches to external task runner Grunt if configured
