@@ -39,9 +39,9 @@ settings:
     minify-img:
       - source: src/html/build/assets/img/*
         target: src/html/build/assets/img/
-  #grunt:
-  #  working-directory: src/html/
-  #  task: live
+    #grunt:
+    #  working-directory: src/html/
+    #  task: live
   #composer:
   #  working-directory: www/
   #  #phar: /usr/local/bin/composer

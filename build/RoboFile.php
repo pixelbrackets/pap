@@ -137,7 +137,7 @@ class RoboFile extends \Robo\Tasks
     public function buildassets()
     {
         $repositoryPath = $this->getBuildProperty('repository-path');
-        $gruntDirectory = $this->getBuildProperty('settings.grunt.working-directory');
+        $gruntDirectory = $this->getBuildProperty('settings.assets.grunt.working-directory');
         $assetSettings = $this->getBuildProperty('settings.assets');
         if (false === empty($gruntDirectory)) {
             // use external task runner instead
@@ -185,8 +185,8 @@ class RoboFile extends \Robo\Tasks
      */
     protected function buildassetsGrunt()
     {
-        $gruntDirectory = $this->getBuildProperty('settings.grunt.working-directory');
-        $gruntTask = $this->getBuildProperty('settings.grunt.task');
+        $gruntDirectory = $this->getBuildProperty('settings.assets.grunt.working-directory');
+        $gruntTask = $this->getBuildProperty('settings.assets.grunt.task');
         if (empty($gruntDirectory) && empty($gruntTask)) {
             $this->io()->error('Grunt not configured');
             return;
