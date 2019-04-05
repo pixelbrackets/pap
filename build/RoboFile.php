@@ -194,7 +194,7 @@ class RoboFile extends \Robo\Tasks
         $gruntDirectory = $this->getBuildProperty('repository-path') . $gruntDirectory;
 
         $this->say('Install/Update Node Packages');
-        $this->taskExec('npm --silent --progress=false ci')
+        $this->taskExec('npm --silent --progress=false --prefer-offline ci')
             ->dir($gruntDirectory)
             ->run();
 
