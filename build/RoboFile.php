@@ -93,8 +93,10 @@ class RoboFile extends \Robo\Tasks
     /**
      * Run Codeception test suites
      *
+     * @param array $options
+     * @option $stage Target stage (eg. local or live)
      */
-    public function test()
+    public function test(array $options = ['stage|s' => 'local'])
     {
         $codeceptionDirectory = $this->getBuildProperty('settings.test.codeception.working-directory');
         if (true === empty($codeceptionDirectory)) {
@@ -104,12 +106,21 @@ class RoboFile extends \Robo\Tasks
         $repositoryPath = $this->getBuildProperty('repository-path');
         $composerPath = $this->getBuildProperty('settings.composer.phar') ?? 'composer';
 
+        $stageOrigin = $this->getBuildProperty('stages.' . $options['stage'] . '.origin');
+        if (true === empty($stageOrigin)) {
+            $this->io()->error('Stage origin not configured');
+            return;
+        }
+
         $this->taskComposerInstall($composerPath)
             ->ignorePlatformRequirements()
             ->workingDir($repositoryPath . $codeceptionDirectory)
             ->run();
 
-        $codeception = $this->taskCodecept()
+        // Pass stage origin to codeception - modify superglobal ENV
+        // since putenv() wont catch on with the codeception configuration loader
+        $_ENV['BASEURL'] = $stageOrigin . '/';
+        $this->taskCodecept()
             ->dir($repositoryPath . $codeceptionDirectory)
             ->run();
 
