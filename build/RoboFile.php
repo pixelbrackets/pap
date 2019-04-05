@@ -120,7 +120,7 @@ class RoboFile extends \Robo\Tasks
         // Pass stage origin to codeception - modify superglobal ENV
         // since putenv() wont catch on with the codeception configuration loader
         $_ENV['BASEURL'] = $stageOrigin . '/';
-        $this->taskCodecept()
+        $codeception = $this->taskCodecept()
             ->dir($repositoryPath . $codeceptionDirectory)
             ->run();
 
