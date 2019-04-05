@@ -194,7 +194,8 @@ class RoboFile extends \Robo\Tasks
         $gruntDirectory = $this->getBuildProperty('repository-path') . $gruntDirectory;
 
         $this->say('Install/Update Node Packages');
-        $this->taskExec('npm --silent --progress=false --prefer-offline ci')
+        $npmInstall = (true === file_exists($gruntDirectory . 'package-lock.json'))? 'ci' : 'install';
+        $this->taskExec('npm --silent --progress=false --prefer-offline ' . $npmInstall)
             ->dir($gruntDirectory)
             ->run();
 
