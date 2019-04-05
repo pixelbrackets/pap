@@ -224,19 +224,6 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
-     * Delete and recreate the autoloader file with Composer
-     *
-     * @deprecated Will be removed in next mayor release
-     * @param array $options
-     * @option $stage Target stage (eg. local or live)
-     */
-    public function composerDumpAutoload(array $options = ['stage|s' => 'local'])
-    {
-        $this->io()->note('Task is deprecated!');
-        $this->composerCommand(['stage' => $options['stage'], 'command' => 'dump-autoload']);
-    }
-
-    /**
      * Install packages with Composer
      *
      * @param array $options
