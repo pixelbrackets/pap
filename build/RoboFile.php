@@ -170,6 +170,15 @@ class RoboFile extends \Robo\Tasks
             }
         }
 
+        if (false === empty($assetSettings['concat'])) {
+            foreach ($assetSettings['concat'] as $concatPaths) {
+                // prefix path to each source item
+                $this->taskConcat(preg_filter('/^/', $repositoryPath, $concatPaths['sources']))
+                    ->to($repositoryPath . $concatPaths['target'])
+                    ->run();
+            }
+        }
+
         if (false === empty($assetSettings['minify-img'])) {
             foreach ($assetSettings['minify-img'] as $minifyPaths) {
                 $this->taskImageMinify($repositoryPath . $minifyPaths['source'])

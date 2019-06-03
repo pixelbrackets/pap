@@ -36,6 +36,11 @@ settings:
     minify-js:
       - source: src/html/build/assets/js/bootstrap.js
         target: src/html/build/assets/js/bootstrap.js
+    concat:
+      - sources:
+          - src/html/build/assets/css/features.css
+          - src/html/build/assets/css/fonts.css
+        target: src/html/build/assets/css/zen.css
     minify-img:
       - source: src/html/build/assets/img/*
         target: src/html/build/assets/img/
