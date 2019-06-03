@@ -1,3 +1,7 @@
+settings:
+  view:
+    open-browser-after-deployment: false
+
 stages:
   local:
     user:
