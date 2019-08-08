@@ -4,7 +4,9 @@ PHP Deployment
 Installation
 ------------
 
+* Install cURL, SSH & rsync to sync files running `sudo apt-get install curl ssh rsync`
 * Install PHP to run PHAR files running `sudo apt-get install php`
+* Install Git to checkout package repositories running `sudo apt-get install git`
 * Install Composer to fetch required PHP packages running
   `wget https://getcomposer.org/composer.phar`
 * Fetch required PHP packages running `./composer.phar install`
