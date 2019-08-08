@@ -1,27 +1,25 @@
 PHP Deployment
 ==============
 
-Installation
-------------
+## Requirements
 
-* Install cURL, SSH & rsync to sync files running `sudo apt-get install curl ssh rsync`
-* Install PHP to run PHAR files running `sudo apt-get install php`
-* Install Git to checkout package repositories running `sudo apt-get install git`
-* Install Composer to fetch required PHP packages running
-  `wget https://getcomposer.org/composer.phar`
+* cURL, SSH & rsync to sync files `sudo apt-get install curl ssh rsync`
+* PHP to run PHAR files `sudo apt-get install php`
+* Git to checkout package repositories `sudo apt-get install git`
+* Composer to fetch required PHP packages `wget https://getcomposer.org/composer.phar`
+
+## Installation
+
 * Fetch required PHP packages running `./composer.phar install`
-* Add `composer.lock` to VCS
 
-Configuration
--------------
+## Configuration
 
 * Configure all shared stages (»test«, »live« etc) within `build.common.properties.yml`
 * If you have a local development environment, then copy
   `build.local.properties.template.yml`, rename it to `build.local.properties.yml`
   and change the parameters as desired
 
-Usage
------
+## Usage
 
 * Run `./robo.phar` to see all available tasks
   * E.g. `./robo.phar deploy -s test` to deploy to the configured test stage
