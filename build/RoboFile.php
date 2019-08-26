@@ -95,6 +95,7 @@ class RoboFile extends \Robo\Tasks
      *
      * @param array $options
      * @option $stage Target stage (eg. local or live)
+     * @throws \Robo\Exception\TaskException Reports failed tests
      */
     public function test(array $options = ['stage|s' => 'local'])
     {
@@ -381,6 +382,7 @@ class RoboFile extends \Robo\Tasks
      *
      * @param array $options
      * @option $stage Target stage (eg. local or live)
+     * @return void
      */
     public function sync(array $options = ['stage|s' => 'local'])
     {
