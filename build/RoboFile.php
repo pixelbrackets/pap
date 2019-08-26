@@ -392,7 +392,7 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
-     * Check if sync task can be executed safely (last build was executed on
+     * Check if sync task can be executed safely (eg. last build was executed on
      * the same branch), otherwise the deploy task should be used instead
      *
      * @param string Current target stage
@@ -414,13 +414,19 @@ class RoboFile extends \Robo\Tasks
 
         if ((string)$lock[0] !== $stage) {
             $this->io()->warning('The last stage used for deployment differs');
-            if(false === $this->io()->confirm('Continue anyway?', false)) {
+            if (false === $this->io()->confirm('Continue anyway?', false)) {
                 return false;
             }
         }
 
         if ((string)$lock[1] !== $this->getCurrentGitBranch()) {
             $this->io()->warning('The last branch used for deployment differs');
+            return false;
+        }
+
+        // last deployment > 3 days
+        if (((int)$lock[2] + 259200) < time()) {
+            $this->io()->warning('The last deployment is too long ago');
             return false;
         }
 
@@ -443,7 +449,7 @@ class RoboFile extends \Robo\Tasks
         }
 
         if (false === $this->syncIsAllowed($options['stage'])) {
-            $this->io()->error('Sync currently not permitted, please run deploy task instead');
+            $this->io()->error('Sync currently not allowed, please run deploy task instead');
             return;
         }
 
@@ -460,8 +466,8 @@ class RoboFile extends \Robo\Tasks
      */
     protected function setLockFile(string $stage)
     {
-        $lock = $stage . ',' . $this->getCurrentGitBranch();
-        file_put_contents('.lock',  $lock);
+        $lock = $stage . ',' . $this->getCurrentGitBranch() . ',' . time();
+        file_put_contents('.lock', $lock);
     }
 
     /**
@@ -474,7 +480,6 @@ class RoboFile extends \Robo\Tasks
     {
         $this->buildassets();
         $this->buildapp(['stage' => $options['stage']]);
-        $this->setLockFile($options['stage']);
 
         $this->syncStage(['stage' => $options['stage']]);
 
@@ -484,6 +489,8 @@ class RoboFile extends \Robo\Tasks
         if ($options['stage'] !== 'local' && false === empty($this->getBuildProperty('settings.view.open-browser-after-deployment'))) {
             $this->view(['stage' => $options['stage']]);
         }
+
+        $this->setLockFile($options['stage']);
     }
 
     /**
