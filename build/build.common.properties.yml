@@ -75,3 +75,5 @@ stages:
       options: -razce 'ssh -p 22'
     composer:
       phar: ${stages.live.working-directory}composer.phar
+    lock-branches:
+      - master

@@ -458,6 +458,27 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
+     * Check if deploy task can be executed safely (eg. current branch is
+     * allowed on target stage)
+     *
+     * @param string Current target stage
+     * @return boolean Returns true if the deploy task may be executed
+     */
+    protected function deployIsAllowed(string $stage)
+    {
+        $lockBranches = $this->getBuildProperty('stages.' . $stage . '.lock-branches');
+
+        if ((false === empty($lockBranches)) && (false === in_array($this->getCurrentGitBranch(), $lockBranches, true))) {
+            $this->io()->warning('The current branch is not allowed for the target stage');
+            if (false === $this->io()->confirm('Continue anyway?', false)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * Create lock file
      *
      * Lock stage & branch
@@ -478,6 +499,11 @@ class RoboFile extends \Robo\Tasks
      */
     public function deploy(array $options = ['stage|s' => 'local'])
     {
+        if (false === $this->deployIsAllowed($options['stage'])) {
+            $this->io()->error('Deployment is not allowed');
+            return;
+        }
+
         $this->buildassets();
         $this->buildapp(['stage' => $options['stage']]);
 
