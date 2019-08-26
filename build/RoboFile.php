@@ -395,16 +395,32 @@ class RoboFile extends \Robo\Tasks
      * Check if sync task can be executed safely (last build was executed on
      * the same branch), otherwise the deploy task should be used instead
      *
+     * @param string Current target stage
      * @return boolean Returns true if the sync task may be executed
      */
-    protected function syncIsAllowed()
+    protected function syncIsAllowed(string $stage)
     {
         if (false === is_file('.lock')) {
             $this->io()->note('»lock« file not present');
             return true;
         }
 
-        if (file_get_contents('.lock') !== $this->getCurrentGitBranch()) {
+        $lock = file_get_contents('.lock');
+        if (false === $lock) {
+            $this->io()->note('»lock« file not readable');
+            return true;
+        }
+        $lock = str_getcsv($lock);
+
+        if ((string)$lock[0] !== $stage) {
+            $this->io()->warning('The last stage used for deployment differs');
+            if(false === $this->io()->confirm('Continue anyway?', false)) {
+                return false;
+            }
+        }
+
+        if ((string)$lock[1] !== $this->getCurrentGitBranch()) {
+            $this->io()->warning('The last branch used for deployment differs');
             return false;
         }
 
@@ -426,7 +442,7 @@ class RoboFile extends \Robo\Tasks
             return;
         }
 
-        if (false === $this->syncIsAllowed()) {
+        if (false === $this->syncIsAllowed($options['stage'])) {
             $this->io()->error('Sync currently not permitted, please run deploy task instead');
             return;
         }
@@ -438,10 +454,14 @@ class RoboFile extends \Robo\Tasks
     /**
      * Create lock file
      *
+     * Lock stage & branch
+     *
+     * @param string Current target stage
      */
-    protected function setLockFile()
+    protected function setLockFile(string $stage)
     {
-        file_put_contents('.lock', $this->getCurrentGitBranch());
+        $lock = $stage . ',' . $this->getCurrentGitBranch();
+        file_put_contents('.lock',  $lock);
     }
 
     /**
@@ -454,7 +474,7 @@ class RoboFile extends \Robo\Tasks
     {
         $this->buildassets();
         $this->buildapp(['stage' => $options['stage']]);
-        $this->setLockFile();
+        $this->setLockFile($options['stage']);
 
         $this->syncStage(['stage' => $options['stage']]);
 
