@@ -40,6 +40,20 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
+     * Retrieve the current Git branch name
+     *
+     * @return string Name of the current branch, empty if not found
+     */
+    protected function getCurrentGitBranch()
+    {
+        $branchName = exec('git rev-parse --abbrev-ref HEAD', $output, $resultCode);
+        if ($resultCode !== 0) {
+            $branchName = '';
+        }
+        return $branchName;
+    }
+
+    /**
      * Lint PHP files (Check only)
      *
      */
@@ -378,6 +392,26 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
+     * Check if sync task can be executed safely (last build was executed on
+     * the same branch), otherwise the deploy task should be used instead
+     *
+     * @return boolean Returns true if the sync task may be executed
+     */
+    protected function syncIsAllowed()
+    {
+        if (false === is_file('.lock')) {
+            $this->io()->note('»lock« file not present');
+            return true;
+        }
+
+        if (file_get_contents('.lock') !== $this->getCurrentGitBranch()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Run downgraded deploy stack (sync only)
      *
      * @param array $options
@@ -392,8 +426,22 @@ class RoboFile extends \Robo\Tasks
             return;
         }
 
+        if (false === $this->syncIsAllowed()) {
+            $this->io()->error('Sync currently not permitted, please run deploy task instead');
+            return;
+        }
+
         $this->prepareSyncPaths();
         $this->syncStage(['stage' => $options['stage']]);
+    }
+
+    /**
+     * Create lock file
+     *
+     */
+    protected function setLockFile()
+    {
+        file_put_contents('.lock', $this->getCurrentGitBranch());
     }
 
     /**
@@ -406,6 +454,7 @@ class RoboFile extends \Robo\Tasks
     {
         $this->buildassets();
         $this->buildapp(['stage' => $options['stage']]);
+        $this->setLockFile();
 
         $this->syncStage(['stage' => $options['stage']]);
 

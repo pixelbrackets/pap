@@ -1,3 +1,4 @@
 /vendor
 /build.local.properties.yml
 /robo.phar
+/.lock
