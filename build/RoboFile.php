@@ -206,6 +206,7 @@ class RoboFile extends \Robo\Tasks
     /**
      * Build assets using external task runner Grunt
      *
+     * Uses NPM to install dependencies and executes Grunt as task runner
      */
     protected function buildassetsGrunt()
     {
@@ -217,23 +218,24 @@ class RoboFile extends \Robo\Tasks
         }
         $gruntDirectory = $this->getBuildProperty('repository-path') . $gruntDirectory;
 
-        $this->say('Install/Update Node Packages');
-        $npmInstall = (true === file_exists($gruntDirectory . 'package-lock.json'))? 'ci' : 'install';
-        $this->taskExec('npm --silent --progress=false --prefer-offline ' . $npmInstall)
-            ->dir($gruntDirectory)
-            ->run();
+        $buildassets = $this->taskExecStack()->dir($gruntDirectory);
 
+        // Fetch dependencies using NPM
+        $npmInstall = (true === file_exists($gruntDirectory . 'package-lock.json')) ? 'ci' : 'install';
+        $buildassets->exec('npm --silent --progress=false --prefer-offline ' . $npmInstall);
+
+        // Manage additional build scripts (sass etc.)
+        // Deprecated - Everything should be a NPM package by now!
         if (true === file_exists($gruntDirectory . 'gems.rb')) {
-            $this->say('Manage Ruby gems');
-            $this->taskExec('bundle install --quiet')
-                ->dir($gruntDirectory)
-                ->run();
+            $buildassets->exec('bundle install --quiet');
         }
 
-        $this->say('Execute Grunt Tasks');
-        $this->taskExec('grunt -q ' . $gruntTask)
-            ->dir($gruntDirectory)
-            ->run();
+        // Execute Grunt as task runner
+        $buildassets->exec('grunt -q ' . $gruntTask);
+
+        if ($buildassets->run()->wasSuccessful() !== true) {
+            throw new \Robo\Exception\TaskException($this, 'Building Assets failed');
+        }
     }
 
     /**
