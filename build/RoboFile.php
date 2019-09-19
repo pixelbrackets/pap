@@ -54,6 +54,28 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
+     * Run a set of command-line executable commands
+     *
+     * @param array $scripts List of commands
+     * @param string $workingDirectory
+     * @throws \Robo\Exception\TaskException
+     */
+    protected function runScripts($scripts, $workingDirectory = null)
+    {
+        $workingDirectory = $workingDirectory ?? $this->getBuildProperty('repository-path');
+
+        $commandRunner = $this->taskExecStack()
+            ->dir($workingDirectory);
+        foreach ($scripts as $script) {
+            $commandRunner->exec($script);
+        }
+
+        if ($commandRunner->run()->wasSuccessful() !== true) {
+            throw new \Robo\Exception\TaskException($this, 'Script execution failed');
+        }
+    }
+
+    /**
      * Lint PHP files (Check only)
      *
      */
@@ -147,16 +169,20 @@ class RoboFile extends \Robo\Tasks
     /**
      * Build assets (Convert, concat, minify…)
      *
-     * Switches to external task runner Grunt if configured
+     * Switches to external task runner if configured
      */
     public function buildassets()
     {
         $repositoryPath = $this->getBuildProperty('repository-path');
-        $gruntDirectory = $this->getBuildProperty('settings.assets.grunt.working-directory');
         $assetSettings = $this->getBuildProperty('settings.assets');
-        if (false === empty($gruntDirectory)) {
-            // use external task runner instead
+        if (false === empty($assetSettings['grunt'])) {
+            // use external task runner Grunt instead
+            // Deprecated - Register scripts instead
             return $this->buildassetsGrunt();
+        }
+        if (false === empty($assetSettings['scripts'])) {
+            // use external task runner instead
+            return $this->runScripts($assetSettings['scripts']);
         }
         if (empty($assetSettings)) {
             $this->say('Assets not configured - Nothing to do');
@@ -207,6 +233,8 @@ class RoboFile extends \Robo\Tasks
      * Build assets using external task runner Grunt
      *
      * Uses NPM to install dependencies and executes Grunt as task runner
+     *
+     * @deprecated Will be removed in next version, register »scripts« instead
      */
     protected function buildassetsGrunt()
     {

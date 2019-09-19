@@ -47,6 +47,8 @@ settings:
     #grunt:
     #  working-directory: src/html/
     #  task: live
+    #scripts:
+    #  - (cd src/html/ && ./build.sh)
   #composer:
   #  working-directory: www/
   #  #phar: /usr/local/bin/composer
