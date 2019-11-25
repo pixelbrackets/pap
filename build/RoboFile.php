@@ -158,10 +158,9 @@ class RoboFile extends \Robo\Tasks
         // since putenv() wont catch on with the codeception configuration loader
         $_ENV['BASEURL'] = $stageOrigin . '/';
         $codeception = $this->taskCodecept($repositoryPath . $codeceptionDirectory . 'vendor/bin/codecept')
-            ->dir($repositoryPath . $codeceptionDirectory)
-            ->run();
+            ->dir($repositoryPath . $codeceptionDirectory);
 
-        if ($codeception->wasSuccessful() !== true) {
+        if ($codeception->run()->wasSuccessful() !== true) {
             throw new \Robo\Exception\TaskException($this, 'Test failed');
         }
     }
