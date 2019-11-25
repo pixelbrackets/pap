@@ -159,6 +159,10 @@ class RoboFile extends \Robo\Tasks
         $_ENV['BASEURL'] = $stageOrigin . '/';
         $codeception = $this->taskCodecept($repositoryPath . $codeceptionDirectory . 'vendor/bin/codecept')
             ->dir($repositoryPath . $codeceptionDirectory);
+        $denyTestGroups = $this->getBuildProperty('stages.' . $options['stage'] . '.test.deny-groups');
+        foreach ((array)$denyTestGroups as $denyTestGroup) {
+            $codeception->excludeGroup($denyTestGroup);
+        }
 
         if ($codeception->run()->wasSuccessful() !== true) {
             throw new \Robo\Exception\TaskException($this, 'Test failed');
