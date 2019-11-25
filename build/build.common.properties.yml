@@ -59,6 +59,7 @@ settings:
   #test:
   #  codeception:
   #    working-directory: test/
+  #    #suite: acceptance
 
 stages:
   test:

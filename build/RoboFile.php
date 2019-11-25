@@ -150,6 +150,7 @@ class RoboFile extends \Robo\Tasks
             return;
         }
 
+        // Install Codeception in working directory
         $this->taskComposerInstall($composerPath)
             ->ignorePlatformRequirements()
             ->workingDir($repositoryPath . $codeceptionDirectory)
@@ -159,7 +160,8 @@ class RoboFile extends \Robo\Tasks
         // since putenv() wont catch on with the codeception configuration loader
         $_ENV['BASEURL'] = $stageOrigin . '/';
         $codeception = $this->taskCodecept($repositoryPath . $codeceptionDirectory . 'vendor/bin/codecept')
-            ->dir($repositoryPath . $codeceptionDirectory);
+            ->dir($repositoryPath . $codeceptionDirectory)
+            ->suite($this->getBuildProperty('settings.test.codeception.suite'));
 
         if (false === empty($options['group'])) {
             $codeception->group($options['group']);
