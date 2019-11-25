@@ -160,8 +160,11 @@ class RoboFile extends \Robo\Tasks
         $codeception = $this->taskCodecept($repositoryPath . $codeceptionDirectory . 'vendor/bin/codecept')
             ->dir($repositoryPath . $codeceptionDirectory);
         $denyTestGroups = $this->getBuildProperty('stages.' . $options['stage'] . '.test.deny-groups');
-        foreach ((array)$denyTestGroups as $denyTestGroup) {
-            $codeception->excludeGroup($denyTestGroup);
+        if (false === empty($denyTestGroups)) {
+            $this->io()->note(array_merge(['Excluding test groups'], $denyTestGroups));
+            foreach ((array)$denyTestGroups as $denyTestGroup) {
+                $codeception->excludeGroup($denyTestGroup);
+            }
         }
 
         if ($codeception->run()->wasSuccessful() !== true) {
