@@ -131,10 +131,11 @@ class RoboFile extends \Robo\Tasks
      *
      * @param array $options
      * @option $stage Target stage (eg. local or live)
-     * @option $group Use a specific test group (otherwise: run all tests)
+     * @option $group Use a specific test group (default: run all tests, with and without groups)
+     * @option $suite Use a specific test suite (eg. acceptance)
      * @throws \Robo\Exception\TaskException Reports failed tests
      */
-    public function test(array $options = ['stage|s' => 'local', 'group|g' => null])
+    public function test(array $options = ['stage|s' => 'local', 'group|g' => null, 'suite' => null])
     {
         $codeceptionDirectory = $this->getBuildProperty('settings.test.codeception.working-directory');
         if (true === empty($codeceptionDirectory)) {
@@ -161,7 +162,7 @@ class RoboFile extends \Robo\Tasks
         $_ENV['BASEURL'] = $stageOrigin . '/';
         $codeception = $this->taskCodecept($repositoryPath . $codeceptionDirectory . 'vendor/bin/codecept')
             ->dir($repositoryPath . $codeceptionDirectory)
-            ->suite($this->getBuildProperty('settings.test.codeception.suite'));
+            ->suite( $options['suite'] ?? $this->getBuildProperty('settings.test.codeception.suite'));
 
         if (false === empty($options['group'])) {
             $codeception->group($options['group']);
