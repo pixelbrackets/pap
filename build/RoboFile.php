@@ -131,9 +131,10 @@ class RoboFile extends \Robo\Tasks
      *
      * @param array $options
      * @option $stage Target stage (eg. local or live)
+     * @option $group Use a specific test group (otherwise: run all tests)
      * @throws \Robo\Exception\TaskException Reports failed tests
      */
-    public function test(array $options = ['stage|s' => 'local'])
+    public function test(array $options = ['stage|s' => 'local', 'group|g' => null])
     {
         $codeceptionDirectory = $this->getBuildProperty('settings.test.codeception.working-directory');
         if (true === empty($codeceptionDirectory)) {
@@ -159,6 +160,11 @@ class RoboFile extends \Robo\Tasks
         $_ENV['BASEURL'] = $stageOrigin . '/';
         $codeception = $this->taskCodecept($repositoryPath . $codeceptionDirectory . 'vendor/bin/codecept')
             ->dir($repositoryPath . $codeceptionDirectory);
+
+        if (false === empty($options['group'])) {
+            $codeception->group($options['group']);
+        }
+
         $denyTestGroups = $this->getBuildProperty('stages.' . $options['stage'] . '.test.deny-groups');
         if (false === empty($denyTestGroups)) {
             $this->io()->note(array_merge(['Excluding test groups'], $denyTestGroups));
