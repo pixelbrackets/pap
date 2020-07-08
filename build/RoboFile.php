@@ -162,7 +162,7 @@ class RoboFile extends \Robo\Tasks
         $_ENV['BASEURL'] = $stageOrigin . '/';
         $codeception = $this->taskCodecept($repositoryPath . $codeceptionDirectory . 'vendor/bin/codecept')
             ->dir($repositoryPath . $codeceptionDirectory)
-            ->suite( $options['suite'] ?? $this->getBuildProperty('settings.test.codeception.suite'));
+            ->suite($options['suite'] ?? $this->getBuildProperty('settings.test.codeception.suite'));
 
         if (false === empty($options['group'])) {
             $codeception->group($options['group']);
