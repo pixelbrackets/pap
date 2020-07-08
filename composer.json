@@ -1,0 +1,25 @@
+{
+    "name": "pixelbrackets/pap",
+    "description": "PHP App Publication",
+    "license": "GPL-2.0-or-later",
+    "type": "library",
+    "require": {
+        "consolidation/robo": "^1.1.3",
+        "henrikbjorn/lurker": "^1.2",
+        "natxet/cssmin": "^3.0",
+        "friendsofphp/php-cs-fixer": "^2.0",
+        "phploc/phploc": "^4.0",
+        "patchwork/jsqueeze": "^2.0",
+        "jakub-onderka/php-parallel-lint": "^1.0",
+        "editorconfig-checker/editorconfig-checker": "^8.0",
+        "jean85/pretty-package-versions": "^1.5 || ^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pixelbrackets\\PhpAppPublication\\": "src/"
+        }
+    },
+    "bin": [
+        "bin/pap"
+    ]
+}

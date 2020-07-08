@@ -1,0 +1,23 @@
+#!/usr/bin/env php
+<?php
+
+$loaded = false;
+
+// are we running as dependency or standalone?
+foreach (array(__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php') as $file) {
+    if (file_exists($file)) {
+        require $file;
+        $loaded = true;
+        break;
+    }
+}
+
+if (!$loaded) {
+    die(
+        'You need to run composer install first' . PHP_EOL
+    );
+}
+
+$runner = new \Robo\Runner(\Pixelbrackets\PhpAppPublication\RoboFile::class);
+$statusCode = $runner->execute($argv);
+exit($statusCode);

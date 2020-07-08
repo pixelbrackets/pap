@@ -1,4 +1,5 @@
 /vendor
-/build.local.properties.yml
-/robo.phar
+/composer.phar
+
 /.lock
+/build.local.properties.yml

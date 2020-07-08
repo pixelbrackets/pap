@@ -1,4 +1,7 @@
 <?php
+
+namespace Pixelbrackets\PhpAppPublication;
+
 /**
  * Robo command configuration
  *
