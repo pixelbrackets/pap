@@ -1,0 +1,36 @@
+# PAP configuration file - See documentation for full list of options
+#
+# Example file - adapt to you own needs
+
+settings:
+  sync-paths:
+    - source: config/
+      target: config/
+    - source: web/
+      target: web/
+    - source: src/
+      target: src/
+    - source: composer.json
+      target: composer.json
+    - source: composer.lock
+      target: composer.lock
+  watch:
+    working-directory: src/
+  view:
+    open-browser-after-deployment: true
+  composer:
+    working-directory: ./
+  lint:
+    php-cs-rules: '@PSR2'
+    lint-paths:
+      - config/
+      - src/
+
+stages:
+  live:
+    user: johndoe
+    host: example.com
+    origin: https://www.example.com/
+    working-directory: /var/www/
+    rsync:
+      options: -razc
