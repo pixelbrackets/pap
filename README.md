@@ -18,7 +18,7 @@ Toolchain to publish a PHP App. Configured with a YAML file only.
 - Build App - Prepare expected directory structures & fetch packages
 - Lint - Identify errors before the app is running
 - Deploy - Sync files to configurable target stages
-- View - Do a smoke test to verify that the app is still working
+- Verify - Do a smoke test to verify that the app is still working
 - Test - Start integration tests
 
 🔧
@@ -43,6 +43,7 @@ Toolchain to publish a PHP App. Configured with a YAML file only.
 - Useable by a person who never deployed the app before
   - No additional knowledge required
   - One command is enough to deploy the app to a stage
+- Always the same commands, don't care about the configuration set up
 - Works well with robots (CI)
 - Minimal requirements on target stage
 - Rsync to synchronize files - no FTP
@@ -60,11 +61,22 @@ General approach: Not made for every condition, but easy to use and integrate
 - Git
 - PHP
 - Composer
-- SSH-Account on target stage(s)
+- SSH-Account on target stage(s) with read & write access,
+  and right to run cURL, rsync and PHP
 
 ## Installation
 
 Packagist Entry https://packagist.org/packages/pixelbrackets/pap/
+
+- `composer require pixelbrackets/pap`
+
+💡 Use the
+[skeleton project](https://packagist.org/packages/pixelbrackets/pap-skeleton/)
+to create a `build` directory and add required configuration files right away.
+
+```bash
+composer create-project pixelbrackets/pap-skeleton build
+```
 
 Read the [integration guide](#integration) to learn how to add the tool to
 your own app.
@@ -73,7 +85,8 @@ your own app.
 
 https://gitlab.com/pixelbrackets/pap/
 
-https://github.com/pixelbrackets/pap/
+Mirror https://github.com/pixelbrackets/pap/ (Issues & Pull Requests
+mirrored to GitLab)
 
 ## Usage
 
@@ -107,9 +120,10 @@ Run `./vendor/bin/pap` to see all available tasks. Some common tasks are:
 
 ## Integration
 
-- Best practice is to create a separate directory for the build & deploy 
-  process, this is not mandatory however
-- Add PAP as dependency
+- [Install PAP](#installation), either as dependency or in a designated
+  subfolder
+  - Best practice is to create a separate directory for the build & deploy 
+    process, this is not mandatory however
 - Add the PAP [configuration](#configuration) file
   `build.common.properties.yml` for all shared settings
 - Add `build.local.properties.yml` to your `.gitignore` file
@@ -120,7 +134,7 @@ Run `./vendor/bin/pap` to see all available tasks. Some common tasks are:
 
 💡 There is a
 [skeleton project](https://packagist.org/packages/pixelbrackets/pap-skeleton/)
-available to create a build directory and add the abovementioned files.
+available to create a build directory and add the above mentioned files.
 
 ```bash
 composer create-project pixelbrackets/pap-skeleton build
@@ -153,10 +167,10 @@ Dan Untenzu (<mail@pixelbrackets.de> / [@pixelbrackets](https://pixelbrackets.de
 
 ## Changelog
 
-See [./CHANGELOG.md](CHANGELOG.md)
+See [CHANGELOG.md](./CHANGELOG.md)
 
 ## Contribution
 
-This script is Open Source, so please use, patch, extend or fork it.
+This script is Open Source, so please use, share, patch, extend or fork it.
 
-[Contributions](CONTRIBUTING.md) are welcome!
+[Contributions](./CONTRIBUTING.md) are welcome!
