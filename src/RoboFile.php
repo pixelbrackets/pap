@@ -572,6 +572,19 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
+     * Run full publication stack (lint, deploy, test)
+     *
+     * @param array $options
+     * @option $stage Target stage (eg. local or live)
+     */
+    public function publish(array $options = ['stage|s' => 'local'])
+    {
+        $this->lintCheck();
+        $this->deploy(['stage' => $options['stage']]);
+        $this->test(['stage' => $options['stage']]);
+    }
+
+    /**
      * Open the project URL on configured stages in the default browser
      *
      * @param array $options
