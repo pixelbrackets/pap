@@ -581,7 +581,31 @@ class RoboFile extends \Robo\Tasks
     {
         $this->lintCheck();
         $this->deploy(['stage' => $options['stage']]);
+        $this->smoketest(['stage' => $options['stage']]);
         $this->test(['stage' => $options['stage']]);
+    }
+
+    /**
+     * Run a build verification test against a stage
+     *
+     * @param array $options
+     * @option $stage Target stage (eg. local or live)
+     */
+    public function smoketest(array $options = ['stage|s' => 'local'])
+    {
+        $stageOrigin = $this->getBuildProperty('stages.' . $options['stage'] . '.origin');
+        if (true === empty($stageOrigin)) {
+            $this->io()->error('Stage origin not configured - Nothing to do');
+            return;
+        }
+
+        try {
+            $ping = (new \GuzzleHttp\Client())->get($stageOrigin);
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            throw new \Robo\Exception\TaskException($this, 'Smoke test failed');
+        }
+
+        $this->say('Smoke test successful for ' . $stageOrigin);
     }
 
     /**

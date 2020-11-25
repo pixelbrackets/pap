@@ -12,7 +12,8 @@
         "patchwork/jsqueeze": "^2.0",
         "jakub-onderka/php-parallel-lint": "^1.0",
         "editorconfig-checker/editorconfig-checker": "^8.0",
-        "jean85/pretty-package-versions": "^1.5 || ^2.0"
+        "jean85/pretty-package-versions": "^1.5 || ^2.0",
+        "guzzlehttp/guzzle": "^6.0 || ^7.0"
     },
     "autoload": {
         "psr-4": {
