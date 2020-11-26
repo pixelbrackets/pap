@@ -632,6 +632,24 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
+     * Open SSH connection to target stage
+     *
+     * @param array $options
+     * @option $stage Target stage (eg. local or live)
+     */
+    public function sshConnect(array $options = ['stage|s' => 'local'])
+    {
+        $stageProperties = $this->getBuildProperty('stages.' . $options['stage']);
+        if (true === empty($stageProperties)) {
+            $this->io()->error('Stage not configured - Skip');
+            return;
+        }
+
+        $sshConnection = $stageProperties['user'] . '@' . $stageProperties['host'];
+        passthru('ssh -t ' . $sshConnection . '\'cd ' . $stageProperties['working-directory'] . ' && exec bash -l\'');
+    }
+
+    /**
      * Sync changed files automatically to local stage
      *
      */
