@@ -415,6 +415,7 @@ class RoboFile extends \Robo\Tasks
      *
      * @param array $options
      * @option $stage Target stage (eg. local or live)
+     * @throws \Robo\Exception\TaskException
      */
     protected function syncStage(array $options = ['stage|s' => 'local'])
     {
@@ -426,7 +427,7 @@ class RoboFile extends \Robo\Tasks
 
         $syncPaths = $this->getBuildProperty('settings.sync-paths');
         foreach ((array)$syncPaths as $syncPath) {
-            $this->taskRsync()
+            $sync = $this->taskRsync()
                 ->rawArg($stageProperties['rsync']['options'])
                 ->exclude($syncPath['exclude'] ?? [])
                 ->fromPath($this->getBuildProperty('repository-path') . $syncPath['source'])
@@ -434,8 +435,11 @@ class RoboFile extends \Robo\Tasks
                 ->toHost($stageProperties['host'])
                 ->toPath($stageProperties['working-directory'] . $syncPath['target'])
                 ->delete()
-                ->verbose()
-                ->run();
+                ->verbose();
+
+            if ($sync->run()->wasSuccessful() !== true) {
+                throw new \Robo\Exception\TaskException($this, 'Synchronization failed');
+            }
         }
     }
 
