@@ -174,3 +174,8 @@ See [CHANGELOG.md](./CHANGELOG.md)
 This script is Open Source, so please use, share, patch, extend or fork it.
 
 [Contributions](./CONTRIBUTING.md) are welcome!
+
+## Feedback
+
+Please send some [feedback](https://pixelbrackets.de/) and share how this
+package has proven useful to you or how you may help to improve it.
