@@ -96,7 +96,8 @@ settings:
       - source: theme/build/assets/img/*
         target: theme/build/assets/img/
     ### Runy any CLI commands instead to build assets, for example starting
-    ### npm, yarn, grunt, gulp etc
+    ### npm, yarn, grunt, gulp etc - If this option is configured,
+    ### then all other (mirror, concat, minify*) are ignored)
     ### scripts: (list)
     ###   - (string, bash command, relative to git root directory)
     #scripts:
