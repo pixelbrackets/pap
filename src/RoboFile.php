@@ -106,11 +106,7 @@ class RoboFile extends \Robo\Tasks
         $lint = $this->taskExecStack()
             ->dir('./vendor/bin/');
         foreach ($lintSettings['lint-paths'] as $lintPath) {
-            $lint
-                ->exec('./php-cs-fixer -vvv fix ' . $repositoryPath . $lintPath . ' --dry-run --diff --using-cache=no --rules=' . escapeshellarg($this->getBuildProperty('php-cs-rules') ?? '@PSR2'))
-                ->exec('./parallel-lint --exclude vendor ' . $repositoryPath . $lintPath)
-                ->exec('./editorconfig-checker -e \'\.(png|jpg|gif|ico|svg|js|css|ttf|eot|woff|woff2|lock|git)$\' ' . $repositoryPath . $lintPath . '/*')
-                ->exec('./phploc -n ' . $repositoryPath . $lintPath);
+            $lint->exec('./phplint.sh ' . $repositoryPath . $lintPath);
         }
 
         if ($lint->run()->wasSuccessful() !== true) {
@@ -129,19 +125,6 @@ class RoboFile extends \Robo\Tasks
         if (false === empty($lintSettings['fix']['scripts'])) {
             return $this->runScripts($lintSettings['fix']['scripts']);
         }
-        if (true === empty($lintSettings['lint-paths'])) {
-            $this->say('Lint not configured');
-            return;
-        }
-
-        $lint = $this->taskExecStack()
-            ->dir('./vendor/bin/');
-        foreach ($lintSettings['lint-paths'] as $lintPath) {
-            $lint
-                ->exec('./php-cs-fixer -vvv fix ' . $repositoryPath . $lintPath . ' --using-cache=no --rules=' . escapeshellarg($this->getBuildProperty('php-cs-rules') ?? '@PSR2'))
-                ->exec('./editorconfig-checker -a -e \'\.(png|jpg|gif|ico|svg|js|css|ttf|eot|woff|woff2|lock|git)$\' ' . $repositoryPath . $lintPath . '/*');
-        }
-        $lint->run();
     }
 
     /**

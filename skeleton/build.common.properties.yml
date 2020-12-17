@@ -19,7 +19,6 @@ settings:
   composer:
     working-directory: ./
   lint:
-    php-cs-rules: '@PSR2'
     lint-paths:
       - config/
       - src/

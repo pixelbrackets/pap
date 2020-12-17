@@ -5,20 +5,22 @@
     "type": "library",
     "require": {
         "consolidation/robo": "^2.2",
-        "editorconfig-checker/editorconfig-checker": "^8.0",
-        "friendsofphp/php-cs-fixer": "^2.0",
         "guzzlehttp/guzzle": "^6.0 || ^7.0",
         "jean85/pretty-package-versions": "^1.5 || ^2.0",
+        "kba-team/phplint.sh": "^1.0",
         "natxet/cssmin": "^3.0",
         "patchwork/jsqueeze": "^2.0",
-        "php-parallel-lint/php-parallel-lint": "^1.0",
-        "phploc/phploc": "^4.0",
         "totten/lurkerlite": "^1.3"
     },
     "autoload": {
         "psr-4": {
             "Pixelbrackets\\PhpAppPublication\\": "src/"
         }
+    },
+    "suggest": {
+        "editorconfig-checker/editorconfig-checker": "Check and fix file formats based on EditorConfig",
+        "friendsofphp/php-cs-fixer": "Check and fix PHP code styles",
+        "php-parallel-lint/php-parallel-lint": "Fast syntax check for PHP files"
     },
     "require-dev": {
         "phpunit/phpunit": "^8.0"
