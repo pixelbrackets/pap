@@ -1,6 +1,6 @@
 ### GENERAL ###
 
-image: chialab/php:7.0-apache
+image: chialab/php:7.3-apache
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
@@ -14,7 +14,7 @@ stages:
 before_script:
   - apt-get update -yqq
   - apt-get install curl ssh rsync git -yqq
-  #- composer install
+  - composer install
 
 ### JOBS ###
 
@@ -27,5 +27,11 @@ job_lint_app_phpdefaultversion: &definition_lint_app_phpdefaultversion
 
 job_lint_app_phpnextversion:
   <<: *definition_lint_app_phpdefaultversion
-  image: chialab/php:7.3-apache
+  image: chialab/php:7.4-apache
+  allow_failure: true
+
+### Ubuntu 18.04 - PHP 7.2
+job_lint_app_phplegacyversion:
+  <<: *definition_lint_app_phpdefaultversion
+  image: chialab/php:7.2-apache
   allow_failure: true
