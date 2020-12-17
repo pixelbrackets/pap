@@ -1,0 +1,30 @@
+settings:
+  assets:
+    scripts:
+      - echo "buildassets script"
+  lint:
+    scripts:
+      - echo "lint script"
+  test:
+    scripts:
+      - echo "test script"
+  watch:
+    working-directory: src/
+  composer:
+    working-directory: ./
+
+stages:
+  local:
+    user:
+    host:
+    origin: http://localhost:8000
+    working-directory: /var/www/
+    rsync:
+      options: -razc
+  live:
+    user: johndoe
+    host: example.com
+    origin: https://www.example.com/
+    working-directory: /var/www/
+    rsync:
+      options: -razc
