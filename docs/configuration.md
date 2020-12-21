@@ -129,6 +129,14 @@ settings:
     ###   - (string, bash command, relative to git root directory)
     #scripts:
     #  - composer lint
+    ### Action to fix files automatically
+    ### fix: (dictionary)
+    fix:
+      ### Any CLI commands to fix files
+      ### scripts: (list)
+      ###   - (string, bash command, relative to git root directory)
+      #scripts:
+      #  - ./vendor/bin/php-cs-fixer fix src
   ### Test app files
   ### test: (dictionary)
   test:

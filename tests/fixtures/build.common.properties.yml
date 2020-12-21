@@ -3,8 +3,13 @@ settings:
     scripts:
       - echo "buildassets script"
   lint:
+    lint-paths:
+      - src/
     scripts:
-      - echo "lint script"
+      - echo "lint check script"
+    fix:
+      scripts:
+        - echo "lint fix script"
   test:
     scripts:
       - echo "test script"
