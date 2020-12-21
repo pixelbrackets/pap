@@ -79,6 +79,15 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
+     * Alias to run »lint:check«
+     *
+     */
+    public function lint()
+    {
+        $this->lintCheck();
+    }
+
+    /**
      * Lint PHP files (Check only)
      *
      */
