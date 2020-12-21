@@ -1,5 +1,15 @@
 # Changelog
 
+2020-12-21 Dan Untenzu <mail@pixelbrackets.de>
+
+  * 7.2.0
+  * FEATURE Test task: Add scripts hook
+  * FEATURE Lint task: Add scripts hook
+  * FEATURE Composer: Replace Lurker Package
+  * FEATURE Composer: Replace Parallel Lint Package
+  * FEATURE Docs: Explain fallbacks
+  * FEATURE Docs: List commands available
+
 2020-11-26 Dan Untenzu <mail@pixelbrackets.de>
 
   * 7.1.0
