@@ -118,6 +118,29 @@ Run `./vendor/bin/pap` to see all available tasks. Some common tasks are:
    ./vendor/bin/pap lint
    ```
 
+### Commands
+
+<!-- Generate using `./bin/pap list` and sort alphabetically -->
+
+```
+buildapp          Build app for desired target stage
+buildassets       Build assets (Convert, concat, minify…)
+composer:command  Execute Composer commands on a target stage
+composer:install  Install packages with Composer
+deploy            Run full deployment stack (build, sync, cache warmup)
+help              Displays help for a command
+lint:check        Lint PHP files (Check only)
+lint:fix          Lint PHP files (Fix)
+list              Lists commands
+publish           Run full publication stack (lint, deploy, test)
+smoketest         Run a build verification test against a stage
+ssh:connect       Open SSH connection to target stage
+sync              Run downgraded deploy stack (sync only)
+test              Run Codeception test suites
+view              Open the project URL on configured stages in the default browser
+watch             Sync changed files automatically to local stage
+```
+
 ## Integration
 
 - [Install PAP](#installation), either as dependency or in a designated
