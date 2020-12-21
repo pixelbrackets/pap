@@ -85,15 +85,19 @@ class RoboFile extends \Robo\Tasks
     public function lintCheck()
     {
         $repositoryPath = $this->getBuildProperty('repository-path');
-        $lintPaths = (array)$this->getBuildProperty('settings.lint.lint-paths');
-        if (true === empty($lintPaths)) {
+        $lintSettings = $this->getBuildProperty('settings.lint');
+        if (false === empty($lintSettings['scripts'])) {
+            // use external task runner instead
+            return $this->runScripts($lintSettings['scripts']);
+        }
+        if (true === empty($lintSettings['lint-paths'])) {
             $this->say('Lint not configured');
             return;
         }
 
         $lint = $this->taskExecStack()
             ->dir('./vendor/bin/');
-        foreach ($lintPaths as $lintPath) {
+        foreach ($lintSettings['lint-paths'] as $lintPath) {
             $lint
                 ->exec('./php-cs-fixer -vvv fix ' . $repositoryPath . $lintPath . ' --dry-run --diff --using-cache=no --rules=' . escapeshellarg($this->getBuildProperty('php-cs-rules') ?? '@PSR2'))
                 ->exec('./parallel-lint --exclude vendor ' . $repositoryPath . $lintPath)

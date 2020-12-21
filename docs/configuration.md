@@ -95,9 +95,10 @@ settings:
       ### target: (string, with trailing slash, relative to git root directory)
       - source: theme/build/assets/img/*
         target: theme/build/assets/img/
-    ### Runy any CLI commands instead to build assets, for example starting
-    ### npm, yarn, grunt, gulp etc - If this option is configured,
-    ### then all other (mirror, concat, minify*) are ignored)
+    ### Run any CLI commands instead to build assets, for example starting
+    ### npm, yarn, grunt, gulp etc
+    ### When this option is configured, then all other options of this task 
+    ### (mirror, concat, minify*) are ignored
     ### scripts: (list)
     ###   - (string, bash command, relative to git root directory)
     #scripts:
@@ -123,6 +124,13 @@ settings:
     ###   - (string, with trailing slash, relative to git root directory)
     lint-paths:
       - src/
+    ### Run any CLI commands instead to lint files
+    ### When this option is configured, then all other options of this task 
+    ### (php-cs-fixer etc) are ignored
+    ### scripts: (list)
+    ###   - (string, bash command, relative to git root directory)
+    #scripts:
+    #  - composer lint
   ### Test app files
   ### test: (dictionary)
   test:
