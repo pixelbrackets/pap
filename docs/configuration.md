@@ -49,11 +49,9 @@ settings:
     ### working-directory: (string, with trailing slash, relative to git root directory)
     working-directory: src/
   ### The »view« task opens the public URL of a target stage in a browser
+  ### The URL is set up in »stages.<stagename>.origin«
   ### view: (dictionary)
-  view:
-    ### Run the view »task« after every deployment
-    ### open-browser-after-deployment: (boolean)
-    open-browser-after-deployment: true
+  #view:
   ### Build assets, either with existings task options or custom bash commands
   ### assets: (dictionary)
   assets:

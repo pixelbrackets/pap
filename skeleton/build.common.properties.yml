@@ -16,8 +16,6 @@ settings:
       target: composer.lock
   watch:
     working-directory: src/
-  view:
-    open-browser-after-deployment: true
   composer:
     working-directory: ./
   lint:
