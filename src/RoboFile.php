@@ -88,7 +88,7 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
-     * Lint PHP files (Check only)
+     * Lint files (Check only)
      *
      */
     public function lintCheck()
@@ -120,7 +120,7 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
-     * Lint PHP files (Fix)
+     * Lint files (Fix)
      *
      */
     public function lintFix()
@@ -143,7 +143,7 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
-     * Run Codeception test suites
+     * Run tests suite against target stage
      *
      * @param array $options
      * @option $stage Target stage (eg. local or live)
@@ -203,7 +203,7 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
-     * Build assets (Convert, concat, minify…)
+     * Build HTML assets (convert, concat, minify…)
      *
      * Switches to external task runner if configured
      */
@@ -315,7 +315,8 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
-     * Build app for desired target stage
+     * Build PHP structure for desired target stage (move files,
+     * fetch dependencies)
      *
      * @param array $options
      * @option $stage Target stage (eg. local or live)
@@ -372,10 +373,7 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
-     * Execute Composer commands on a target stage
-     *
-     * e.g. Run »composer dump-autoload« on test stage
-     *     robo composer:command -s test -c dump-autoload
+     * Execute Composer commands on target stage
      *
      * @param array $options
      * @option $stage Target stage (eg. local or live), leave empty to run in repository working directory
@@ -418,7 +416,7 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
-     * Move directories in repository to prepare a working sync task
+     * Move files in repository to prepare a working sync task
      *
      */
     protected function prepareSyncPaths()
@@ -441,7 +439,7 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
-     * Sync files between repository and stage folder
+     * Rsync files between repository and stage folder
      *
      * @param array $options
      * @option $stage Target stage (eg. local or live)
@@ -516,7 +514,9 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
-     * Run downgraded deploy stack (sync only)
+     * Synchronize files to target stage
+     *
+     * File sync only! Needs »buildapp« or »deploy« task to rebuild the app
      *
      * @param array $options
      * @option $stage Target stage (eg. local or live)
@@ -597,21 +597,21 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
-     * Run full publication stack (lint, deploy, test)
+     * Run full publication stack (lint, deploy, smoketest, test)
      *
      * @param array $options
      * @option $stage Target stage (eg. local or live)
      */
     public function publish(array $options = ['stage|s' => 'local'])
     {
-        $this->lintCheck();
+        $this->lint();
         $this->deploy(['stage' => $options['stage']]);
         $this->smoketest(['stage' => $options['stage']]);
         $this->test(['stage' => $options['stage']]);
     }
 
     /**
-     * Run a build verification test against a stage
+     * Run a build verification test against target stage
      *
      * @param array $options
      * @option $stage Target stage (eg. local or live)
@@ -634,7 +634,7 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
-     * Open the public URL of a target stage in the browser
+     * Open the public URL of target stage in the browser
      *
      * The URL is set up in »stages.<stagename>.origin«
      *
