@@ -303,6 +303,18 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
+     * Alias to run »buildassets« and »buildapp«
+     *
+     * @param array $options
+     * @option $stage Target stage (eg. local or live)
+     */
+    public function build(array $options = ['stage|s' => 'local'])
+    {
+        $this->buildassets();
+        $this->buildapp(['stage' => $options['stage']]);
+    }
+
+    /**
      * Build app for desired target stage
      *
      * @param array $options
@@ -562,7 +574,7 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
-     * Run full deployment stack (build, sync, cache warmup)
+     * Run full deployment stack (build, sync, composer command)
      *
      * @param array $options
      * @option $stage Target stage (eg. local or live)
@@ -574,8 +586,7 @@ class RoboFile extends \Robo\Tasks
             return;
         }
 
-        $this->buildassets();
-        $this->buildapp(['stage' => $options['stage']]);
+        $this->build(['stage' => $options['stage']]);
 
         $this->syncStage(['stage' => $options['stage']]);
 
