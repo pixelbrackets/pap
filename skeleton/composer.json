@@ -4,6 +4,6 @@
     "type": "project",
     "license": "GPL-2.0-or-later",
     "require-dev": {
-        "pixelbrackets/pap": "^7.0"
+        "pixelbrackets/pap": "^8.0"
     }
 }
