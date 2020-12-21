@@ -144,6 +144,11 @@ class RoboFile extends \Robo\Tasks
      */
     public function test(array $options = ['stage|s' => 'local', 'group|g' => null, 'suite' => null])
     {
+        $testSettings = $this->getBuildProperty('settings.test');
+        if (false === empty($testSettings['scripts'])) {
+            // use external task runner instead
+            return $this->runScripts($testSettings['scripts']);
+        }
         $codeceptionDirectory = $this->getBuildProperty('settings.test.codeception.working-directory');
         if (true === empty($codeceptionDirectory)) {
             $this->say('Test framework not configured');

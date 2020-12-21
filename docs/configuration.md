@@ -143,6 +143,13 @@ settings:
       ### Test suite to start
       ### suite: (string, one of unit, acceptance or functional)
       suite: acceptance
+    ### Run any CLI commands instead to test files
+    ### When this option is configured, then all other options of this task 
+    ### (codeception etc) are ignored
+    ### scripts: (list)
+    ###   - (string, bash command, relative to git root directory)
+    #scripts:
+    #  - composer lint
 
 ### Settings for each stage
 ### Add all shared stages here, all stages used on a local machine only
