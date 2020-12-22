@@ -1,5 +1,24 @@
 # Changelog
 
+2020-12-22 Dan Untenzu <mail@pixelbrackets.de>
+
+  * 8.0.0
+  * FEATURE Add build task alias `pap build` (runs `buildassets & buildapp`)
+  * FEATURE Add lint task alias `pap lint` (runs `lint:check`)
+  * FEATURE Lint-Fix task: Add scripts hook
+  * FEATURE Composer: Upgrade robo framework
+  * FEATURE Add minimal test file
+  * FEATURE Change PHP version support → Drop PHP 7.0 & 7.1. Add PHP 7.3 & 7.4.
+    * Breaking Change: Use PHP >= 7.2
+  * FEATURE Remove view action from deploy command
+    * Breaking Change: Remove the option
+      `settings.view.open-browser-after-deployment` from your configuration
+      files and run the »view« task directly instead
+  * FEATURE Replace linters → All linters replaced with a single syntax check
+    * Breaking Change: The default linter does a syntax check only now → Add any
+      additionaly linters manually and configure the run commands withing the
+      `lint.scripts` and `lint.fix.scripts` hooks
+
 2020-12-21 Dan Untenzu <mail@pixelbrackets.de>
 
   * 7.2.0
