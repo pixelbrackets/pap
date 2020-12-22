@@ -3,7 +3,7 @@
 
 $loaded = false;
 
-// are we running as dependency or standalone?
+// are we running as dependency (1) or standalone (2)?
 foreach (array(__DIR__ . '/../../../autoload.php', __DIR__ . '/../vendor/autoload.php') as $file) {
     if (file_exists($file)) {
         require $file;
@@ -18,6 +18,8 @@ if (!$loaded) {
     );
 }
 
+$version = \Jean85\PrettyVersions::getVersion('pixelbrackets/pap')->getPrettyVersion();
+
 $runner = new \Robo\Runner(\Pixelbrackets\PhpAppPublication\RoboFile::class);
-$statusCode = $runner->execute($argv);
+$statusCode = $runner->execute($argv, 'PAP', $version);
 exit($statusCode);
