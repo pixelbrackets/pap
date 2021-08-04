@@ -1,5 +1,10 @@
 # Changelog
 
+2021-08-04 Dan Untenzu <mail@pixelbrackets.de>
+
+  * 7.2.1
+  * BUGFIX Replace faulty SSH connection command
+
 2020-12-21 Dan Untenzu <mail@pixelbrackets.de>
 
   * 7.2.0
