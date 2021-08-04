@@ -1,5 +1,10 @@
 # Changelog
 
+2021-08-04 Dan Untenzu <mail@pixelbrackets.de>
+
+  * 8.0.1
+  * BUGFIX Replace faulty SSH connection command
+
 2020-12-22 Dan Untenzu <mail@pixelbrackets.de>
 
   * 8.0.0
@@ -18,6 +23,11 @@
     * Breaking Change: The default linter does a syntax check only now → Add any
       additionaly linters manually and configure the run commands withing the
       `lint.scripts` and `lint.fix.scripts` hooks
+
+2021-08-04 Dan Untenzu <mail@pixelbrackets.de>
+
+  * 7.2.1
+  * BUGFIX Replace faulty SSH connection command (Backport)
 
 2020-12-21 Dan Untenzu <mail@pixelbrackets.de>
 
