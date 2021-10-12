@@ -199,11 +199,6 @@ class RoboFile extends \Robo\Tasks
     {
         $repositoryPath = $this->getBuildProperty('repository-path');
         $assetSettings = $this->getBuildProperty('settings.assets');
-        if (false === empty($assetSettings['grunt'])) {
-            // use external task runner Grunt instead
-            // Deprecated - Register scripts instead
-            return $this->buildassetsGrunt();
-        }
         if (false === empty($assetSettings['scripts'])) {
             // use external task runner instead
             return $this->runScripts($assetSettings['scripts']);
@@ -250,43 +245,6 @@ class RoboFile extends \Robo\Tasks
                     ->to($repositoryPath . $minifyPaths['target'])
                     ->run();
             }
-        }
-    }
-
-    /**
-     * Build assets using external task runner Grunt
-     *
-     * Uses NPM to install dependencies and executes Grunt as task runner
-     *
-     * @deprecated Will be removed in next version, register »scripts« instead
-     */
-    protected function buildassetsGrunt()
-    {
-        $gruntDirectory = $this->getBuildProperty('settings.assets.grunt.working-directory');
-        $gruntTask = $this->getBuildProperty('settings.assets.grunt.task');
-        if (empty($gruntDirectory) && empty($gruntTask)) {
-            $this->io()->error('Grunt not configured');
-            return;
-        }
-        $gruntDirectory = $this->getBuildProperty('repository-path') . $gruntDirectory;
-
-        $buildassets = $this->taskExecStack()->dir($gruntDirectory);
-
-        // Fetch dependencies using NPM
-        $npmInstall = (true === file_exists($gruntDirectory . 'package-lock.json')) ? 'ci' : 'install';
-        $buildassets->exec('npm --silent --progress=false --prefer-offline ' . $npmInstall);
-
-        // Manage additional build scripts (sass etc.)
-        // Deprecated - Everything should be a NPM package by now!
-        if (true === file_exists($gruntDirectory . 'gems.rb')) {
-            $buildassets->exec('bundle install --quiet');
-        }
-
-        // Execute Grunt as task runner
-        $buildassets->exec('grunt -q ' . $gruntTask);
-
-        if ($buildassets->run()->wasSuccessful() !== true) {
-            throw new \Robo\Exception\TaskException($this, 'Building Assets failed');
         }
     }
 
