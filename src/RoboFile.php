@@ -663,6 +663,15 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
+     * Alias to run »ssh:connect«
+     *
+     */
+    public function ssh(array $options = ['stage|s' => 'local'])
+    {
+        $this->sshConnect($options);
+    }
+
+    /**
      * Open SSH connection to target stage
      *
      * @param array $options
@@ -708,7 +717,7 @@ class RoboFile extends \Robo\Tasks
                 $stages
             );
 
-            $this->say('Hint: Use command »ssh:connect --stage <stage>« to SSH connect to one of the above stages right away, use »view --stage <stage>« to open the public URL of target stage in the browser.');
+            $this->say('Hint: Use command »ssh --stage <stage>« to SSH connect to one of the above stages right away, use »view --stage <stage>« to open the public URL of target stage in the browser.');
 
             return;
         }
