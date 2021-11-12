@@ -176,6 +176,10 @@ composer create-project pixelbrackets/pap-skeleton build
   paths, which allows storing the configuration file in any subdirectory
 - 📝 Documentation of all [available options](./docs/configuration.md)
 
+💡 Additionally to this short integration and configuration guide you may
+want to take a look at the [walktrough tutorial](./docs/walktrough.md),
+which explains all steps to configure an example app.
+
 ## Updates
 
 See [Upgrade Guide](./docs/upgrade-guide.md)
