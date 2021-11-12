@@ -630,7 +630,7 @@ class RoboFile extends \Robo\Tasks
 
         try {
             $ping = (new \GuzzleHttp\Client())->get($stageOrigin);
-        } catch (\GuzzleHttp\Exception\RequestException $e) {
+        } catch (\GuzzleHttp\Exception\TransferException $e) {
             throw new \Robo\Exception\TaskException($this, 'Smoke test failed');
         }
 
