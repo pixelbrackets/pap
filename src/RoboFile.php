@@ -682,6 +682,21 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
+     * Pretty print configuration for debugging
+     *
+     */
+    public function show()
+    {
+        $configuration = [
+            'repository-path' => $this->getBuildProperty('repository-path'),
+            'settings' => $this->getBuildProperty('settings'),
+            'stages' => $this->getBuildProperty('stages')
+        ];
+
+        $this->io()->write(\Symfony\Component\Yaml\Yaml::dump($configuration, 5, 2));
+    }
+
+    /**
      * Sync changed files automatically to local stage
      *
      */
