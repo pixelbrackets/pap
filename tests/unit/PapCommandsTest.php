@@ -36,12 +36,22 @@ class PapCommandsTest extends TestCase
             [
                 'Stage origin not configured',
                 0,
-                'smoketest',
+                'smoketest', '-s', 'not-existing-stage'
             ],
             [
                 'Stage origin not configured',
                 0,
-                'smoketest', '-s', 'not-existing-stage'
+                'smoketest', '-s', 'faulty'
+            ],
+            [
+                'Smoke test successful',
+                0,
+                'smoketest', '-s', 'live'
+            ],
+            [
+                'my lint check script',
+                0,
+                'lint'
             ],
         ];
     }
@@ -51,6 +61,9 @@ class PapCommandsTest extends TestCase
      */
     public function testGeneralCommands($expectedOutput, $expectedStatus, $CliArguments)
     {
+        // Change working directory to load fixture files
+        chdir(__DIR__ . '/../fixtures/');
+
         // Create Robo arguments and execute a runner instance
         $argv = $this->argv(func_get_args());
         list($actualOutput, $statusCode) = $this->execute($argv, $this->commandClass);

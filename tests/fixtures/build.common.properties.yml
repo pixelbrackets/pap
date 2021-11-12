@@ -6,10 +6,10 @@ settings:
     lint-paths:
       - src/
     scripts:
-      - echo "lint check script"
+      - echo "my lint check script"
     fix:
       scripts:
-        - echo "lint fix script"
+        - echo "my lint fix script"
   test:
     scripts:
       - echo "test script"
@@ -26,6 +26,9 @@ stages:
     working-directory: /var/www/
     rsync:
       options: -razc
+  faulty:
+    user: nada
+    host: zilch
   live:
     user: johndoe
     host: example.com
