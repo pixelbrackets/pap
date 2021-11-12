@@ -670,7 +670,8 @@ class RoboFile extends \Robo\Tasks
         }
 
         $sshConnection = $stageProperties['user'] . '@' . $stageProperties['host'];
-        passthru('ssh -t ' . $sshConnection . ' \'cd ' . $stageProperties['working-directory'] . ' && exec bash -l\'');
+        $sshPort = (false === empty($stageProperties['port']))? ' -p' . (int)$stageProperties['port'] : '';
+        passthru('ssh -t ' . $sshConnection . $sshPort . ' \'cd ' . $stageProperties['working-directory'] . ' && exec bash -l\'');
     }
 
     /**
