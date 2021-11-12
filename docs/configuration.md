@@ -170,7 +170,7 @@ stages:
     ### user: (string)
     user: johndoe
     ### The server host to connect to
-    ### host: (string, domain or ipaddress)
+    ### host: (string, domain or ip address)
     host: example.com
     ### URL of the app installed on the stage
     ### origin: (string, HTTP/HTTPS)
@@ -189,7 +189,7 @@ stages:
       ### Path to composer if not installed as globaly
       ### phar: (string, with filename, absolute path on host machine)
       phar: ${stages.test.working-directory}composer.phar
-    ### Stop the »deploy« task if the currently checkout out branch of the Git
+    ### Stop the »deploy« task if the currently checked out branch of the Git
     ### repository is not listed in this option
     ### Avoids deploying unwanted branches on a target stage
     ### lock-branches: (list)
@@ -219,8 +219,8 @@ Best practice is to configure the local stage in this file only.
 ### All settings are inherited from the distributon file,
 ### use the same keys to overwrite any setting
 settings:
-  view:
-    open-browser-after-deployment: false
+  composer:
+    phar: /home/acme/composer/bin/composer
 
 ### Stages have the same structure as in the distribution file as well
 stages:
