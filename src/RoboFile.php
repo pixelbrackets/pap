@@ -354,6 +354,7 @@ class RoboFile extends \Robo\Tasks
             }
         } else {
             $remote = $this->taskSshExec($stageProperties['host'], $stageProperties['user'])
+                ->port((int)($stageProperties['port']?? 22))
                 ->remoteDir($stageProperties['working-directory'])
                 ->exec($composer);
 
@@ -403,6 +404,7 @@ class RoboFile extends \Robo\Tasks
             }
         } else {
             $remote = $this->taskSshExec($stageProperties['host'], $stageProperties['user'])
+                ->port((int)($stageProperties['port']?? 22))
                 ->remoteDir($stageProperties['working-directory'])
                 ->exec($composer);
 
