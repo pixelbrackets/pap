@@ -87,7 +87,7 @@ settings:
           - theme/build/assets/css/fonts.css
         target: theme/build/assets/css/zen-garden.css
     ### Minify images - allows asterisks
-    ### minify-js: (list)
+    ### minify-img: (list)
     minify-img:
       ### source: (string, with trailing slash, relative to git root directory)
       ### target: (string, with trailing slash, relative to git root directory)
@@ -155,7 +155,7 @@ settings:
     ### scripts: (list)
     ###   - (string, bash command, relative to git root directory)
     #scripts:
-    #  - composer lint
+    #  - composer test
 
 ### Settings for each stage
 ### Add all shared stages here, all stages used on a local machine only
