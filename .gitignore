@@ -3,5 +3,5 @@
 /composer.phar
 /composer.lock
 
-/build/.lock
+/build/.pap.lock
 /build/build.local.properties.yml

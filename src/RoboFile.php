@@ -444,12 +444,12 @@ class RoboFile extends \Robo\Tasks
      */
     protected function syncIsAllowed(string $stage)
     {
-        if (false === is_file('.lock')) {
+        if (false === is_file('.pap.lock')) {
             $this->io()->note('»lock« file not present');
             return true;
         }
 
-        $lock = file_get_contents('.lock');
+        $lock = file_get_contents('.pap.lock');
         if (false === $lock) {
             $this->io()->note('»lock« file not readable');
             return true;
@@ -534,7 +534,7 @@ class RoboFile extends \Robo\Tasks
     protected function setLockFile(string $stage)
     {
         $lock = $stage . ',' . $this->getCurrentGitBranch() . ',' . time();
-        file_put_contents('.lock', $lock);
+        file_put_contents('.pap.lock', $lock);
     }
 
     /**

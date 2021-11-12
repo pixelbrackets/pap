@@ -154,7 +154,7 @@ watch             Sync changed files automatically to local stage
 - Add the PAP [configuration](#configuration) file
   `build.common.properties.yml` for all shared settings
 - Add `build.local.properties.yml` to your `.gitignore` file
-- Add `.lock` to your `.gitignore` file
+- Add `.pap.lock` to your `.gitignore` file
 - Optional but recommended: Add a template file to overwrite local settings,
   eg. `build.local.properties.template.yml`
 - Add a README how to use PAP
