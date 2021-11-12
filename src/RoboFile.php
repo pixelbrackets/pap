@@ -318,6 +318,7 @@ class RoboFile extends \Robo\Tasks
      * @param array $options
      * @option $stage Target stage (eg. local or live)
      * @option $remote Execute composer locally for a stage or remote on a stage (eg. true)
+     * @throws \Robo\Exception\TaskException Reports failed installs
      */
     public function composerInstall(array $options = ['stage|s' => 'local', 'remote' => true])
     {
@@ -348,12 +349,17 @@ class RoboFile extends \Robo\Tasks
         }
 
         if ((bool)$options['remote'] !== true || $options['stage'] === 'local') {
-            $composer->run();
+            if ($composer->run()->wasSuccessful() !== true) {
+                throw new \Robo\Exception\TaskException($this, 'Composer install failed');
+            }
         } else {
-            $this->taskSshExec($stageProperties['host'], $stageProperties['user'])
+            $remote = $this->taskSshExec($stageProperties['host'], $stageProperties['user'])
                 ->remoteDir($stageProperties['working-directory'])
-                ->exec($composer)
-                ->run();
+                ->exec($composer);
+
+            if ($remote->run()->wasSuccessful() !== true) {
+                throw new \Robo\Exception\TaskException($this, 'Composer install failed');
+            }
         }
     }
 
@@ -363,6 +369,7 @@ class RoboFile extends \Robo\Tasks
      * @param array $options
      * @option $stage Target stage (eg. local or live), leave empty to run in repository working directory
      * @option $command Name of the Command to execute (eg. dump-autoload)
+     * @throws \Robo\Exception\TaskException Reports failed commands
      */
     public function composerCommand(array $options = ['stage|s' => null, 'command|c' => null])
     {
@@ -391,12 +398,17 @@ class RoboFile extends \Robo\Tasks
             ->rawArg($options['command'])
             ->dir($stageProperties['working-directory']);
         if ($options['stage'] === 'local') {
-            $composer->run();
+            if ($composer->run()->wasSuccessful() !== true) {
+                throw new \Robo\Exception\TaskException($this, 'Composer command failed');
+            }
         } else {
-            $this->taskSshExec($stageProperties['host'], $stageProperties['user'])
+            $remote = $this->taskSshExec($stageProperties['host'], $stageProperties['user'])
                 ->remoteDir($stageProperties['working-directory'])
-                ->exec($composer)
-                ->run();
+                ->exec($composer);
+
+            if ($remote->run()->wasSuccessful() !== true) {
+                throw new \Robo\Exception\TaskException($this, 'Composer command failed');
+            }
         }
     }
 
