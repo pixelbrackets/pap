@@ -7,7 +7,6 @@
         "consolidation/robo": "^2.2",
         "guzzlehttp/guzzle": "^6.0 || ^7.0",
         "jean85/pretty-package-versions": "^1.5 || ^2.0",
-        "kba-team/phplint.sh": "^1.0",
         "natxet/cssmin": "^3.0",
         "patchwork/jsqueeze": "^2.0",
         "totten/lurkerlite": "^1.3"

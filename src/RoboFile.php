@@ -106,10 +106,12 @@ class RoboFile extends \Robo\Tasks
             return;
         }
 
-        $lint = $this->taskExecStack()
-            ->dir('./vendor/bin/');
-        foreach ($lintSettings['lint-paths'] as $lintPath) {
-            $lint->exec('./phplint.sh ' . $repositoryPath . $lintPath);
+        // Run PHPs internal linter
+        $finder = new \Symfony\Component\Finder\Finder();
+        $finder->files()->name('*.php')->in(preg_filter('/^/', $repositoryPath, $lintSettings['lint-paths']));
+        $lint = $this->taskExecStack()->stopOnFail(true);
+        foreach ($finder as $file) {
+            $lint->exec('php -l "' . $file->getRealPath() . '" > /dev/null');
         }
 
         if ($lint->run()->wasSuccessful() !== true) {
