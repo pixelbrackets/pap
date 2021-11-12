@@ -20,7 +20,9 @@ class RoboFile extends \Robo\Tasks
     {
         Robo::loadConfiguration([
             realpath('build.common.properties.yml'),
-            realpath('build.local.properties.yml')
+            realpath('build.local.properties.yml'),
+            realpath('pap.yml'),
+            realpath('pap.local.yml')
         ]);
 
         // Calculate absolute path to repository if not set already

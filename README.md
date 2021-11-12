@@ -152,11 +152,11 @@ watch             Sync changed files automatically to local stage
   - Best practice is to create a separate directory for the build & deploy 
     process, this is not mandatory however
 - Add the PAP [configuration](#configuration) file
-  `build.common.properties.yml` for all shared settings
-- Add `build.local.properties.yml` to your `.gitignore` file
+  `pap.yml` for all shared settings
+- Add `pap.local.yml` to your `.gitignore` file
 - Add `.pap.lock` to your `.gitignore` file
 - Optional but recommended: Add a template file to overwrite local settings,
-  eg. `build.local.properties.template.yml`
+  eg. `pap.local.template.yml`
 - Add a README how to use PAP
 
 💡 There is a
@@ -170,9 +170,9 @@ composer create-project pixelbrackets/pap-skeleton build
 ## Configuration
 
 - All general settings and shared stages are configured in
-  the distribution file `build.common.properties.yml`
+  the distribution file `pap.yml`
 - All settings and stages may be overriden in a local environment file
-  `build.local.properties.yml`
+  `pap.local.yml`
   - This file should be added to the `.gitignore` list
 - PAP always uses the root directory of the Git repository for all configurable
   paths, which allows storing the configuration file in any subdirectory

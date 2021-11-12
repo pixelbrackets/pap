@@ -61,11 +61,11 @@ wget https://getcomposer.org/composer.phar
 ## Configuration
 
 - All general settings and shared stages are configured in
-  the distribution file `build.common.properties.yml`
+  the distribution file `pap.yml`
 - All settings and stages may be overriden in a local environment file
-  `build.local.properties.yml`, which is ignored by Git
-  - Copy `build.local.properties.template.yml`, rename it to
-    `build.local.properties.yml` and change parameters as desired
+  `pap.local.yml`, which is ignored by Git
+  - Copy `pap.local.template.yml`, rename it to
+    `pap.local.yml` and change parameters as desired
 - The documentation of all options is available in the
   [PAP](https://packagist.org/packages/pixelbrackets/pap) package repository
 

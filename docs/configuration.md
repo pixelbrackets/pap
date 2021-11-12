@@ -1,7 +1,7 @@
 # Configuration
 
 All general settings and shared stages are configured in the distribution file
-`build.common.properties.yml`.
+`pap.yml`.
 
 PAP always uses the root directory of the Git repository for all configurable
 paths. This allows storing the configuration file in any subdirectory.
@@ -159,7 +159,7 @@ settings:
 
 ### Settings for each stage
 ### Add all shared stages here, all stages used on a local machine only
-### should be configured in »build.local.properties.yml« instead
+### should be configured in »pap.local.yml« instead
 ### stages: (dictionary)
 stages:
   ### Name of the stage - used in commands as argument
@@ -214,7 +214,7 @@ stages:
 ```
 
 All settings of the distribution file may be overriden with a local file named
-`build.local.properties.yml`. Add this file to your `.gitignore`.
+`pap.local.yml`. Add this file to your `.gitignore`.
 
 Best practice is to configure the local stage in this file only.
 

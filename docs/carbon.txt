@@ -1,9 +1,8 @@
 ~ $ cd build/
 build $ ls
-README.md build.common.properties.yml composer.json composer.lock vendor
+README.md pap.yml composer.json composer.lock vendor
 build $ ./vendor/bin/pap deploy --stage live
 [Assets\Minify]
 [Composer\Install]]
 [Remote\Rsync]
-[Dev\OpenBrowser]
 Done

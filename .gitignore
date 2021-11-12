@@ -4,4 +4,4 @@
 /composer.lock
 
 /build/.pap.lock
-/build/build.local.properties.yml
+/build/pap.local.yml

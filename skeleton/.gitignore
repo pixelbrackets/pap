@@ -2,4 +2,4 @@
 /composer.phar
 
 /.pap.lock
-/build.local.properties.yml
+/pap.local.yml

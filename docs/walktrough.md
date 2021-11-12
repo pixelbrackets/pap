@@ -40,7 +40,7 @@ composer create-project pixelbrackets/pap-skeleton build
 ```
 
 The skeleton project provides all required files to run PAP. The file
-`build/build.common.properties.yml` holds *all* needed settings.
+`build/pap.yml` holds *all* needed settings.
 
 ## Stages
 
