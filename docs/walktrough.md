@@ -64,6 +64,9 @@ stages:
     working-directory: /var/web178/app/www/
 ```
 
+When we run `./vendor/bin/pap show stages` we should get a list
+of all configured stages now.
+
 To test the connection we may use the `ssh:connect` task.
 Run `./vendor/bin/pap ssh:connect --stage test`. If everything is correct
 it will connect to the target stage and switch into the working directory.

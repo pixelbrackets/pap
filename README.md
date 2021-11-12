@@ -135,6 +135,7 @@ lint:check        Lint files (Check only)
 lint:fix          Lint files (Fix)
 list              Lists commands
 publish           Run full publication stack (lint, deploy, smoketest, test)
+show              Pretty print configuration for debugging
 smoketest         Run a build verification test against target stage
 ssh:connect       Open SSH connection to target stage
 sync              Synchronize files to target stage
