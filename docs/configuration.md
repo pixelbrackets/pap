@@ -169,6 +169,9 @@ stages:
     ### The current machines needs to be authorized to to use this username
     ### user: (string)
     user: johndoe
+    ### Port to start the SSH connection with (22 if empty)
+    ### port: (integer, SSH port)
+    #port: 22
     ### The server host to connect to
     ### host: (string, domain or ip address)
     host: example.com
