@@ -18,7 +18,10 @@ class RoboFile extends \Robo\Tasks
 {
     public function __construct()
     {
-        Robo::loadConfiguration(['build.common.properties.yml','build.local.properties.yml']);
+        Robo::loadConfiguration([
+            realpath('build.common.properties.yml'),
+            realpath('build.local.properties.yml')
+        ]);
 
         // Calculate absolute path to repository if not set already
         if (true === empty(Robo::config()->get('repository-path'))) {
