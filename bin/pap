@@ -20,6 +20,11 @@ if (!$loaded) {
 
 $version = \Jean85\PrettyVersions::getVersion('pixelbrackets/pap')->getPrettyVersion();
 
-$runner = new \Robo\Runner(\Pixelbrackets\PhpAppPublication\RoboFile::class);
-$statusCode = $runner->execute($argv, 'PAP', $version);
+try {
+    $runner = new \Robo\Runner(\Pixelbrackets\PhpAppPublication\RoboFile::class);
+    $statusCode = $runner->execute($argv, 'PAP', $version);
+} catch (\Exception $e) {
+    echo 'Fatal Error' . $e->getMessage();
+    $statusCode = 1;
+}
 exit($statusCode);
