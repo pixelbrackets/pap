@@ -684,14 +684,31 @@ class RoboFile extends \Robo\Tasks
     /**
      * Pretty print configuration for debugging
      *
+     * @param string $scope What part of the configuration to print (all | stages)
      */
-    public function show()
+    public function show($scope = 'all')
     {
         $configuration = [
             'repository-path' => $this->getBuildProperty('repository-path'),
             'settings' => $this->getBuildProperty('settings'),
             'stages' => $this->getBuildProperty('stages')
         ];
+        if ($scope === 'stages') {
+            $stages = [];
+            foreach ((array)$configuration['stages'] as $stagename => $stage) {
+                $stages[$stagename]['stage'] = $stagename;
+                $stages[$stagename]['user'] = $stage['user'] ?? '';
+                $stages[$stagename]['host'] = $stage['host'] ?? '';
+                $stages[$stagename]['port'] = $stage['port'] ?? '';
+                $stages[$stagename]['working-directory'] = $stage['working-directory'] ?? '';
+                $stages[$stagename]['origin'] = $stage['origin'] ?? '';
+            }
+            $this->io()->table(
+                ['Stage', 'User', 'Host', 'Port', 'Working Directory', 'Origin'],
+                $stages
+            );
+            return;
+        }
 
         $this->io()->write(\Symfony\Component\Yaml\Yaml::dump($configuration, 5, 2));
     }
