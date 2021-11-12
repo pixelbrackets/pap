@@ -707,6 +707,9 @@ class RoboFile extends \Robo\Tasks
                 ['Stage', 'User', 'Host', 'Port', 'Working Directory', 'Origin'],
                 $stages
             );
+
+            $this->say('Hint: Use command »ssh:connect --stage <stage>« to SSH connect to one of the above stages right away, use »view --stage <stage>« to open the public URL of target stage in the browser.');
+
             return;
         }
 
