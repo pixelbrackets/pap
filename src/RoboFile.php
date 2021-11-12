@@ -452,10 +452,12 @@ class RoboFile extends \Robo\Tasks
             return;
         }
 
+        $syncPort = (false === empty($stageProperties['port']))? '-e "ssh -p ' . (int)$stageProperties['port'] . '"' : '';
+        $syncOptions = $stageProperties['rsync']['options']?? '';
         $syncPaths = $this->getBuildProperty('settings.sync-paths');
         foreach ((array)$syncPaths as $syncPath) {
             $sync = $this->taskRsync()
-                ->rawArg($stageProperties['rsync']['options'])
+                ->rawArg($syncPort . ' ' . $syncOptions)
                 ->exclude($syncPath['exclude'] ?? [])
                 ->fromPath($this->getBuildProperty('repository-path') . $syncPath['source'])
                 ->toUser($stageProperties['user'])
