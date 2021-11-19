@@ -1,5 +1,17 @@
 # Changelog
 
+2021-11-19 Dan Untenzu <mail@pixelbrackets.de>
+
+  * 8.1.0
+  * FEATURE Throw exception if composer commands fail
+  * FEATURE Docs: Add walktrough
+  * FEATURE Docs: Mention SSH port option
+  * FEATURE Use SSH port in ssh task
+  * FEATURE Use SSH port in composer tasks
+  * FEATURE Use SSH port in sync task
+  * FEATURE Safeguard the configuration files path
+  * FEATURE Catch more transfer exceptions in smoketest
+
 2021-08-04 Dan Untenzu <mail@pixelbrackets.de>
 
   * 8.0.1
