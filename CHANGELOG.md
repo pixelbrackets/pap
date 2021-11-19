@@ -2,6 +2,29 @@
 
 2021-11-19 Dan Untenzu <mail@pixelbrackets.de>
 
+  * 9.0.0
+  * BUGFIX Catch fatal error in binary constructor
+  * FEATURE Add task to print configuration → `pap show`
+  * FEATURE Show stage information → `pap show stages`
+  * FEATURE Add alias for ssh:connect task → `pap ssh` runs `pap ssh:connect`
+  * FEATURE Add PHAR buildscript
+  * FEATURE Remove the deprecated `buildasset:grunt` task
+    * Breaking Change: Replace with custom scripts in
+      `settings.assets.scripts`, for example `npm ci && grunt`
+  * FEATURE Replace phplint.sh call
+    * Breaking Change: The linter script `/vendor/bin/phplint.sh` is
+      integrated into PAP now → replace any existing externals calls or
+      re-add »kba-team/phplint.sh« as dependency
+  * FEATURE Rename lock file to avoid conflicts with other locks
+    * Breaking Change: Add `.pap.lock` to your gitignore,
+      rename a possibly existing `.lock` file to  `.pap.lock`
+  * FEATURE Rename configuration files
+    * Breaking Change: Rename configuration files:
+      `build.common.properties.yml` to `pap.yml`
+      `build.local.properties.yml` to `pap.local.yml`
+
+2021-11-19 Dan Untenzu <mail@pixelbrackets.de>
+
   * 8.1.0
   * FEATURE Throw exception if composer commands fail
   * FEATURE Docs: Add walktrough
