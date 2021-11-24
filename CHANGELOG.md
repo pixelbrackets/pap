@@ -22,6 +22,7 @@
     * Breaking Change: Rename configuration files:
       `build.common.properties.yml` to `pap.yml`
       `build.local.properties.yml` to `pap.local.yml`
+      `build.local.properties.template.yml` to `pap.local.template.yml`
 
 2021-11-19 Dan Untenzu <mail@pixelbrackets.de>
 
