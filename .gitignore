@@ -5,3 +5,6 @@
 
 /build/.pap.lock
 /build/pap.local.yml
+
+# Build artifacts for self-contained executables
+/build/

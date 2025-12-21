@@ -234,8 +234,8 @@ settings:
     lint-paths:
       - src/
   test:
-   scripts:
-     - composer test
+    scripts:
+      - composer test
 
 stages:
   test:

@@ -1,9 +1,22 @@
 {
     "name": "pixelbrackets/pap-skeleton",
-    "description": "PHP App Publication - Skeleton Projekt",
+    "description": "PHP App Publication - Skeleton Project",
     "type": "project",
     "license": "GPL-2.0-or-later",
-    "require-dev": {
-        "pixelbrackets/pap": "^8.0"
+    "require": {
+        "php": "^7.2 || ^8.0",
+        "pixelbrackets/pap-installer": "^1.0"
+    },
+    "scripts": {
+        "post-create-project-cmd": [
+            "@install-pap"
+        ],
+        "post-install-cmd": [
+            "@install-pap"
+        ],
+        "post-update-cmd": [
+            "@install-pap"
+        ],
+        "install-pap": "php vendor/pixelbrackets/pap-installer/bin/install-pap-executable.php"
     }
 }

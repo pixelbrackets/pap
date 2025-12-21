@@ -30,6 +30,9 @@
     "scripts": {
         "test": [
             "phpunit tests/unit/"
-        ]
+        ],
+        "build:phar": "php --define phar.readonly=0 build-phar.php",
+        "build:binary": "./build-binary.sh",
+        "build:executables": "./build-executables.sh"
     }
 }

@@ -1,0 +1,6 @@
+{
+    "src": "./pap.phar",
+    "dest": "./build",
+    "platform": "linux",
+    "php": "8.2"
+}

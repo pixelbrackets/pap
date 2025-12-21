@@ -1,80 +1,71 @@
-# Build & Deployment Guide
+# Build & Deployment
 
-This guide explains how to build and deploy the app.
-
-The toolchain is set up with
-[PAP](https://packagist.org/packages/pixelbrackets/pap).
+Deployment is managed with [PAP (PHP App Publication)](https://github.com/pixelbrackets/pap).
 
 ## Requirements
 
-- cURL, SSH & rsync to sync files
-- Git to checkout package repositories
-- PHP to run the script
-- Composer to fetch required PHP packages
-- SSH-Account on target stage(s) with read & write access,
-  and right to run cURL, rsync and PHP
-
-```bash
-apt-get install curl ssh rsync git php
-wget https://getcomposer.org/composer.phar
-```
+- cURL, SSH & rsync
+- Git
+- PHP & Composer
+- SSH access to deployment targets
 
 ## Installation
 
-- Fetch required PHP packages running `./composer.phar install`
+```bash
+composer install
+# PAP executable is downloaded automatically
+```
 
 ## Usage
 
-- Run `./vendor/bin/pap` to see all available tasks
-- Add `--help` to each task command, to see all available options
-- Add `--simulate` to each task command, to run in dry-mode first
-- Most tasks have a stage as target, passed with `--stage <stagename>`
-- If no stagename is passed, the name »local« is used as default - use this
-  for development on your local machine
+**Common commands:**
 
-1. Deploy to »live« stage
-   ```bash
-   ./vendor/bin/pap deploy --stage live
-   ```
+```bash
+# Deploy to live stage
+./vendor/bin/pap deploy --stage live
 
-1. Deploy to »local« stage, used for development (default stage)
-   ```bash
-   ./vendor/bin/pap deploy
-   ```
+# Deploy to local stage (default, for development)
+./vendor/bin/pap deploy
 
-1. Sync to »local« stage (skips building assets)
-   ```bash
-   ./vendor/bin/pap sync
-   ```
+# Sync files without building assets
+./vendor/bin/pap sync
 
-1. Sync to »local« stage automatically if anything changes in the
-   source directory (files changed, added or removed)
-   ```bash
-   ./vendor/bin/pap watch
-   ```
+# Watch and auto-sync on file changes
+./vendor/bin/pap watch
 
-1. Lint current build
-   ```bash
-   ./vendor/bin/pap lint
-   ```
+# Lint files
+./vendor/bin/pap lint
+
+# See all available commands
+./vendor/bin/pap list
+
+# Get help for any command
+./vendor/bin/pap deploy --help
+
+# Dry-run mode
+./vendor/bin/pap deploy --simulate
+```
 
 ## Configuration
 
-- All general settings and shared stages are configured in
-  the distribution file `pap.yml`
-- All settings and stages may be overriden in a local environment file
-  `pap.local.yml`, which is ignored by Git
-  - Copy `pap.local.template.yml`, rename it to
-    `pap.local.yml` and change parameters as desired
-- The documentation of all options is available in the
-  [PAP](https://packagist.org/packages/pixelbrackets/pap) package repository
+**Shared settings** (`pap.yml`):
+- Deployment stages (local, test, live)
+- Sync paths
+- Build tasks
 
-## Update
+**Local overrides** (`pap.local.yml`):
+- Copy from `pap.local.template.yml`
+- Customize for your environment
+- Ignored by Git
 
-- Update required PHP packages running `./composer.phar update`
-- Commit the updated `composer.lock` file
+**Documentation:**
+- [Configuration options](https://github.com/pixelbrackets/pap/blob/master/docs/configuration.md)
+- [Walkthrough tutorial](https://github.com/pixelbrackets/pap/blob/master/docs/walktrough.md)
 
-## Upgrade
+## Updates
 
-- Check the [PAP](https://packagist.org/packages/pixelbrackets/pap) package
-  repository for new releases, and the upgrade guide
+```bash
+composer update
+git add composer.lock
+git commit -m "Update dependencies"
+```

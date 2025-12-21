@@ -1,10 +1,41 @@
 # Configuration
 
-All general settings and shared stages are configured in the distribution file
-`pap.yml`.
+All general settings and shared stages are configured in the distribution file `pap.yml`.
 
-PAP always uses the root directory of the Git repository for all configurable
-paths. This allows storing the configuration file in any subdirectory.
+PAP always uses the root directory of the Git repository for all configurable paths.
+This allows storing the configuration file in any subdirectory.
+
+## Manual Setup
+
+**Note:** Most users should use the Skeleton package running 
+`composer create-project pixelbrackets/pap-skeleton build` instead.
+This section is for users who want to set up PAP manually without the skeleton package.
+Skip this step when using the skeleton.
+
+1. Create a build directory:
+   ```bash
+   mkdir build
+   cd build
+   ```
+1. Initialize Composer:
+   ```bash
+   composer init --name="yourvendor/yourproject-build"
+   composer require pixelbrackets/pap-installer
+   ```
+1. Create configuration files:
+   - Create `pap.yml` for shared settings (see example below)
+   - Create `pap.local.template.yml` as a template for local overrides
+   - Create a `README.md` explaining how to use PAP in your project
+1. Add files to `.gitignore`:
+   ```
+   /build/pap.local.yml
+   /build/.pap.lock
+   /build/vendor/
+   ```
+1. Configure deployment stages
+   - Edit `pap.yml` (see Configuration reference below)
+
+## Configuration Reference
 
 ```yaml
 ### General settings of PAP, used for all stages
