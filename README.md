@@ -189,7 +189,7 @@ Run `./vendor/bin/pap` to see all available tasks. Some common tasks are:
 ./vendor/bin/pap sync
 ```
 
-**Watch and auto-sync on file changes:**
+**Watch and auto-sync to local stage on file changes:**
 ```bash
 ./vendor/bin/pap watch
 ```
@@ -199,7 +199,41 @@ Run `./vendor/bin/pap` to see all available tasks. Some common tasks are:
 ./vendor/bin/pap lint
 ```
 
+**SSH into stage:**
+```bash
+./vendor/bin/pap ssh -s live
+```
+
+**Open stage URL in browser:**
+```bash
+./vendor/bin/pap view -s live
+```
+
 ### Commands
+
+**Task Hierarchy** - Understanding the full publication stack:
+
+```
+publish (Complete release workflow)
+├── lint (Validate code syntax)
+├── deploy (Full deployment)
+│   ├── build (Prepare application)
+│   │   ├── buildassets (Process CSS/JS/images)
+│   │   └── buildapp (Prepare directory structure and install composer dependencies locally)
+│   ├── sync (Transfer files via rsync)
+│   └── composer:install (Install remaining dependencies and trigger post-install commands on target stage)
+├── smoketest (Quick HTTP check)
+└── test (Run integration tests via Codeception)
+
+Common standalone tasks:
+├── sync (Quick file sync without rebuilding)
+├── watch (Auto-sync on file changes)
+├── lint:fix (Auto-fix code style issues)
+├── ssh:connect (SSH into stage)
+└── view (Open stage URL in browser)
+```
+
+**All Available Commands:**
 
 <!-- Generate using `./bin/pap list` and sort alphabetically -->
 
