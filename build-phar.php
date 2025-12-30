@@ -7,21 +7,24 @@ if (ini_get('phar.readonly') == 1) {
 }
 
 $exclude = [
-    '.notes',
-    'build',
-    'docs',
-    'skeleton',
-    'tests',
+    '.claude',
     '.editorconfig',
     '.git',
     '.gitattributes',
     '.gitignore',
     '.gitlab-ci.yml',
     '.idea',
+    '.notes',
+    '.php-version',
     '.php_cs.cache',
+    'CLAUDE.md',
     'CONTRIBUTING.md',
+    'build',
     'build-phar.php',
     'composer.phar',
+    'docs',
+    'skeleton',
+    'tests',
 ];
 
 $filter = function ($file, $key, $iterator) use ($exclude) {

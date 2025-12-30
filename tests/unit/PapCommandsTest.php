@@ -24,7 +24,7 @@ class PapCommandsTest extends TestCase
     /**
      * Data provider for testExampleCommands.
      */
-    public function generalCommandsProvider()
+    public static function generalCommandsProvider()
     {
         return [
 

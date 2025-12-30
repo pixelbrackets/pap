@@ -98,7 +98,7 @@ composer install
 ```
 
 The installer detects your platform and downloads the appropriate executable automatically:
-- Linux: Self-contained binary (PHP 8.2 bundled, no version conflicts)
+- Linux: Self-contained binary (PHP binary bundled, no version conflicts)
 - Other platforms: Universal PHAR (requires system PHP 7.2+)
 
 *🧑‍🔧 Opt-out from automatic installation* to install PAP manually instead:
@@ -114,16 +114,19 @@ composer install
 Install PAP once globally to use across multiple projects.
 
 ```bash
-# Linux binary (PHP-independent, recommended)
+# Linux binary (PHP-independent, recommended for convenience)
 wget https://raw.githubusercontent.com/pixelbrackets/pap-dist/main/pap-linux-x64
 sudo mv pap-linux-x64 /usr/local/bin/pap
 sudo chmod +x /usr/local/bin/pap
 
-# Universal PHAR (requires PHP 7.2+)
+# Universal PHAR (requires PHP 7.2+, recommended for security-critical environments)
 wget https://raw.githubusercontent.com/pixelbrackets/pap-dist/main/pap.phar
 sudo mv pap.phar /usr/local/bin/pap
 sudo chmod +x /usr/local/bin/pap
 ```
+
+**Security Note:** The binary bundles a specific PHP version and may lag behind PHP security updates.
+For security-critical deployments, use the PHAR to maintain control over PHP updates via your system's package manager.
 
 Distribution repository with all available executables: https://github.com/pixelbrackets/pap-dist
 

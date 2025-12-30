@@ -12,8 +12,11 @@ if [ ! -f "$HOME/.config/composer/vendor/bin/phpacker" ]; then
     exit 1
 fi
 
+# Read PHP version from .php-version file
+PHP_VERSION=$(tr -d '[:space:]' < .php-version)
+
 # Build Linux binary with PHPacker
-~/.config/composer/vendor/bin/phpacker build linux x64 --src=./pap.phar --dest=./build --php=8.2 --no-interaction
+~/.config/composer/vendor/bin/phpacker build linux x64 --src=./pap.phar --dest=./build --php="$PHP_VERSION" --no-interaction
 
 # Clean up
 if [ -d "build/linux" ]; then
