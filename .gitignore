@@ -8,3 +8,5 @@
 
 # Build artifacts for self-contained executables
 /build/
+/.version
+/pap.phar

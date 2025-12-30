@@ -41,6 +41,12 @@ $iterator = new RecursiveIteratorIterator(
     )
 );
 
+// Inject version from Git tag
+exec('git describe --tags --dirty --always', $gitVersion);
+$version = trim($gitVersion[0] ?? 'dev');
+file_put_contents(__DIR__ . '/.version', $version);
+echo 'Building version: ' . $version . PHP_EOL;
+
 // Create entry script to avoid shebang duplicates
 $file = file(__DIR__ . '/bin/pap');
 unset($file[0]);
@@ -60,7 +66,8 @@ $phar->stopBuffering();
 // Make phar executable
 chmod(__DIR__ . '/pap.phar', 0770);
 
-// Remove entry script
+// Remove generated entry script and version file
 unlink(__DIR__ . '/bin/pap.php');
+unlink(__DIR__ . '/.version');
 
 echo 'Done';

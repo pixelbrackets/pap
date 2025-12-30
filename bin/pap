@@ -18,7 +18,12 @@ if (!$loaded) {
     );
 }
 
-$version = \Jean85\PrettyVersions::getVersion('pixelbrackets/pap')->getPrettyVersion();
+// Determine version: prefer .version file (PHAR/binary builds), fallback to PrettyVersions (Composer installs)
+if (file_exists(__DIR__ . '/../.version')) {
+    $version = trim(file_get_contents(__DIR__ . '/../.version'));
+} else {
+    $version = \Jean85\PrettyVersions::getVersion('pixelbrackets/pap')->getPrettyVersion();
+}
 
 try {
     $runner = new \Robo\Runner(\Pixelbrackets\PhpAppPublication\RoboFile::class);
