@@ -1,7 +1,24 @@
-# Walktrough
+# Walkthrough
 
-The goal in this walktrough is to publish a minimal app with PAP.
-It contains some assets, has some dependencies to other packages,
+**📚 Step-by-step tutorial for beginners**
+
+The goal of this walkthrough is to publish a complete example app with PAP from scratch.
+
+**What you'll learn:**
+- Setting up deployment stages
+- Configuring file synchronization
+- Building and minifying assets
+- Managing dependencies
+- Running tests and smoketests
+- Complete publication workflow
+
+**Prerequisites:** Git repository, SSH access to target server, basic command line knowledge
+
+**Time:** ~15 minutes
+
+## Example App
+
+Our example contains some assets, has some dependencies to other packages,
 and will be available on a test and live stage.
 
 This is the fictional file structure:
@@ -71,11 +88,15 @@ To test the connection we may use the `ssh:connect` task.
 Run `./vendor/bin/pap ssh:connect --stage test`. If everything is correct
 it will connect to the target stage and switch into the working directory.
 
-## Synchronisation
+## Synchronization
 
-Now we set up the file synchronisation. We don't need to sync documentation
-files or tests, but everything else may be send to the target stage. In PAP
-all paths start in the root directory of our Git repository. Regardless of
+Now we set up the file synchronization. We don't need to sync documentation
+files or tests, but everything else may be sent to the target stage.
+
+We also want to sync the `vendor/` directory, because installing dependencies
+on the target stage may be slow or not possible at all.
+
+In PAP all paths start in the root directory of our Git repository. Regardless of
 the location of the PAP configuration file.
 
 So for our example app the sync paths may look like this:
@@ -95,7 +116,13 @@ settings:
       target: composer.lock
 ```
 
-To test the synchronisation we run the command
+You may wonder why the `source` and `target` paths have separate entries. The reason is that
+in monorepos some teams split backend and frontend code in separate Git directories
+like `src/php/` and `src/html/` and need to deploy them to different locations 
+on the target stage (like `app/`, `public/`, …). In our simple example app the Git repository
+structure matches the target stage structure, so source and target paths happen to be the same.
+
+To test the synchronization we run the command
 `./vendor/bin/pap sync --stage test`. It will sync all files.
 On the next execution of the command only new and changed files will be synced.
 
@@ -147,16 +174,18 @@ The build command will then execute these scripts instead.
 
 ## Dependencies
 
-Run `./vendor/bin/pap buildapp` to let Composer fetch all dependencies
-of your app.
+Run `./vendor/bin/pap buildapp` to let Composer fetch all dependencies of your app locally.
 
 ## Deployment
 
 The command `./vendor/bin/pap deploy --stage test` combines all the above
-commands. It will fetch dependencies, build assets, synchronize all files,
-and trigger composer scripts running `composer install` on the target stage.
+commands. It will fetch dependencies, build assets, sync all files,
+and run `composer install` on the target stage to install remaining dependencies.
 
-So any teammates or your CI may run this one command only to deploy your app. 🎉
+**This is the key benefit of PAP:** Your teammates don't need to memorize multiple build
+steps or understand the complete deployment process. Just document the deployment command
+and everyone is able to publish the app. Perfect for new team members, CI/CD pipelines,
+or when you manage multiple projects.
 
 ## Tests
 

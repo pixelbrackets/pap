@@ -10,50 +10,44 @@
 [![License](https://img.shields.io/badge/license-gpl--2.0--or--later-blue.svg?style=flat-square)](https://spdx.org/licenses/GPL-2.0-or-later.html)
 [![Contribution](https://img.shields.io/badge/contributions_welcome-%F0%9F%94%B0-brightgreen.svg?labelColor=brightgreen&style=flat-square)](https://gitlab.com/pixelbrackets/pap/-/blob/master/CONTRIBUTING.md)
 
-Toolchain to publish a PHP App. Configured with a YAML file only.
+Toolchain to publish a PHP App. One YAML file. One command set. Any project.
 
-🚀
+**⚡ Same commands in every project** - Learn once, use everywhere.
+No need to memorize different deployment steps for each project.
+
+**📝 One YAML file** - All deployment configuration in one place.
+No scattered scripts, no complex build tools.
+
+**🚀 15 minute setup** - Add PAP to any project in minutes.
+No coupling with your app code, works as standalone build directory.
+
+**👥 Team and CI-friendly** - New teammates and CI robots can deploy
+without understanding the internals. Just one command: `pap publish`.
+
+## What it does
 
 - Build Assets - Minify & concat CSS, JavaScript, SVG assets
 - Build App - Prepare expected directory structures & fetch packages
 - Lint - Identify errors before the app is running
-- Deploy - Sync files to configurable target stages
+- Deploy - Sync files to configurable target stages (local, test, live, …)
 - Verify - Do a smoke test to verify that the app is still working
 - Test - Start integration tests
 
-🔧
-
-- All general settings and shared stages are configured in a YAML file
-
-🎯
-
-- KISS - Not made for every condition, but easy to use and integrate
-
 ![Screenshot](./docs/screenshot.png)
 
-## Vision
+## Design Principles
 
-- One CLI script with a fixed set of task commands
-  - No mix, extending or renaming of task commands
-  - Tasks not configured will abort instead of failing
-- Configuration with a flat text file
-- Override settings for local machines
-- Installation reduced to a bare minimum
-- Portable, easy to integrate in many repositories
-- Usable by a person who never deployed the app before
-  - No additional knowledge required
-  - One command is enough to deploy the app to a stage
-- Always the same commands, don't care about the configuration set up
-- Works well with robots (CI)
-- Minimal requirements on target stage
-- Rsync to synchronize files - no FTP
-- SSH to connect to stages
-- No rollback - Use Git to revert changes
-- No provisioning
-- Support for monorepos
-- Deploy to many stages
+**KISS approach** - Not made for every condition, but easy to use and integrate
 
-General approach: Not made for every condition, but easy to use and integrate
+- Fixed set of task commands (no extending or renaming)
+- YAML configuration with local overrides support
+- Works as standalone build directory (no coupling with app code)
+- CI/CD friendly - same commands work for humans and robots
+- Minimal requirements: Git, PHP, Composer, rsync, SSH
+- Multiple deployment stages (local, test, live, ...)
+- Monorepo support
+- No rollback (use Git to revert changes)
+- No provisioning (deploy only)
 
 ## Requirements
 
@@ -83,7 +77,10 @@ the PAP executable in one command.
 composer create-project pixelbrackets/pap-skeleton build
 ```
 
-Now edit `build/pap.yml` to configure your deployment stages. See [Configuration](#configuration).
+Now edit `build/pap.yml` to configure your deployment stages.
+
+**📚 New to PAP?** Follow the [step-by-step walkthrough tutorial](./docs/walktrough.md) to
+learn how to set up PAP and publish your PHP webapp or website (~15 minutes).
 
 ### Existing Projects
 
@@ -159,10 +156,9 @@ PAP is configured with YAML files:
 All configuration paths are relative to your Git repository root, so you can place the configuration
 in any subdirectory (typically `build/`) and are still good to go.
 
-**Documentation:**
-- 📝 [All available configuration options](./docs/configuration.md)
-- 📖 [Step-by-step walkthrough tutorial](./docs/walktrough.md)
-- 🛠️ [Manual setup without skeleton package](./docs/configuration.md#manual-setup) (advanced)
+- 📖 [Walkthrough: Publish your first app](./docs/walktrough.md) - Complete beginner guide with example app (15 min)
+- 📝 [Reference: All available configuration options](./docs/configuration.md)
+- 🛠️ [Tutorial: Manual setup without skeleton package](./docs/configuration.md#manual-setup) (advanced)
 
 ## Updates
 
