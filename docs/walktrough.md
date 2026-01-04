@@ -138,7 +138,7 @@ on the target stage (like `app/`, `public/`, …). In our simple example app the
 structure matches the target stage structure, so source and target paths happen to be the same.
 
 To test the synchronization we run the command
-`./vendor/bin/pap sync --stage test`. It will sync all files.
+`./vendor/bin/pap sync --stage test`. It will sync all files to the test stage.
 On the next execution of the command only new and changed files will be synced.
 
 We may run `./vendor/bin/pap view --stage test` to open a browser and point to
@@ -207,6 +207,13 @@ or when you manage multiple projects.
 Tests should be a part of your publication process. The setup is optional,
 but it reduces having to remember multiple test commands for different projects.
 
+PAP supports several popular test methods out of the box (linting, unit tests,
+smoke tests, integration tests), but not all testing tools for simplicity reasons.
+However, you can easily adapt any test command to your needs using custom scripts,
+as shown in the examples below.
+
+### Static Analysis / Linting
+
 PAP provides a basic PHP syntax check, which will catch fatal errors in your
 PHP code before you try to deploy it to the target stage.
 
@@ -219,33 +226,55 @@ settings:
       - src/
 ```
 
-Run `./vendor/bin/pap lint` to check the `src` directory.
+Run `./vendor/bin/pap lint` to check the `src` directory only.
 
-To run custom linters you may use the `scripts` option again.
+### Unit Tests
+
+Unit tests verify your code logic before deployment. PAP supports running
+PHPUnit or any other unit test framework on your local code.
 
 ```yaml
 settings:
-  lint:
-    scripts:
-      - composer lint
+  unit-test:
+    phpunit:
+      config: phpunit.xml
 ```
 
-After the deployment we may want to run a so called smoketest to check that
+Run `./vendor/bin/pap unittest` to run your unit tests.
+
+Alternatively, you can use custom scripts for other test runners:
+
+```yaml
+settings:
+  unit-test:
+    scripts:
+      - composer test
+```
+
+### Smoke test
+
+After the deployment we may want to run a so-called smoke test to check that
 the app did not crash. PAP offers a command to do so. It will use the domain
 setup for each stage.
 
 Run `./vendor/bin/pap smoketest --stage test` to run a quick availability test.
 
-To run integration tests or any other test suite you use the `test` option:
+### Integration Tests
+
+Integration tests verify that your complete application works correctly as a whole.
+It will test how all parts (code, templates, APIs) work together in the target environment.
+
+PAP supports Codeception for integration testing by default:
 
 ```yaml
 settings:
   test:
-   scripts:
-     - composer test
+    codeception:
+      working-directory: test/
+      suite: acceptance
 ```
 
-Run `./vendor/bin/pap test` to trigger the registered test scripts.
+Run `./vendor/bin/pap test --stage test` to run integration tests against the deployed app.
 
 ## Publication
 
@@ -277,9 +306,13 @@ settings:
   lint:
     lint-paths:
       - src/
+  unit-test:
+    phpunit:
+      config: phpunit.xml
   test:
-    scripts:
-      - composer test
+    codeception:
+      working-directory: test/
+      suite: acceptance
 
 stages:
   test:
@@ -297,6 +330,7 @@ stages:
 `./vendor/bin/pap publish` will run the full publication stack for us:
 
 - lint
+- unittest
 - deploy
   - buildassets
   - buildapp

@@ -168,7 +168,27 @@ settings:
       ###   - (string, bash command, relative to git root directory)
       #scripts:
       #  - ./vendor/bin/php-cs-fixer fix src
-  ### Test app files
+  ### Run unit tests against local code
+  ### unit-test: (dictionary)
+  unit-test:
+    ### PHPUnit testing framework
+    ### phpunit: (dictionary)
+    phpunit:
+      ### Working directory of the test framework
+      ### working-directory: (string, with trailing slash, relative to git root directory)
+      working-directory: ./
+      ### PHPUnit configuration file (optional)
+      ### config: (string, with filename, relative to working directory)
+      config: phpunit.xml
+    ### Run any CLI commands instead to run unit tests
+    ### When this option is configured, then all other options of this task
+    ### (phpunit etc) are ignored
+    ### scripts: (list)
+    ###   - (string, bash command, relative to git root directory)
+    #scripts:
+    #  - ./vendor/bin/phpunit
+    #  - ./vendor/bin/pest
+  ### Run integration tests against deployed app
   ### test: (dictionary)
   test:
     ### Codeception testing framework

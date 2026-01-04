@@ -135,7 +135,54 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
-     * Run tests suite against target stage
+     * Run unit tests
+     *
+     * Runs unit tests against local code (not stage-specific),
+     * with built-in PHPUnit support
+     *
+     * @throws \Robo\Exception\TaskException Reports failed tests
+     */
+    public function unittest()
+    {
+        $unittestSettings = $this->getBuildProperty('settings.unit-test');
+        if (false === empty($unittestSettings['scripts'])) {
+            // use external task runner instead
+            return $this->runScripts($unittestSettings['scripts']);
+        }
+
+        // Run PHPUnit
+        $phpunitWorkingDirectory = $this->getBuildProperty('settings.unit-test.phpunit.working-directory');
+        if (true === empty($phpunitWorkingDirectory)) {
+            $this->say('Unit test framework not configured');
+            return;
+        }
+        $repositoryPath = $this->getBuildProperty('repository-path');
+        $composerPath = $this->getBuildProperty('settings.composer.phar') ?? 'composer';
+
+        // Install PHPUnit in working directory
+        $this->taskComposerInstall($composerPath)
+            ->ignorePlatformRequirements()
+            ->workingDir($repositoryPath . $phpunitWorkingDirectory)
+            ->run();
+
+        $phpunit = $this->taskPhpUnit($repositoryPath . $phpunitWorkingDirectory . 'vendor/bin/phpunit')
+            ->dir($repositoryPath . $phpunitWorkingDirectory);
+
+        $phpunitConfig = $this->getBuildProperty('settings.unit-test.phpunit.config');
+        if (false === empty($phpunitConfig)) {
+            $phpunit->configFile($phpunitConfig);
+        }
+
+        if ($phpunit->run()->wasSuccessful() !== true) {
+            throw new \Robo\Exception\TaskException($this, 'Unit tests failed');
+        }
+    }
+
+    /**
+     * Run integration tests against target stage
+     *
+     * Runs integration tests against deployed application (stage-specific),
+     * with built-in Codeception support
      *
      * @param array $options
      * @option $stage Target stage (eg. local or live)
@@ -150,6 +197,8 @@ class RoboFile extends \Robo\Tasks
             // use external task runner instead
             return $this->runScripts($testSettings['scripts']);
         }
+
+        // Run Codeception
         $codeceptionDirectory = $this->getBuildProperty('settings.test.codeception.working-directory');
         if (true === empty($codeceptionDirectory)) {
             $this->say('Test framework not configured');
@@ -563,7 +612,7 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
-     * Run full publication stack (lint, deploy, smoketest, test)
+     * Run full publication stack (lint, unittest, deploy, smoketest, test)
      *
      * @param array $options
      * @option $stage Target stage (eg. local or live)
@@ -571,6 +620,7 @@ class RoboFile extends \Robo\Tasks
     public function publish(array $options = ['stage|s' => 'local'])
     {
         $this->lint();
+        $this->unittest();
         $this->deploy(['stage' => $options['stage']]);
         $this->smoketest(['stage' => $options['stage']]);
         $this->test(['stage' => $options['stage']]);

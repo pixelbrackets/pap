@@ -29,9 +29,10 @@ without understanding the internals. Just one command: `pap publish`.
 - Build Assets - Minify & concat CSS, JavaScript, SVG assets
 - Build App - Prepare expected directory structures & fetch packages
 - Lint - Identify errors before the app is running
+- Unit Test - Run unit tests against local code
 - Deploy - Sync files to configurable target stages (local, test, live, …)
 - Verify - Do a smoke test to verify that the app is still working
-- Test - Start integration tests
+- Test - Run integration tests against deployed app
 
 ![Screenshot](./docs/screenshot.png)
 
@@ -229,6 +230,7 @@ Somme common tasks are:
 ```
 publish (Complete release workflow)
 ├── lint (Validate code syntax)
+├── unittest (Run unit tests against local code)
 ├── deploy (Full deployment)
 │   ├── build (Prepare application)
 │   │   ├── buildassets (Process CSS/JS/images)
@@ -236,7 +238,7 @@ publish (Complete release workflow)
 │   ├── sync (Transfer files via rsync)
 │   └── composer:install (Install remaining dependencies and trigger post-install commands on target stage)
 ├── smoketest (Quick HTTP check)
-└── test (Run integration tests via Codeception)
+└── test (Run integration tests against deployed app)
 
 Common standalone tasks:
 ├── show stages (get a list of all configured stages)
@@ -263,13 +265,14 @@ lint              Alias to run »lint:check«
 lint:check        Lint files (Check only)
 lint:fix          Lint files (Fix)
 list              Lists commands
-publish           Run full publication stack (lint, deploy, smoketest, test)
+publish           Run full publication stack (lint, unittest, deploy, smoketest, test)
 show              Pretty print configuration for debugging
 smoketest         Run a build verification test against target stage
 ssh               Alias to run »ssh:connect«
 ssh:connect       Open SSH connection to target stage
 sync              Synchronize files to target stage
-test              Run tests suite against target stage
+test              Run integration tests against target stage
+unittest          Run unit tests against local code
 view              Open the public URL of target stage in the browser
 watch             Sync changed files automatically to local stage
 ```
