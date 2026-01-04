@@ -59,6 +59,17 @@ composer create-project pixelbrackets/pap-skeleton build
 The skeleton project provides all required files to run PAP. The file
 `build/pap.yml` holds *all* needed settings.
 
+## Commands
+
+Before we start configuring PAP, here are some helpful tips for working with PAP commands:
+
+- Run `./vendor/bin/pap` to see all available tasks
+- Add `--help` to each task command, to see all available options
+- Add `--simulate` to each task command, to run in dry-mode first
+- Most tasks have a stage as target, passed with `--stage <stagename>`
+- If no stagename is passed, the name "local" is used as default - use this
+  for development on your local machine
+
 ## Stages
 
 First we set up all target stages. Below the key `stages` we define one stage
@@ -87,6 +98,10 @@ of all configured stages now.
 To test the connection we may use the `ssh:connect` task.
 Run `./vendor/bin/pap ssh:connect --stage test`. If everything is correct
 it will connect to the target stage and switch into the working directory.
+
+Throughout this walkthrough we'll use the `test` stage in our examples now.
+You may replace it with `live` when you want to publish to the live stage
+or omit the `--stage` parameter to use the default local stage.
 
 ## Synchronization
 

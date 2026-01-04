@@ -13,7 +13,7 @@ Deployment is managed with [PAP (PHP App Publication)](https://github.com/pixelb
 
 ```bash
 composer install
-# PAP executable is downloaded automatically
+# PAP installed via Composer
 ```
 
 ## Usage

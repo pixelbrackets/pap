@@ -39,15 +39,20 @@ without understanding the internals. Just one command: `pap publish`.
 
 **KISS approach** - Not made for every condition, but easy to use and integrate
 
-- Fixed set of task commands (no extending or renaming)
+- Fixed set of task commands (but you can run custom scripts within them)
 - YAML configuration with local overrides support
 - Works as standalone build directory (no coupling with app code)
 - CI/CD friendly - same commands work for humans and robots
 - Minimal requirements: Git, PHP, Composer, rsync, SSH
-- Multiple deployment stages (local, test, live, ...)
+- Multiple deployment stages (local, test, live, …)
 - Monorepo support
 - No rollback (use Git to revert changes)
 - No provisioning (deploy only)
+
+When to use alternatives: Need custom task workflows, atomic releases, advanced rollback strategies,
+or server provisioning? Tools like [Deployer](https://deployer.org/), [Capistrano](https://capistranorb.com/),
+or [Ansible](https://www.ansible.com/) offer more features. PAPs sweet spot is that it is *deliberately* simple -
+perfect for small to medium projects where complexity isn't worth the overhead.
 
 ## Requirements
 
@@ -75,9 +80,11 @@ the PAP executable in one command.
 
 ```bash
 composer create-project pixelbrackets/pap-skeleton build
+cd build
+./vendor/bin/pap list
 ```
 
-Now edit `build/pap.yml` to configure your deployment stages.
+Now edit `pap.yml` to configure your deployment stages.
 
 **📚 New to PAP?** Follow the [step-by-step walkthrough tutorial](./docs/walktrough.md) to
 learn how to set up PAP and publish your PHP webapp or website (~15 minutes).
@@ -85,59 +92,62 @@ learn how to set up PAP and publish your PHP webapp or website (~15 minutes).
 ### Existing Projects
 
 If your project already has a `build/` directory with PAP configuration files,
-then all you need to do is fetching the PAP executable using Composer,
-no additional setup required.
+then all you need to do is fetching PAP using Composer, no additional setup required.
 
 ```bash
 cd build
 composer install
-# PAP is now available as ./vendor/bin/pap
-```
-
-The installer detects your platform and downloads the appropriate executable automatically:
-- Linux: Self-contained binary (PHP binary bundled, no version conflicts)
-- Other platforms: Universal PHAR (requires system PHP 7.2+)
-
-*🧑‍🔧 Opt-out from automatic installation* to install PAP manually instead:
-```bash
-cd build
-export PAP_NO_BINARY=1
-composer install
-# Now install PAP manually (see below)
+./vendor/bin/pap list
 ```
 
 ### Global Installation (Advanced)
 
-Install PAP once globally to use across multiple projects.
+For special use cases like global installation, team consistency, or CI environments,
+you can install PAP as a phar executable or self-contained binary.
+
+Distribution repository: https://github.com/pixelbrackets/pap-dist/releases
+
+**Binary** (Linux):
 
 ```bash
-# Linux binary (PHP-independent, recommended for convenience)
-wget https://raw.githubusercontent.com/pixelbrackets/pap-dist/main/pap-linux-x64
+wget https://github.com/pixelbrackets/pap-dist/releases/latest/download/pap-linux-x64
 sudo mv pap-linux-x64 /usr/local/bin/pap
 sudo chmod +x /usr/local/bin/pap
-
-# Universal PHAR (requires PHP 7.2+, recommended for security-critical environments)
-wget https://raw.githubusercontent.com/pixelbrackets/pap-dist/main/pap.phar
-sudo mv pap.phar /usr/local/bin/pap
-sudo chmod +x /usr/local/bin/pap
+pap list
 ```
 
-**Security Note:** The binary bundles a specific PHP version and may lag behind PHP security updates.
-For security-critical deployments, use the PHAR to maintain control over PHP updates via your system's package manager.
+The binary bundles a specific PHP version, so it works independent of your projects PHP version.
+**Security Note:** The bundled PHP version may lag behind security updates. For production deployments
+within public CI workflows, prefer the standard Composer installation to control PHP updates via system updates.
 
-Distribution repository with all available executables: https://github.com/pixelbrackets/pap-dist
+**PHAR** (all platforms):
+
+```bash
+wget https://github.com/pixelbrackets/pap-dist/releases/latest/download/pap.phar
+php pap.phar list
+```
 
 ### CI/CD Usage
 
-Example GitLab CI configuration:
+**GitLab CI example:**
 
 ```yaml
 deploy:
   stage: deploy
   image: composer:latest
   script:
-    - cd build && composer install  # Installs PAP automatically
+    - cd build && composer install  # Installs PAP via Composer
     - vendor/bin/pap deploy --stage live # Deploy app to live stage using the versioned configuration files
+```
+
+**GitHub Actions example:**
+
+```yaml
+- name: Install dependencies
+  run: cd build && composer install
+
+- name: Deploy
+  run: cd build && vendor/bin/pap deploy --stage live
 ```
 
 ## Configuration
@@ -168,7 +178,14 @@ See [Upgrade Guide](./docs/upgrade-guide.md)
 
 This section gives a brief overview of available commands and common tasks.
 
-Run `./vendor/bin/pap` to see all available tasks. Some common tasks are:
+**Quick Tips:**
+- Run `./vendor/bin/pap` to see all available tasks
+- Add `--help` to each task command to see all available options
+- Add `--simulate` to each task command to run in dry-mode first
+- Most tasks have a stage as target, passed with `--stage <stagename>`
+- If no stagename is passed, the name "local" is used as default - use this for development on your local machine
+
+Somme common tasks are:
 
 **Deploy to live stage:**
 ```bash
@@ -222,6 +239,7 @@ publish (Complete release workflow)
 └── test (Run integration tests via Codeception)
 
 Common standalone tasks:
+├── show stages (get a list of all configured stages)
 ├── sync (Quick file sync without rebuilding)
 ├── watch (Auto-sync on file changes)
 ├── lint:fix (Auto-fix code style issues)

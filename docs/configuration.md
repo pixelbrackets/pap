@@ -7,7 +7,7 @@ This allows storing the configuration file in any subdirectory.
 
 ## Manual Setup
 
-**Note:** Most users should use the Skeleton package running 
+**Note:** Most users should use the Skeleton package running
 `composer create-project pixelbrackets/pap-skeleton build` instead.
 This section is for users who want to set up PAP manually without the skeleton package.
 Skip this step when using the skeleton.
@@ -17,10 +17,10 @@ Skip this step when using the skeleton.
    mkdir build
    cd build
    ```
-1. Initialize Composer:
+1. Initialize Composer and install PAP:
    ```bash
    composer init --name="yourvendor/yourproject-build"
-   composer require pixelbrackets/pap-installer
+   composer require pixelbrackets/pap
    ```
 1. Create configuration files:
    - Create `pap.yml` for shared settings (see example below)
