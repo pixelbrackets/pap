@@ -19,8 +19,8 @@ class RoboFile extends \Robo\Tasks
     public function __construct()
     {
         Robo::loadConfiguration([
-            realpath('build.common.properties.yml'),
-            realpath('build.local.properties.yml'),
+            realpath('build.common.properties.yml'), // Keep for backwards compatibility
+            realpath('build.local.properties.yml'), // Keep for backwards compatibility
             realpath('pap.yml'),
             realpath('pap.local.yml')
         ]);
@@ -179,6 +179,15 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
+     * Alias to run »integrationtest«
+     *
+     */
+    public function test(array $options = ['stage|s' => 'local', 'group|g' => null, 'suite' => null])
+    {
+        $this->integrationtest($options);
+    }
+
+    /**
      * Run integration tests against target stage
      *
      * Runs integration tests against deployed application (stage-specific),
@@ -190,16 +199,20 @@ class RoboFile extends \Robo\Tasks
      * @option $suite Use a specific test suite (eg. acceptance)
      * @throws \Robo\Exception\TaskException Reports failed tests
      */
-    public function test(array $options = ['stage|s' => 'local', 'group|g' => null, 'suite' => null])
+    public function integrationtest(array $options = ['stage|s' => 'local', 'group|g' => null, 'suite' => null])
     {
-        $testSettings = $this->getBuildProperty('settings.test');
+        // Support 'integration-test' and 'test' config keys for backwards compatibility
+        $testSettings = $this->getBuildProperty('settings.integration-test')
+            ?? $this->getBuildProperty('settings.test');
         if (false === empty($testSettings['scripts'])) {
             // use external task runner instead
             return $this->runScripts($testSettings['scripts']);
         }
 
         // Run Codeception
-        $codeceptionDirectory = $this->getBuildProperty('settings.test.codeception.working-directory');
+        // Support 'integration-test' and 'test' config keys for backwards compatibility
+        $codeceptionDirectory = $this->getBuildProperty('settings.integration-test.codeception.working-directory')
+            ?? $this->getBuildProperty('settings.test.codeception.working-directory');
         if (true === empty($codeceptionDirectory)) {
             $this->say('Test framework not configured');
             return;
@@ -224,7 +237,8 @@ class RoboFile extends \Robo\Tasks
         $_ENV['BASEURL'] = $stageOrigin . '/';
         $codeception = $this->taskCodecept($repositoryPath . $codeceptionDirectory . 'vendor/bin/codecept')
             ->dir($repositoryPath . $codeceptionDirectory)
-            ->suite($options['suite'] ?? $this->getBuildProperty('settings.test.codeception.suite'));
+            ->suite($options['suite'] ?? ($this->getBuildProperty('settings.integration-test.codeception.suite')
+                ?? $this->getBuildProperty('settings.test.codeception.suite')));
 
         if (false === empty($options['group'])) {
             $codeception->group($options['group']);

@@ -268,13 +268,18 @@ PAP supports Codeception for integration testing by default:
 
 ```yaml
 settings:
-  test:
+  integration-test:
     codeception:
       working-directory: test/
       suite: acceptance
 ```
 
-Run `./vendor/bin/pap test --stage test` to run integration tests against the deployed app.
+Run `./vendor/bin/pap integrationtest --stage test` to run integration tests against the deployed app.
+
+You can also use the `test` command (alias for backwards compatibility):
+```bash
+./vendor/bin/pap test --stage test
+```
 
 ## Publication
 
@@ -309,7 +314,7 @@ settings:
   unit-test:
     phpunit:
       config: phpunit.xml
-  test:
+  integration-test:
     codeception:
       working-directory: test/
       suite: acceptance
@@ -336,7 +341,7 @@ stages:
   - buildapp
   - synchronize
 - smoketest
-- test
+- integrationtest
 
 PAP will skip any command which is not configured in the configuration file.
 So it is okay to run the `publish` command even when you sync static files only.

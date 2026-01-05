@@ -189,8 +189,9 @@ settings:
     #  - ./vendor/bin/phpunit
     #  - ./vendor/bin/pest
   ### Run integration tests against deployed app
-  ### test: (dictionary)
-  test:
+  ### integration-test: (dictionary)
+  ### Backwards compatible: 'test' config key still works
+  integration-test:
     ### Codeception testing framework
     ### codeception: (dictionary)
     codeception:

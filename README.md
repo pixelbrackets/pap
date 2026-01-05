@@ -238,7 +238,7 @@ publish (Complete release workflow)
 │   ├── sync (Transfer files via rsync)
 │   └── composer:install (Install remaining dependencies and trigger post-install commands on target stage)
 ├── smoketest (Quick HTTP check)
-└── test (Run integration tests against deployed app)
+└── integrationtest (Run integration tests against deployed app)
 
 Common standalone tasks:
 ├── show stages (get a list of all configured stages)
@@ -261,17 +261,18 @@ composer:command  Execute Composer commands on target stage
 composer:install  Install packages with Composer
 deploy            Run full deployment stack (build, sync, composer command)
 help              Displays help for a command
+integrationtest   Run integration tests against target stage
 lint              Alias to run »lint:check«
 lint:check        Lint files (Check only)
 lint:fix          Lint files (Fix)
 list              Lists commands
-publish           Run full publication stack (lint, unittest, deploy, smoketest, test)
+publish           Run full publication stack (lint, unittest, deploy, smoketest, integrationtest)
 show              Pretty print configuration for debugging
 smoketest         Run a build verification test against target stage
 ssh               Alias to run »ssh:connect«
 ssh:connect       Open SSH connection to target stage
 sync              Synchronize files to target stage
-test              Run integration tests against target stage
+test              Alias to run »integrationtest«
 unittest          Run unit tests against local code
 view              Open the public URL of target stage in the browser
 watch             Sync changed files automatically to local stage
