@@ -184,7 +184,7 @@ This section gives a brief overview of available commands and common tasks.
 - Add `--help` to each task command to see all available options
 - Add `--simulate` to each task command to run in dry-mode first
 - Most tasks have a stage as target, passed with `--stage <stagename>`
-- If no stagename is passed, the name "local" is used as default - use this for development on your local machine
+  - If no stagename is passed, the name "local" is used as default - use this for development on your local machine
 
 Somme common tasks are:
 
@@ -203,9 +203,10 @@ Somme common tasks are:
 ./vendor/bin/pap sync
 ```
 
-**Watch and auto-sync to local stage on file changes:**
+**Watch and auto-sync on file changes:**
 ```bash
-./vendor/bin/pap watch
+./vendor/bin/pap watch              # Defaults to local stage
+./vendor/bin/pap watch --stage live # Watch and sync to live stage
 ```
 
 **Lint files:**
@@ -275,7 +276,7 @@ sync              Synchronize files to target stage
 test              Alias to run »integrationtest«
 unittest          Run unit tests against local code
 view              Open the public URL of target stage in the browser
-watch             Sync changed files automatically to local stage
+watch             Sync changed files automatically to target stage
 ```
 
 ## License

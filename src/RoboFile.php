@@ -443,8 +443,11 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
-     * Move files in repository to prepare a working sync task
+     * Prepare local Git repository before syncing to remote stage
      *
+     * Internal method which rearranges files within the Git repository
+     * (e.g. move built assets to web folder).
+     * This is an optional pre-sync step configured via settings.prepare-sync-paths.
      */
     protected function prepareSyncPaths()
     {
@@ -466,7 +469,14 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
-     * Rsync files between repository and stage folder
+     * Synchronize files from local Git repository to remote stage
+     *
+     * Internal task which performs the actual rsync operation
+     * to transfer files to the remote stage.
+     *
+     * Note: deploy() calls this method directly (bypassing the lock check
+     * existing in the sync() method),
+     * because deploy creates the lock file itself after sync completes.
      *
      * @param array $options
      * @option $stage Target stage (eg. local or live)
@@ -545,7 +555,11 @@ class RoboFile extends \Robo\Tasks
     /**
      * Synchronize files to target stage
      *
-     * File sync only! Needs »buildapp« or »deploy« task to rebuild the app
+     * Command for quick file synchronization without rebuilding assets.
+     *
+     * Includes safety checks via .pap.lock file to ensure sync is safe to run
+     * (checks if last deploy was on the same branch and not too long ago).
+     * Use »deploy« task for full rebuild and initial deployment.
      *
      * @param array $options
      * @option $stage Target stage (eg. local or live)
@@ -569,8 +583,10 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
-     * Check if deploy task can be executed safely (eg. current branch is
-     * allowed on target stage)
+     * Check if deploy task can be executed safely
+     *
+     * Checks if current branch is allowed on target stage to prevent accidental
+     * deployments to live from feature branches.
      *
      * @param string Current target stage
      * @return boolean Returns true if the deploy task may be executed
@@ -752,18 +768,23 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
-     * Sync changed files automatically to local stage
+     * Sync changed files automatically to target stage
      *
+     * @param array $options
+     * @option $stage Target stage (eg. local or live)
      */
-    public function watch()
+    public function watch(array $options = ['stage|s' => 'local'])
     {
         $properties = $this->getBuildProperty();
+        $stage = $options['stage'];
+
+        $this->io()->note('Watching for changes and syncing to stage: ' . $stage);
 
         $this->taskWatch()
             ->monitor(
                 $this->getBuildProperty('repository-path') . $this->getBuildProperty('settings.watch.working-directory'),
-                function () {
-                    $this->sync(['stage' => 'local']);
+                function () use ($stage) {
+                    $this->sync(['stage' => $stage]);
                 }
             )
             ->run();

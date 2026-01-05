@@ -69,6 +69,7 @@ Before we start configuring PAP, here are some helpful tips for working with PAP
 - Most tasks have a stage as target, passed with `--stage <stagename>`
 - If no stagename is passed, the name "local" is used as default - use this
   for development on your local machine
+- Run `./vendor/bin/pap show` to see a pretty print of your configuration for debugging
 
 ## Stages
 
@@ -346,10 +347,27 @@ stages:
 PAP will skip any command which is not configured in the configuration file.
 So it is okay to run the `publish` command even when you sync static files only.
 
-## More
+That's it! Your app is now published to the test stage.
+
+## Next Steps
 
 PAP provides more [commands](../README.md#usage) and
 [configuration](configuration.md) options. Take a look at the existing
 documentation, it should help you to publish even more complex structures.
 
-[Contributions](../CONTRIBUTING.md) are welcome!
+Useful standalone commands for development:
+
+- `./vendor/bin/pap watch` - Automatically sync files when changes are detected
+  - Defaults to the local stage again, but you may also send changes to another stage
+  using `./vendor/bin/pap watch --stage <stagename>`
+- `./vendor/bin/pap show stages` - Display all configured stages of the current project
+- `./vendor/bin/pap composer:command --stage test --command <my composer command or script>` - Run
+  arbitrary Composer commands on a stage
+- `./vendor/bin/pap ssh:connect --stage test` - Connect to a stage via SSH
+- Some commands and most options have a short alias, run `./vendor/bin/pap --help` to see them
+  
+  For example `pap ssh -s live` is an alias for `pap ssh:connect --stage live`
+- When you switch a lot between projects, you may consider installing PAP globally
+  → See [Global Installation](../README.md#global-installation) for details
+
+You missed something or spotted an error? [Contributions](../CONTRIBUTING.md) are welcome!
