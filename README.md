@@ -231,15 +231,15 @@ Somme common tasks are:
 ```
 publish (Complete release workflow)
 ├── lint (Validate code syntax)
-├── unittest (Run unit tests against local code)
+├── test:unit (Run unit tests against local code)
 ├── deploy (Full deployment)
 │   ├── build (Prepare application)
 │   │   ├── buildassets (Process CSS/JS/images)
 │   │   └── buildapp (Prepare directory structure and install composer dependencies locally)
 │   ├── sync (Transfer files via rsync)
 │   └── composer:install (Install remaining dependencies and trigger post-install commands on target stage)
-├── smoketest (Quick HTTP check)
-└── integrationtest (Run integration tests against deployed app)
+├── test:smoke (Quick HTTP check)
+└── test:integration (Run integration tests against deployed app)
 
 Common standalone tasks:
 ├── show stages (get a list of all configured stages)
@@ -261,20 +261,20 @@ buildassets       Build HTML assets (convert, concat, minify…)
 composer:command  Execute Composer commands on target stage
 composer:install  Install packages with Composer
 deploy            Run full deployment stack (build, sync, composer command)
-help              Displays help for a command
-integrationtest   Run integration tests against target stage
+help              Display help for a command
 lint              Alias to run »lint:check«
 lint:check        Lint files (Check only)
 lint:fix          Lint files (Fix)
-list              Lists commands
-publish           Run full publication stack (lint, unittest, deploy, smoketest, integrationtest)
+list              List commands
+publish           Run full publication stack (lint, test:unit, deploy, test:smoke, test:integration)
 show              Pretty print configuration for debugging
-smoketest         Run a build verification test against target stage
 ssh               Alias to run »ssh:connect«
 ssh:connect       Open SSH connection to target stage
 sync              Synchronize files to target stage
-test              Alias to run »integrationtest«
-unittest          Run unit tests against local code
+test              Alias to run »test:integration«
+test:integration  Run integration tests against target stage
+test:smoke        Run a build verification test against target stage
+test:unit         Run unit tests against local code
 view              Open the public URL of target stage in the browser
 watch             Sync changed files automatically to target stage
 ```

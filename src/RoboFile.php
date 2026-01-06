@@ -135,14 +135,32 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
-     * Run unit tests
+     * Alias to run »test:integration«
+     *
+     */
+    public function test(array $options = ['stage|s' => 'local', 'group|g' => null, 'suite' => null])
+    {
+        $this->testIntegration($options);
+    }
+
+    /**
+     * Alias to run »test:unit«
+     *
+     */
+    public function unittest()
+    {
+        $this->testUnit();
+    }
+
+    /**
+     * Run unit tests against local code
      *
      * Runs unit tests against local code (not stage-specific),
      * with built-in PHPUnit support
      *
      * @throws \Robo\Exception\TaskException Reports failed tests
      */
-    public function unittest()
+    public function testUnit()
     {
         $unittestSettings = $this->getBuildProperty('settings.unit-test');
         if (false === empty($unittestSettings['scripts'])) {
@@ -179,12 +197,12 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
-     * Alias to run »integrationtest«
+     * Alias to run »test:integration«
      *
      */
-    public function test(array $options = ['stage|s' => 'local', 'group|g' => null, 'suite' => null])
+    public function integrationtest(array $options = ['stage|s' => 'local', 'group|g' => null, 'suite' => null])
     {
-        $this->integrationtest($options);
+        $this->testIntegration($options);
     }
 
     /**
@@ -194,12 +212,12 @@ class RoboFile extends \Robo\Tasks
      * with built-in Codeception support
      *
      * @param array $options
+     * @throws \Robo\Exception\TaskException Reports failed tests
      * @option $stage Target stage (eg. local or live)
      * @option $group Use a specific test group (default: run all tests, with and without groups)
      * @option $suite Use a specific test suite (eg. acceptance)
-     * @throws \Robo\Exception\TaskException Reports failed tests
      */
-    public function integrationtest(array $options = ['stage|s' => 'local', 'group|g' => null, 'suite' => null])
+    public function testIntegration(array $options = ['stage|s' => 'local', 'group|g' => null, 'suite' => null])
     {
         // Support 'integration-test' and 'test' config keys for backwards compatibility
         $testSettings = $this->getBuildProperty('settings.integration-test')
@@ -333,6 +351,7 @@ class RoboFile extends \Robo\Tasks
      *
      * @param array $options
      * @option $stage Target stage (eg. local or live)
+     * @throws \Robo\Exception\TaskException
      */
     public function buildapp(array $options = ['stage|s' => 'local'])
     {
@@ -564,6 +583,7 @@ class RoboFile extends \Robo\Tasks
      * @param array $options
      * @option $stage Target stage (eg. local or live)
      * @return void
+     * @throws \Robo\Exception\TaskException
      */
     public function sync(array $options = ['stage|s' => 'local'])
     {
@@ -588,7 +608,7 @@ class RoboFile extends \Robo\Tasks
      * Checks if current branch is allowed on target stage to prevent accidental
      * deployments to live from feature branches.
      *
-     * @param string Current target stage
+     * @param string $stage Current target stage
      * @return boolean Returns true if the deploy task may be executed
      */
     protected function deployIsAllowed(string $stage)
@@ -610,7 +630,7 @@ class RoboFile extends \Robo\Tasks
      *
      * Lock stage & branch
      *
-     * @param string Current target stage
+     * @param string $stage Current target stage
      */
     protected function setLockFile(string $stage)
     {
@@ -623,6 +643,7 @@ class RoboFile extends \Robo\Tasks
      *
      * @param array $options
      * @option $stage Target stage (eg. local or live)
+     * @throws \Robo\Exception\TaskException
      */
     public function deploy(array $options = ['stage|s' => 'local'])
     {
@@ -642,18 +663,28 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
-     * Run full publication stack (lint, unittest, deploy, smoketest, test)
+     * Run full publication stack (lint, test:unit, deploy, test:smoke, test:integration)
      *
      * @param array $options
      * @option $stage Target stage (eg. local or live)
+     * @throws \Robo\Exception\TaskException
      */
     public function publish(array $options = ['stage|s' => 'local'])
     {
         $this->lint();
-        $this->unittest();
+        $this->testUnit();
         $this->deploy(['stage' => $options['stage']]);
-        $this->smoketest(['stage' => $options['stage']]);
-        $this->test(['stage' => $options['stage']]);
+        $this->testSmoke(['stage' => $options['stage']]);
+        $this->testIntegration(['stage' => $options['stage']]);
+    }
+
+    /**
+     * Alias to run »test:smoke«
+     *
+     */
+    public function smoketest(array $options = ['stage|s' => 'local'])
+    {
+        $this->testSmoke($options);
     }
 
     /**
@@ -661,8 +692,9 @@ class RoboFile extends \Robo\Tasks
      *
      * @param array $options
      * @option $stage Target stage (eg. local or live)
+     * @throws \Robo\Exception\TaskException
      */
-    public function smoketest(array $options = ['stage|s' => 'local'])
+    public function testSmoke(array $options = ['stage|s' => 'local'])
     {
         $stageOrigin = $this->getBuildProperty('stages.' . $options['stage'] . '.origin');
         if (true === empty($stageOrigin)) {

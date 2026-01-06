@@ -9,7 +9,7 @@ The goal of this walkthrough is to publish a complete example app with PAP from 
 - Configuring file synchronization
 - Building and minifying assets
 - Managing dependencies
-- Running tests and smoketests
+- Running tests and smoke tests
 - Complete publication workflow
 
 **Prerequisites:** Git repository, SSH access to target server, basic command line knowledge
@@ -241,7 +241,7 @@ settings:
       config: phpunit.xml
 ```
 
-Run `./vendor/bin/pap unittest` to run your unit tests.
+Run `./vendor/bin/pap test:unit` to run your unit tests.
 
 Alternatively, you can use custom scripts for other test runners:
 
@@ -258,7 +258,7 @@ After the deployment we may want to run a so-called smoke test to check that
 the app did not crash. PAP offers a command to do so. It will use the domain
 setup for each stage.
 
-Run `./vendor/bin/pap smoketest --stage test` to run a quick availability test.
+Run `./vendor/bin/pap test:smoke --stage test` to run a quick availability test.
 
 ### Integration Tests
 
@@ -275,12 +275,7 @@ settings:
       suite: acceptance
 ```
 
-Run `./vendor/bin/pap integrationtest --stage test` to run integration tests against the deployed app.
-
-You can also use the `test` command (alias for backwards compatibility):
-```bash
-./vendor/bin/pap test --stage test
-```
+Run `./vendor/bin/pap test:integration --stage test` to run integration tests against the deployed app.
 
 ## Publication
 
@@ -336,13 +331,13 @@ stages:
 `./vendor/bin/pap publish` will run the full publication stack for us:
 
 - lint
-- unittest
+- test:unit
 - deploy
   - buildassets
   - buildapp
   - synchronize
-- smoketest
-- integrationtest
+- test:smoke
+- test:integration
 
 PAP will skip any command which is not configured in the configuration file.
 So it is okay to run the `publish` command even when you sync static files only.
