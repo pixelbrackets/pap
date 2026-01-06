@@ -360,6 +360,20 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
+     * Alias to run »composer:command«
+     *
+     * @hidden
+     * @param array $options
+     * @option $stage Target stage (eg. local or live), leave empty to run in repository working directory
+     * @option $command Name of the Command to execute (eg. dump-autoload)
+     * @throws \Robo\Exception\TaskException Reports failed commands
+     */
+    public function composer(array $options = ['stage|s' => null, 'command|c' => null])
+    {
+        $this->composerCommand($options);
+    }
+
+    /**
      * Install packages with Composer
      *
      * @param array $options
