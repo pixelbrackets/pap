@@ -23,41 +23,165 @@ class PapCommandsTest extends TestCase
 
     /**
      * Data provider for testExampleCommands.
+     *
+     * Structure: Expected output snippets, expected status codes
+     * and CLI arguments for various commands.
      */
     public static function generalCommandsProvider()
     {
         return [
-
+            // Basic commands
             [
                 'publish',
                 0,
                 'list',
             ],
             [
-                'Stage origin not configured',
+                'help',
                 0,
-                'smoketest', '-s', 'not-existing-stage'
+                'help',
             ],
             [
-                'Stage origin not configured',
+                'repository-path:',
                 0,
-                'smoketest', '-s', 'faulty'
+                'show',
             ],
             [
-                'Smoke test successful',
+                'Stage',
                 0,
-                'smoketest', '-s', 'live'
+                'show', 'stages',
+            ],
+
+            // Lint commands
+            [
+                'my lint check script',
+                0,
+                'lint',
             ],
             [
                 'my lint check script',
                 0,
-                'lint'
+                'lint:check',
+            ],
+            [
+                'my lint fix script',
+                0,
+                'lint:fix',
+            ],
+
+            // Build commands
+            [
+                'buildassets script',
+                0,
+                'buildassets',
+            ],
+            [
+                'Installing Packages',
+                0,
+                'buildapp',
+            ],
+            [
+                'buildassets script',
+                0,
+                'build',
+            ],
+
+            // Test commands
+            [
+                'unit test script',
+                0,
+                'test:unit',
+            ],
+            [
+                'unit test script',
+                0,
+                'unittest', // Backwards compatible alias
+            ],
+            [
+                'integration test script',
+                0,
+                'test:integration',
+            ],
+            [
+                'integration test script',
+                0,
+                'integrationtest', // Backwards compatible alias
+            ],
+            [
+                'integration test script',
+                0,
+                'test', // Backwards compatible alias for test:integration
+            ],
+            [
+                'Stage origin not configured',
+                0,
+                'test:smoke', '-s', 'not-existing-stage'
+            ],
+            [
+                'Stage origin not configured',
+                0,
+                'test:smoke', '-s', 'faulty'
+            ],
+            [
+                'Smoke test successful',
+                0,
+                'test:smoke', '-s', 'live'
+            ],
+            [
+                'Smoke test successful',
+                0,
+                'smoketest', '-s', 'live' // Backwards compatible alias
+            ],
+
+            // Deploy commands (test error messages without actual SSH)
+            [
+                'Stage not configured',
+                0,
+                'sync', '-s', 'not-existing-stage'
+            ],
+            [
+                'Stage not configured',
+                0,
+                'deploy', '-s', 'not-existing-stage'
+            ],
+
+            // SSH commands (test error messages)
+            [
+                'Stage not configured',
+                0,
+                'ssh:connect', '-s', 'not-existing-stage'
+            ],
+            [
+                'No command specified',
+                0,
+                'ssh:exec', '-s', 'live'
+            ],
+
+            // Composer commands (test error messages)
+            [
+                'Stage not configured',
+                0,
+                'composer:command', '-s', 'not-existing-stage'
+            ],
+            [
+                'Stage not configured',
+                0,
+                'composer:install', '-s', 'not-existing-stage'
+            ],
+
+            // Publish workflow (runs through lint and unit tests, exits with 1 at deploy step)
+            [
+                'unit test script',
+                1,
+                'publish',
             ],
         ];
     }
 
     /**
      * @dataProvider generalCommandsProvider
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
      */
     public function testGeneralCommands($expectedOutput, $expectedStatus, $CliArguments)
     {

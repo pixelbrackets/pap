@@ -10,6 +10,12 @@ settings:
     fix:
       scripts:
         - echo "my lint fix script"
+  unit-test:
+    scripts:
+      - echo "unit test script"
+  integration-test:
+    scripts:
+      - echo "integration test script"
   test:
     scripts:
       - echo "test script"

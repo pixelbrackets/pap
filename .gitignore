@@ -2,7 +2,7 @@
 /vendor/
 /composer.phar
 /composer.lock
-
+/tests/fixtures/.pap.lock
 /build/.pap.lock
 /build/pap.local.yml
 
