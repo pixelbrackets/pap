@@ -11,6 +11,7 @@ The goal of this walkthrough is to publish a complete example app with PAP from 
 - Managing dependencies
 - Running tests and smoke tests
 - Complete publication workflow
+- Some additional tips and tricks for development
 
 **Prerequisites:** Git repository, SSH access to target server, basic command line knowledge
 
@@ -342,7 +343,7 @@ stages:
 PAP will skip any command which is not configured in the configuration file.
 So it is okay to run the `publish` command even when you sync static files only.
 
-That's it! Your app is now published to the test stage.
+**🎉 That's it! Your app is now published to the test stage.**
 
 ## Next Steps
 
@@ -354,14 +355,33 @@ Useful standalone commands for development:
 
 - `./vendor/bin/pap watch` - Automatically sync files when changes are detected
   - Defaults to the local stage again, but you may also send changes to another stage
-  using `./vendor/bin/pap watch --stage <stagename>`
-- `./vendor/bin/pap show stages` - Display all configured stages of the current project
+    using `./vendor/bin/pap watch --stage <stagename>`
 - `./vendor/bin/pap composer:command --stage test --command <my composer command or script>` - Run
   arbitrary Composer commands on a stage
+  - For example your app has registered a custom Composer script `composer clear-cache`,
+    you may run it on the test stage using `./vendor/bin/pap composer:command --stage test --command "clear-cache"`
 - `./vendor/bin/pap ssh:connect --stage test` - Connect to a stage via SSH
+
+…or use these commands for quick debugging:
+
+- `./vendor/bin/pap show stages` - Display all configured stages of the current project
+- `./vendor/bin/pap ssh:exec --stage test --command "<command>"` - Execute a single command on a stage
+  - Examples:
+
+    Check PHP version on live `pap ssh:exec -s live -c "php -v"`
+
+    View last 50 lines of application log `pap ssh:exec -s test -c "tail -n 50 var/log/app.log"`
+
+    Remove error log file on test stage `pap ssh:exec -s test -c "rm var/log/error.log"`
+
+    Check disk space `pap ssh:exec -s live -c "df -h"`
+
+…and some final tricks:
+
 - Some commands and most options have a short alias, run `./vendor/bin/pap --help` to see them
-  
-  For example `pap ssh -s live` is an alias for `pap ssh:connect --stage live`
+  - For example `pap ssh -s live` is an alias for `pap ssh:connect --stage live`
+  - The above-mentioned command `./vendor/bin/pap composer:command --stage test --command "clear-cache"`
+    is aliased as `./vendor/bin/pap composer -s test -c "clear-cache"`
 - When you switch a lot between projects, you may consider installing PAP globally
   → See [Global Installation](../README.md#global-installation) for details
 

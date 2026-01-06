@@ -426,7 +426,7 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
-     * Execute Composer commands on target stage
+     * Execute Composer command in working directory on target stage
      *
      * @param array $options
      * @option $stage Target stage (eg. local or live), leave empty to run in repository working directory
@@ -776,6 +776,37 @@ class RoboFile extends \Robo\Tasks
         $sshConnection = $stageProperties['user'] . '@' . $stageProperties['host'];
         $sshPort = (false === empty($stageProperties['port']))? ' -p' . (int)$stageProperties['port'] : '';
         passthru('ssh -t ' . $sshConnection . $sshPort . ' \'cd ' . $stageProperties['working-directory'] . ' && exec bash -l\'');
+    }
+
+    /**
+     * Execute command in working directory on target stage via SSH
+     *
+     * Runs a single command on the remote stage without opening an interactive shell.
+     * The command is executed in the stage's working directory.
+     *
+     * @param array $options
+     * @option $stage Target stage (eg. local or live)
+     * @option $command Command to execute on remote stage
+     */
+    public function sshExec(array $options = ['stage|s' => 'local', 'command|c' => null])
+    {
+        $stageProperties = $this->getBuildProperty('stages.' . $options['stage']);
+        if (true === empty($stageProperties)) {
+            $this->io()->error('Stage not configured - Skip');
+            return;
+        }
+
+        if (true === empty($options['command'])) {
+            $this->io()->error('No command specified. Use --command "your command here"');
+            return;
+        }
+
+        $sshConnection = $stageProperties['user'] . '@' . $stageProperties['host'];
+        $sshPort = (false === empty($stageProperties['port']))? ' -p' . (int)$stageProperties['port'] : '';
+        $escapedCommand = escapeshellarg($options['command']);
+
+        $this->io()->note('Executing on ' . $options['stage'] . ': ' . $options['command']);
+        passthru('ssh -t ' . $sshConnection . $sshPort . ' \'cd ' . $stageProperties['working-directory'] . ' && ' . $escapedCommand . '\'');
     }
 
     /**

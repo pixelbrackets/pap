@@ -214,14 +214,15 @@ Somme common tasks are:
 ./vendor/bin/pap lint
 ```
 
-**SSH into stage:**
+**SSH:**
 ```bash
-./vendor/bin/pap ssh -s live
+./vendor/bin/pap ssh -s test                         # Open interactive shell on test stage
+./vendor/bin/pap ssh:exec -s test --command "php -v" # Execute single command
 ```
 
-**Open stage URL in browser:**
+**Examine:**
 ```bash
-./vendor/bin/pap view -s live
+./vendor/bin/pap view -s live # Opens the live stage URL in default browser
 ```
 
 ### Commands
@@ -247,6 +248,7 @@ Common standalone tasks:
 ├── watch (Auto-sync on file changes)
 ├── lint:fix (Auto-fix code style issues)
 ├── ssh:connect (SSH into stage)
+├── ssh:exec (Execute command on stage)
 └── view (Open stage URL in browser)
 ```
 
@@ -258,7 +260,7 @@ Common standalone tasks:
 build             Alias to run »buildassets« and »buildapp«
 buildapp          Build PHP structure for desired target stage (move files, fetch dependencies)
 buildassets       Build HTML assets (convert, concat, minify…)
-composer:command  Execute Composer commands on target stage
+composer:command  Execute Composer command in working directory on target stage
 composer:install  Install packages with Composer
 deploy            Run full deployment stack (build, sync, composer command)
 help              Display help for a command
@@ -270,6 +272,7 @@ publish           Run full publication stack (lint, test:unit, deploy, test:smok
 show              Pretty print configuration for debugging
 ssh               Alias to run »ssh:connect«
 ssh:connect       Open SSH connection to target stage
+ssh:exec          Execute command in working directory on target stage via SSH
 sync              Synchronize files to target stage
 test              Alias to run »test:integration«
 test:integration  Run integration tests against target stage
