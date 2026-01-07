@@ -27,11 +27,12 @@ class RoboFile extends \Robo\Tasks
 
         // Calculate absolute path to repository if not set already
         if (true === empty(Robo::config()->get('repository-path'))) {
-            $repositoryPath = exec('git rev-parse --show-toplevel', $output, $resultCode);
+            $repositoryPath = exec('git rev-parse --show-toplevel 2>/dev/null', $output, $resultCode);
             if ($resultCode === 0) {
                 Robo::config()->set('repository-path', $repositoryPath . '/');
             } else {
-                throw new \Robo\Exception\TaskException($this, 'Missing repository path');
+                Robo::output()->writeln('<error>[ERROR] PAP must be run from within a Git repository </error>');
+                exit(1);
             }
         }
     }
