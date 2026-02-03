@@ -10,7 +10,8 @@
         "jean85/pretty-package-versions": "^1.5 || ^2.0",
         "natxet/cssmin": "^3.0",
         "patchwork/jsqueeze": "^2.0",
-        "totten/lurkerlite": "^1.3"
+        "totten/lurkerlite": "^1.3",
+        "cweagans/composer-patches": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^8.0 || ^9.6 || ^10.0 || ^11.0"
@@ -35,5 +36,17 @@
         "build:phar": "php --define phar.readonly=0 build-phar.php",
         "build:binary": "./build-binary.sh",
         "build:executables": "./build-executables.sh"
+    },
+    "config": {
+        "allow-plugins": {
+            "cweagans/composer-patches": true
+        }
+    },
+    "extra": {
+        "patches": {
+            "consolidation/robo": {
+                "Symfony Console 7.4 compatibility": "https://patch-diff.githubusercontent.com/raw/consolidation/robo/pull/1185.diff"
+            }
+        }
     }
 }
