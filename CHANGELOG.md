@@ -1,5 +1,17 @@
 # Changelog
 
+2026-02-04 Dan Kleine <mail@pixelbrackets.de>
+
+  * 9.1.0
+  * FEATURE Add task to execute ssh commands
+  * FEATURE Pass stage to watch task
+  * FEATURE Add aliases for test commands
+  * FEATURE Add command for unit tests
+  * FEATURE Upgrade to PHP 8.4
+  * FEATURE Add build script for executables
+  * FEATURE Better error message outside of git
+  * BUGFIX Add robo patch to hide deprecation messages
+  
 2021-11-19 Dan Untenzu <mail@pixelbrackets.de>
 
   * 9.0.0
