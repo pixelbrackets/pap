@@ -22,7 +22,7 @@ composer install
 
 ```bash
 # Deploy to live stage
-./vendor/bin/pap deploy --stage live
+./vendor/bin/pap deploy live
 
 # Deploy to local stage (default, for development)
 ./vendor/bin/pap deploy

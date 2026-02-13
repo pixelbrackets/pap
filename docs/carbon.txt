@@ -1,7 +1,7 @@
 acme-project$ cd build && ls
 composer.json composer.lock pap.yml README.md vendor/
 
-acme-project/build$ ./vendor/bin/pap deploy --stage live
+acme-project/build$ ./vendor/bin/pap deploy live
 [Assets\Minify]
 [Composer\Install]
 [Remote\Rsync]

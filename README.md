@@ -138,7 +138,7 @@ deploy:
   image: composer:latest
   script:
     - cd build && composer install  # Installs PAP via Composer
-    - vendor/bin/pap deploy --stage live # Deploy app to live stage using the versioned configuration files
+    - vendor/bin/pap deploy live # Deploy app to live stage using the versioned configuration files
 ```
 
 **GitHub Actions example:**
@@ -148,7 +148,7 @@ deploy:
   run: cd build && composer install
 
 - name: Deploy
-  run: cd build && vendor/bin/pap deploy --stage live
+  run: cd build && vendor/bin/pap deploy live
 ```
 
 ## Configuration
@@ -183,14 +183,14 @@ This section gives a brief overview of available commands and common tasks.
 - Run `./vendor/bin/pap` to see all available tasks
 - Add `--help` to each task command to see all available options
 - Add `--simulate` to each task command to run in dry-mode first
-- Most tasks have a stage as target, passed with `--stage <stagename>`
+- Most tasks have a stage as target, passed as argument (eg. `deploy live`) or with `--stage <stagename>`
   - If no stagename is passed, the name "local" is used as default - use this for development on your local machine
 
 Somme common tasks are:
 
 **Deploy to live stage:**
 ```bash
-./vendor/bin/pap deploy --stage live
+./vendor/bin/pap deploy live
 ```
 
 **Deploy to local stage (default, for development):**
@@ -206,7 +206,7 @@ Somme common tasks are:
 **Watch and auto-sync on file changes:**
 ```bash
 ./vendor/bin/pap watch              # Defaults to local stage
-./vendor/bin/pap watch --stage live # Watch and sync to live stage
+./vendor/bin/pap watch live # Watch and sync to live stage
 ```
 
 **Lint files:**

@@ -67,7 +67,7 @@ Before we start configuring PAP, here are some helpful tips for working with PAP
 - Run `./vendor/bin/pap` to see all available tasks
 - Add `--help` to each task command, to see all available options
 - Add `--simulate` to each task command, to run in dry-mode first
-- Most tasks have a stage as target, passed with `--stage <stagename>`
+- Most tasks have a stage as target, passed as argument (eg. `deploy live`) or with `--stage <stagename>`
 - If no stagename is passed, the name "local" is used as default - use this
   for development on your local machine
 - Run `./vendor/bin/pap show` to see a pretty print of your configuration for debugging
@@ -98,12 +98,12 @@ When we run `./vendor/bin/pap show stages` we should get a list
 of all configured stages now.
 
 To test the connection we may use the `ssh:connect` task.
-Run `./vendor/bin/pap ssh:connect --stage test`. If everything is correct
+Run `./vendor/bin/pap ssh:connect test`. If everything is correct
 it will connect to the target stage and switch into the working directory.
 
 Throughout this walkthrough we'll use the `test` stage in our examples now.
 You may replace it with `live` when you want to publish to the live stage
-or omit the `--stage` parameter to use the default local stage.
+or omit the stage to use the default local stage.
 
 ## Synchronization
 
@@ -140,10 +140,10 @@ on the target stage (like `app/`, `public/`, …). In our simple example app the
 structure matches the target stage structure, so source and target paths happen to be the same.
 
 To test the synchronization we run the command
-`./vendor/bin/pap sync --stage test`. It will sync all files to the test stage.
+`./vendor/bin/pap sync test`. It will sync all files to the test stage.
 On the next execution of the command only new and changed files will be synced.
 
-We may run `./vendor/bin/pap view --stage test` to open a browser and point to
+We may run `./vendor/bin/pap view test` to open a browser and point to
 the configured URL of the test stage, which is `https://test.app.example.com/`
 in our case.
 
@@ -195,7 +195,7 @@ Run `./vendor/bin/pap buildapp` to let Composer fetch all dependencies of your a
 
 ## Deployment
 
-The command `./vendor/bin/pap deploy --stage test` combines all the above
+The command `./vendor/bin/pap deploy test` combines all the above
 commands. It will fetch dependencies, build assets, sync all files,
 and run `composer install` on the target stage to install remaining dependencies.
 
@@ -259,7 +259,7 @@ After the deployment we may want to run a so-called smoke test to check that
 the app did not crash. PAP offers a command to do so. It will use the domain
 setup for each stage.
 
-Run `./vendor/bin/pap test:smoke --stage test` to run a quick availability test.
+Run `./vendor/bin/pap test:smoke test` to run a quick availability test.
 
 ### Integration Tests
 
@@ -276,7 +276,7 @@ settings:
       suite: acceptance
 ```
 
-Run `./vendor/bin/pap test:integration --stage test` to run integration tests against the deployed app.
+Run `./vendor/bin/pap test:integration test` to run integration tests against the deployed app.
 
 ## Publication
 
@@ -355,33 +355,33 @@ Useful standalone commands for development:
 
 - `./vendor/bin/pap watch` - Automatically sync files when changes are detected
   - Defaults to the local stage again, but you may also send changes to another stage
-    using `./vendor/bin/pap watch --stage <stagename>`
-- `./vendor/bin/pap composer:command --stage test --command <my composer command or script>` - Run
+    using `./vendor/bin/pap watch <stagename>`
+- `./vendor/bin/pap composer:command test --command <my composer command or script>` - Run
   arbitrary Composer commands on a stage
   - For example your app has registered a custom Composer script `composer clear-cache`,
-    you may run it on the test stage using `./vendor/bin/pap composer:command --stage test --command "clear-cache"`
-- `./vendor/bin/pap ssh:connect --stage test` - Connect to a stage via SSH
+    you may run it on the test stage using `./vendor/bin/pap composer:command test --command "clear-cache"`
+- `./vendor/bin/pap ssh:connect test` - Connect to a stage via SSH
 
 …or use these commands for quick debugging:
 
 - `./vendor/bin/pap show stages` - Display all configured stages of the current project
-- `./vendor/bin/pap ssh:exec --stage test --command "<command>"` - Execute a single command on a stage
+- `./vendor/bin/pap ssh:exec test --command "<command>"` - Execute a single command on a stage
   - Examples:
 
-    Check PHP version on live `pap ssh:exec -s live -c "php -v"`
+    Check PHP version on live `pap ssh:exec live -c "php -v"`
 
-    View last 50 lines of application log `pap ssh:exec -s test -c "tail -n 50 var/log/app.log"`
+    View last 50 lines of application log `pap ssh:exec test -c "tail -n 50 var/log/app.log"`
 
-    Remove error log file on test stage `pap ssh:exec -s test -c "rm var/log/error.log"`
+    Remove error log file on test stage `pap ssh:exec test -c "rm var/log/error.log"`
 
-    Check disk space `pap ssh:exec -s live -c "df -h"`
+    Check disk space `pap ssh:exec live -c "df -h"`
 
 …and some final tricks:
 
 - Some commands and most options have a short alias, run `./vendor/bin/pap --help` to see them
-  - For example `pap ssh -s live` is an alias for `pap ssh:connect --stage live`
-  - The above-mentioned command `./vendor/bin/pap composer:command --stage test --command "clear-cache"`
-    is aliased as `./vendor/bin/pap composer -s test -c "clear-cache"`
+  - For example `pap ssh live` is an alias for `pap ssh:connect live`
+  - The above-mentioned command `./vendor/bin/pap composer:command test --command "clear-cache"`
+    is aliased as `./vendor/bin/pap composer test -c "clear-cache"`
 - When you switch a lot between projects, you may consider installing PAP globally
   → See [Global Installation](../README.md#global-installation) for details
 

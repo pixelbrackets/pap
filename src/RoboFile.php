@@ -139,9 +139,10 @@ class RoboFile extends \Robo\Tasks
      * Alias to run »test:integration«
      *
      */
-    public function test(array $options = ['stage|s' => 'local', 'group|g' => null, 'suite' => null])
+    public function test($stage = '', array $options = ['stage|s' => 'local', 'group|g' => null, 'suite' => null])
     {
-        $this->testIntegration($options);
+        $options['stage'] = $stage ?: $options['stage'];
+        $this->testIntegration('', $options);
     }
 
     /**
@@ -201,9 +202,10 @@ class RoboFile extends \Robo\Tasks
      * Alias to run »test:integration«
      *
      */
-    public function integrationtest(array $options = ['stage|s' => 'local', 'group|g' => null, 'suite' => null])
+    public function integrationtest($stage = '', array $options = ['stage|s' => 'local', 'group|g' => null, 'suite' => null])
     {
-        $this->testIntegration($options);
+        $options['stage'] = $stage ?: $options['stage'];
+        $this->testIntegration('', $options);
     }
 
     /**
@@ -212,14 +214,16 @@ class RoboFile extends \Robo\Tasks
      * Runs integration tests against deployed application (stage-specific),
      * with built-in Codeception support
      *
+     * @param string $stage Target stage (eg. local or live)
      * @param array $options
      * @throws \Robo\Exception\TaskException Reports failed tests
      * @option $stage Target stage (eg. local or live)
      * @option $group Use a specific test group (default: run all tests, with and without groups)
      * @option $suite Use a specific test suite (eg. acceptance)
      */
-    public function testIntegration(array $options = ['stage|s' => 'local', 'group|g' => null, 'suite' => null])
+    public function testIntegration($stage = '', array $options = ['stage|s' => 'local', 'group|g' => null, 'suite' => null])
     {
+        $options['stage'] = $stage ?: $options['stage'];
         // Support 'integration-test' and 'test' config keys for backwards compatibility
         $testSettings = $this->getBuildProperty('settings.integration-test')
             ?? $this->getBuildProperty('settings.test');
@@ -337,27 +341,31 @@ class RoboFile extends \Robo\Tasks
     /**
      * Alias to run »buildassets« and »buildapp«
      *
+     * @param string $stage Target stage (eg. local or live)
      * @param array $options
      * @option $stage Target stage (eg. local or live)
      */
-    public function build(array $options = ['stage|s' => 'local'])
+    public function build($stage = '', array $options = ['stage|s' => 'local'])
     {
+        $options['stage'] = $stage ?: $options['stage'];
         $this->buildassets();
-        $this->buildapp(['stage' => $options['stage']]);
+        $this->buildapp('', $options);
     }
 
     /**
      * Build PHP structure for desired target stage (move files,
      * fetch dependencies)
      *
+     * @param string $stage Target stage (eg. local or live)
      * @param array $options
      * @option $stage Target stage (eg. local or live)
      * @throws \Robo\Exception\TaskException
      */
-    public function buildapp(array $options = ['stage|s' => 'local'])
+    public function buildapp($stage = '', array $options = ['stage|s' => 'local'])
     {
+        $options['stage'] = $stage ?: $options['stage'];
         $this->prepareSyncPaths();
-        $this->composerInstall(['stage' => $options['stage'], 'remote' => false]);
+        $this->composerInstall('', ['stage' => $options['stage'], 'remote' => false]);
     }
 
     /**
@@ -369,21 +377,24 @@ class RoboFile extends \Robo\Tasks
      * @option $command Name of the Command to execute (eg. dump-autoload)
      * @throws \Robo\Exception\TaskException Reports failed commands
      */
-    public function composer(array $options = ['stage|s' => null, 'command|c' => null])
+    public function composer($stage = '', array $options = ['stage|s' => null, 'command|c' => null])
     {
-        $this->composerCommand($options);
+        $options['stage'] = $stage ?: $options['stage'];
+        $this->composerCommand('', $options);
     }
 
     /**
      * Install packages with Composer
      *
+     * @param string $stage Target stage (eg. local or live)
      * @param array $options
      * @option $stage Target stage (eg. local or live)
      * @option $remote Execute composer locally for a stage or remote on a stage (eg. true)
      * @throws \Robo\Exception\TaskException Reports failed installs
      */
-    public function composerInstall(array $options = ['stage|s' => 'local', 'remote' => true])
+    public function composerInstall($stage = '', array $options = ['stage|s' => 'local', 'remote' => true])
     {
+        $options['stage'] = $stage ?: $options['stage'];
         $composerSettings = $this->getBuildProperty('settings.composer');
         if (true === empty($composerSettings)) {
             $this->say('Composer not configured');
@@ -429,13 +440,15 @@ class RoboFile extends \Robo\Tasks
     /**
      * Execute Composer command in working directory on target stage
      *
+     * @param string $stage Target stage (eg. local or live), leave empty to run in repository working directory
      * @param array $options
      * @option $stage Target stage (eg. local or live), leave empty to run in repository working directory
      * @option $command Name of the Command to execute (eg. dump-autoload)
      * @throws \Robo\Exception\TaskException Reports failed commands
      */
-    public function composerCommand(array $options = ['stage|s' => null, 'command|c' => null])
+    public function composerCommand($stage = '', array $options = ['stage|s' => null, 'command|c' => null])
     {
+        $options['stage'] = $stage ?: $options['stage'];
         if (true === empty($this->getBuildProperty('settings.composer'))) {
             $this->say('Composer not configured');
             return;
@@ -595,13 +608,15 @@ class RoboFile extends \Robo\Tasks
      * (checks if last deploy was on the same branch and not too long ago).
      * Use »deploy« task for full rebuild and initial deployment.
      *
+     * @param string $stage Target stage (eg. local or live)
      * @param array $options
      * @option $stage Target stage (eg. local or live)
      * @return void
      * @throws \Robo\Exception\TaskException
      */
-    public function sync(array $options = ['stage|s' => 'local'])
+    public function sync($stage = '', array $options = ['stage|s' => 'local'])
     {
+        $options['stage'] = $stage ?: $options['stage'];
         $stageProperties = $this->getBuildProperty('stages.' . $options['stage']);
         if (true === empty($stageProperties)) {
             $this->io()->error('Stage not configured');
@@ -656,23 +671,25 @@ class RoboFile extends \Robo\Tasks
     /**
      * Run full deployment stack (build, sync, composer command)
      *
+     * @param string $stage Target stage (eg. local or live)
      * @param array $options
      * @option $stage Target stage (eg. local or live)
      * @throws \Robo\Exception\TaskException
      */
-    public function deploy(array $options = ['stage|s' => 'local'])
+    public function deploy($stage = '', array $options = ['stage|s' => 'local'])
     {
+        $options['stage'] = $stage ?: $options['stage'];
         if (false === $this->deployIsAllowed($options['stage'])) {
             $this->io()->error('Deployment is not allowed');
             return;
         }
 
-        $this->build(['stage' => $options['stage']]);
+        $this->build('', ['stage' => $options['stage']]);
 
         $this->syncStage(['stage' => $options['stage']]);
 
         // run composer install on stage as well to update tables etc.
-        $this->composerInstall(['stage' => $options['stage'], 'remote' => true]);
+        $this->composerInstall('', ['stage' => $options['stage'], 'remote' => true]);
 
         $this->setLockFile($options['stage']);
     }
@@ -680,37 +697,42 @@ class RoboFile extends \Robo\Tasks
     /**
      * Run full publication stack (lint, test:unit, deploy, test:smoke, test:integration)
      *
+     * @param string $stage Target stage (eg. local or live)
      * @param array $options
      * @option $stage Target stage (eg. local or live)
      * @throws \Robo\Exception\TaskException
      */
-    public function publish(array $options = ['stage|s' => 'local'])
+    public function publish($stage = '', array $options = ['stage|s' => 'local'])
     {
+        $options['stage'] = $stage ?: $options['stage'];
         $this->lint();
         $this->testUnit();
-        $this->deploy(['stage' => $options['stage']]);
-        $this->testSmoke(['stage' => $options['stage']]);
-        $this->testIntegration(['stage' => $options['stage']]);
+        $this->deploy('', ['stage' => $options['stage']]);
+        $this->testSmoke('', ['stage' => $options['stage']]);
+        $this->testIntegration('', ['stage' => $options['stage']]);
     }
 
     /**
      * Alias to run »test:smoke«
      *
      */
-    public function smoketest(array $options = ['stage|s' => 'local'])
+    public function smoketest($stage = '', array $options = ['stage|s' => 'local'])
     {
-        $this->testSmoke($options);
+        $options['stage'] = $stage ?: $options['stage'];
+        $this->testSmoke('', $options);
     }
 
     /**
      * Run a build verification test against target stage
      *
+     * @param string $stage Target stage (eg. local or live)
      * @param array $options
      * @option $stage Target stage (eg. local or live)
      * @throws \Robo\Exception\TaskException
      */
-    public function testSmoke(array $options = ['stage|s' => 'local'])
+    public function testSmoke($stage = '', array $options = ['stage|s' => 'local'])
     {
+        $options['stage'] = $stage ?: $options['stage'];
         $stageOrigin = $this->getBuildProperty('stages.' . $options['stage'] . '.origin');
         if (true === empty($stageOrigin)) {
             $this->io()->error('Stage origin not configured - Nothing to do');
@@ -731,11 +753,13 @@ class RoboFile extends \Robo\Tasks
      *
      * The URL is set up in »stages.<stagename>.origin«
      *
+     * @param string $stage Target stage (eg. local or live)
      * @param array $options
      * @option $stage Target stage (eg. local or live)
      */
-    public function view(array $options = ['stage|s' => 'local'])
+    public function view($stage = '', array $options = ['stage|s' => 'local'])
     {
+        $options['stage'] = $stage ?: $options['stage'];
         $stageProperties = $this->getBuildProperty('stages.' . $options['stage']);
         if (true === empty($stageProperties)) {
             $this->io()->error('Stage not configured');
@@ -755,19 +779,22 @@ class RoboFile extends \Robo\Tasks
      * Alias to run »ssh:connect«
      *
      */
-    public function ssh(array $options = ['stage|s' => 'local'])
+    public function ssh($stage = '', array $options = ['stage|s' => 'local'])
     {
-        $this->sshConnect($options);
+        $options['stage'] = $stage ?: $options['stage'];
+        $this->sshConnect('', $options);
     }
 
     /**
      * Open SSH connection to target stage
      *
+     * @param string $stage Target stage (eg. local or live)
      * @param array $options
      * @option $stage Target stage (eg. local or live)
      */
-    public function sshConnect(array $options = ['stage|s' => 'local'])
+    public function sshConnect($stage = '', array $options = ['stage|s' => 'local'])
     {
+        $options['stage'] = $stage ?: $options['stage'];
         $stageProperties = $this->getBuildProperty('stages.' . $options['stage']);
         if (true === empty($stageProperties)) {
             $this->io()->error('Stage not configured - Skip');
@@ -785,12 +812,14 @@ class RoboFile extends \Robo\Tasks
      * Runs a single command on the remote stage without opening an interactive shell.
      * The command is executed in the stage's working directory.
      *
+     * @param string $stage Target stage (eg. local or live)
      * @param array $options
      * @option $stage Target stage (eg. local or live)
      * @option $command Command to execute on remote stage
      */
-    public function sshExec(array $options = ['stage|s' => 'local', 'command|c' => null])
+    public function sshExec($stage = '', array $options = ['stage|s' => 'local', 'command|c' => null])
     {
+        $options['stage'] = $stage ?: $options['stage'];
         $stageProperties = $this->getBuildProperty('stages.' . $options['stage']);
         if (true === empty($stageProperties)) {
             $this->io()->error('Stage not configured - Skip');
@@ -837,7 +866,7 @@ class RoboFile extends \Robo\Tasks
                 $stages
             );
 
-            $this->say('Hint: Use command »ssh --stage <stage>« to SSH connect to one of the above stages right away, use »view --stage <stage>« to open the public URL of target stage in the browser.');
+            $this->say('Hint: Use command »ssh <stage>« to SSH connect to one of the above stages right away, use »view <stage>« to open the public URL of target stage in the browser.');
 
             return;
         }
@@ -848,21 +877,21 @@ class RoboFile extends \Robo\Tasks
     /**
      * Sync changed files automatically to target stage
      *
+     * @param string $stage Target stage (eg. local or live)
      * @param array $options
      * @option $stage Target stage (eg. local or live)
      */
-    public function watch(array $options = ['stage|s' => 'local'])
+    public function watch($stage = '', array $options = ['stage|s' => 'local'])
     {
-        $properties = $this->getBuildProperty();
-        $stage = $options['stage'];
+        $options['stage'] = $stage ?: $options['stage'];
 
-        $this->io()->note('Watching for changes and syncing to stage: ' . $stage);
+        $this->io()->note('Watching for changes and syncing to stage: ' . $options['stage']);
 
         $this->taskWatch()
             ->monitor(
                 $this->getBuildProperty('repository-path') . $this->getBuildProperty('settings.watch.working-directory'),
-                function () use ($stage) {
-                    $this->sync(['stage' => $stage]);
+                function () use ($options) {
+                    $this->sync('', $options);
                 }
             )
             ->run();
