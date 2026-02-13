@@ -216,8 +216,8 @@ Somme common tasks are:
 
 **SSH:**
 ```bash
-./vendor/bin/pap ssh -s test                         # Open interactive shell on test stage
-./vendor/bin/pap ssh:exec -s test --command "php -v" # Execute single command
+./vendor/bin/pap ssh test                    # Open interactive shell on test stage
+./vendor/bin/pap ssh:exec test "php -v"      # Execute single command
 ```
 
 **Examine:**

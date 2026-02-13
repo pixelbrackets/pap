@@ -377,10 +377,11 @@ class RoboFile extends \Robo\Tasks
      * @option $command Name of the Command to execute (eg. dump-autoload)
      * @throws \Robo\Exception\TaskException Reports failed commands
      */
-    public function composer($stage = '', array $options = ['stage|s' => null, 'command|c' => null])
+    public function composer($stage = '', $cmd = '', array $options = ['stage|s' => null, 'command|c' => null])
     {
         $options['stage'] = $stage ?: $options['stage'];
-        $this->composerCommand('', $options);
+        $options['command'] = $cmd ?: $options['command'];
+        $this->composerCommand('', '', $options);
     }
 
     /**
@@ -441,14 +442,16 @@ class RoboFile extends \Robo\Tasks
      * Execute Composer command in working directory on target stage
      *
      * @param string $stage Target stage (eg. local or live), leave empty to run in repository working directory
+     * @param string $cmd Name of the Command to execute (eg. dump-autoload)
      * @param array $options
      * @option $stage Target stage (eg. local or live), leave empty to run in repository working directory
      * @option $command Name of the Command to execute (eg. dump-autoload)
      * @throws \Robo\Exception\TaskException Reports failed commands
      */
-    public function composerCommand($stage = '', array $options = ['stage|s' => null, 'command|c' => null])
+    public function composerCommand($stage = '', $cmd = '', array $options = ['stage|s' => null, 'command|c' => null])
     {
         $options['stage'] = $stage ?: $options['stage'];
+        $options['command'] = $cmd ?: $options['command'];
         if (true === empty($this->getBuildProperty('settings.composer'))) {
             $this->say('Composer not configured');
             return;
@@ -813,13 +816,15 @@ class RoboFile extends \Robo\Tasks
      * The command is executed in the stage's working directory.
      *
      * @param string $stage Target stage (eg. local or live)
+     * @param string $cmd Command to execute on remote stage
      * @param array $options
      * @option $stage Target stage (eg. local or live)
      * @option $command Command to execute on remote stage
      */
-    public function sshExec($stage = '', array $options = ['stage|s' => 'local', 'command|c' => null])
+    public function sshExec($stage = '', $cmd = '', array $options = ['stage|s' => 'local', 'command|c' => null])
     {
         $options['stage'] = $stage ?: $options['stage'];
+        $options['command'] = $cmd ?: $options['command'];
         $stageProperties = $this->getBuildProperty('stages.' . $options['stage']);
         if (true === empty($stageProperties)) {
             $this->io()->error('Stage not configured - Skip');
@@ -827,7 +832,7 @@ class RoboFile extends \Robo\Tasks
         }
 
         if (true === empty($options['command'])) {
-            $this->io()->error('No command specified. Use --command "your command here"');
+            $this->io()->error('No command specified. Use ssh:exec <stage> "your command here"');
             return;
         }
 

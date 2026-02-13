@@ -356,16 +356,16 @@ Useful standalone commands for development:
 - `./vendor/bin/pap watch` - Automatically sync files when changes are detected
   - Defaults to the local stage again, but you may also send changes to another stage
     using `./vendor/bin/pap watch <stagename>`
-- `./vendor/bin/pap composer:command test --command <my composer command or script>` - Run
+- `./vendor/bin/pap composer:command test <my composer command or script>` - Run
   arbitrary Composer commands on a stage
   - For example your app has registered a custom Composer script `composer clear-cache`,
-    you may run it on the test stage using `./vendor/bin/pap composer:command test --command "clear-cache"`
+    you may run it on the test stage using `./vendor/bin/pap composer:command test "clear-cache"`
 - `./vendor/bin/pap ssh:connect test` - Connect to a stage via SSH
 
 …or use these commands for quick debugging:
 
 - `./vendor/bin/pap show stages` - Display all configured stages of the current project
-- `./vendor/bin/pap ssh:exec test --command "<command>"` - Execute a single command on a stage
+- `./vendor/bin/pap ssh:exec test "<command>"` - Execute a single command on a stage
   - Examples:
 
     Check PHP version on live `pap ssh:exec live -c "php -v"`
@@ -380,8 +380,8 @@ Useful standalone commands for development:
 
 - Some commands and most options have a short alias, run `./vendor/bin/pap --help` to see them
   - For example `pap ssh live` is an alias for `pap ssh:connect live`
-  - The above-mentioned command `./vendor/bin/pap composer:command test --command "clear-cache"`
-    is aliased as `./vendor/bin/pap composer test -c "clear-cache"`
+  - The above-mentioned command `./vendor/bin/pap composer:command test "clear-cache"`
+    is aliased as `./vendor/bin/pap composer test "clear-cache"`
 - When you switch a lot between projects, you may consider installing PAP globally
   → See [Global Installation](../README.md#global-installation) for details
 
