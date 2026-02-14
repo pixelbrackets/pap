@@ -30,6 +30,13 @@ class PapCommandsTest extends TestCase
     public static function generalCommandsProvider()
     {
         return [
+            // Init command (pap.yml exists in fixtures, --no-interaction aborts)
+            [
+                'Aborted',
+                0,
+                'init', '--no-interaction',
+            ],
+
             // Basic commands
             [
                 'publish',

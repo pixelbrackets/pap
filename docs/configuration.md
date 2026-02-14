@@ -19,20 +19,21 @@ Skip this step when using the skeleton.
    ```
 1. Initialize Composer and install PAP:
    ```bash
-   composer init --name="yourvendor/yourproject-build"
    composer require pixelbrackets/pap
    ```
-1. Create configuration files:
-   - Create `pap.yml` for shared settings (see example below)
-   - Create `pap.local.template.yml` as a template for local overrides
-   - Create a `README.md` explaining how to use PAP in your project
+1. Generate configuration files using the init wizard:
+   ```bash
+   ./vendor/bin/pap init
+   ```
+   This creates a `pap.yml` and `pap.local.template.yml` file interactively.
+   You can also create these files manually (see Configuration reference below).
 1. Add files to `.gitignore`:
    ```
    /build/pap.local.yml
    /build/.pap.lock
    /build/vendor/
    ```
-1. Configure deployment stages
+1. Review and adjust the generated configuration
    - Edit `pap.yml` (see Configuration reference below)
 
 ## Configuration Reference

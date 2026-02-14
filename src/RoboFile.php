@@ -17,6 +17,7 @@ use Robo\Robo;
 use Symfony\Component\Console\Helper\ProgressIndicator;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
+use Symfony\Component\Yaml\Yaml;
 
 class RoboFile extends \Robo\Tasks
 {
@@ -104,6 +105,94 @@ class RoboFile extends \Robo\Tasks
                 throw new \Robo\Exception\TaskException($this, 'Script execution failed');
             }
         }
+    }
+
+    /**
+     * Generate configuration interactively
+     */
+    public function init()
+    {
+        $targetDir = getcwd() . '/';
+
+        if (file_exists($targetDir . 'pap.yml')) {
+            if (false === $this->io()->confirm('pap.yml already exists. Overwrite?', false)) {
+                $this->say('Aborted');
+                return;
+            }
+        }
+
+        $stageName = $this->io()->ask('Stage name', 'live');
+        $user = $this->io()->ask('SSH user', 'deployer');
+        $host = $this->io()->ask('SSH host', 'example.com');
+        $workingDir = $this->io()->ask('Remote working directory', '/var/www/');
+        $origin = $this->io()->ask('Public URL of the stage', 'https://www.example.com/');
+        $syncInput = $this->io()->ask('Paths to sync (comma-separated)', 'src/, web/, config/, composer.json, composer.lock');
+        $enableLint = $this->io()->confirm('Enable linting?', true);
+
+        $syncPaths = [];
+        $directoryPaths = [];
+        foreach (array_map('trim', explode(',', $syncInput)) as $path) {
+            $syncPaths[] = ['source' => $path, 'target' => $path];
+            if (substr($path, -1) === '/') {
+                $directoryPaths[] = $path;
+            }
+        }
+
+        $config = [
+            'settings' => [
+                'sync-paths' => $syncPaths,
+                'composer' => ['working-directory' => './'],
+            ],
+            'stages' => [
+                $stageName => [
+                    'user' => $user,
+                    'host' => $host,
+                    'origin' => $origin,
+                    'working-directory' => $workingDir,
+                    'rsync' => ['options' => '-razc'],
+                ],
+            ],
+        ];
+
+        if ($enableLint && !empty($directoryPaths)) {
+            $config['settings']['lint'] = ['lint-paths' => $directoryPaths];
+        }
+
+        $header = '# PAP configuration file' . PHP_EOL
+            . '# See https://github.com/pixelbrackets/pap for documentation' . PHP_EOL . PHP_EOL;
+        file_put_contents($targetDir . 'pap.yml', $header . Yaml::dump($config, 5, 2));
+
+        $template = '# Copy this file to pap.local.yml and adapt to your local setup' . PHP_EOL
+            . '# pap.local.yml is gitignored and not committed' . PHP_EOL . PHP_EOL;
+        $localConfig = [
+            'stages' => [
+                'local' => [
+                    'user' => '',
+                    'host' => '',
+                    'origin' => 'http://localhost:8000',
+                    'working-directory' => '/var/www/',
+                    'rsync' => ['options' => '-razc'],
+                ],
+            ],
+        ];
+        file_put_contents($targetDir . 'pap.local.template.yml', $template . Yaml::dump($localConfig, 5, 2));
+
+        $gitignorePath = $targetDir . '.gitignore';
+        $gitignore = file_exists($gitignorePath) ? file_get_contents($gitignorePath) : '';
+        if (strpos($gitignore, 'pap.local.yml') === false) {
+            file_put_contents($gitignorePath, 'pap.local.yml' . PHP_EOL, FILE_APPEND);
+        }
+        if (strpos($gitignore, '.pap.lock') === false) {
+            file_put_contents($gitignorePath, '.pap.lock' . PHP_EOL, FILE_APPEND);
+        }
+
+        $this->io()->success('Created pap.yml and pap.local.template.yml');
+        $this->io()->note([
+            'Next steps:',
+            '1. Review and adjust pap.yml',
+            '2. Copy pap.local.template.yml to pap.local.yml for local overrides',
+            '3. Run: pap deploy ' . $stageName,
+        ]);
     }
 
     /**
@@ -927,7 +1016,7 @@ class RoboFile extends \Robo\Tasks
             return;
         }
 
-        $this->io()->write(\Symfony\Component\Yaml\Yaml::dump($configuration, 5, 2));
+        $this->io()->write(Yaml::dump($configuration, 5, 2));
     }
 
     /**

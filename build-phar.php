@@ -23,7 +23,6 @@ $exclude = [
     'build-phar.php',
     'composer.phar',
     'docs',
-    'skeleton',
     'tests',
 ];
 

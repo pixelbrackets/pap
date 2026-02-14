@@ -3,7 +3,7 @@ set -e
 
 # Build all executables (PHAR and binary)
 
-# Install dependencies
+# Install dependencies without dev dependencies
 composer install --no-dev --optimize-autoloader
 
 # Build PHAR
@@ -26,5 +26,8 @@ mv pap.phar build/pap.phar
 cd build
 sha256sum pap-linux-* pap.phar > checksums.txt 2>/dev/null || sha256sum pap.phar > checksums.txt
 cd ..
+
+# Re-Install with dev dependencies for further development
+composer install
 
 echo "Done"

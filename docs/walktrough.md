@@ -60,6 +60,18 @@ composer create-project pixelbrackets/pap-skeleton build
 The skeleton project provides all required files to run PAP. The file
 `build/pap.yml` holds *all* needed settings.
 
+Alternatively, you can install PAP and generate configuration files interactively:
+
+```
+mkdir build && cd build
+composer init --name="yourvendor/yourproject-build"
+composer require pixelbrackets/pap
+./vendor/bin/pap init
+```
+
+The `init` wizard asks for stage name, SSH host, sync paths and more,
+then generates the `pap.yml` and `pap.local.template.yml` for you.
+
 ## Commands
 
 Before we start configuring PAP, here are some helpful tips for working with PAP commands:

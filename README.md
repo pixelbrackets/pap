@@ -87,6 +87,17 @@ cd build
 
 Now edit `pap.yml` to configure your deployment stages.
 
+Alternatively, add PAP to an existing directory and use the built-in init wizard
+to generate configuration files interactively:
+
+```bash
+composer require pixelbrackets/pap
+./vendor/bin/pap init
+```
+
+The wizard asks for stage name, SSH credentials, sync paths and more,
+then generates the according `pap.yml` file.
+
 **📚 New to PAP?** Follow the [step-by-step walkthrough tutorial](./docs/walktrough.md) to
 learn how to set up PAP and publish your PHP webapp or website (~15 minutes).
 
@@ -206,7 +217,7 @@ Somme common tasks are:
 **Watch and auto-sync on file changes:**
 ```bash
 ./vendor/bin/pap watch              # Defaults to local stage
-./vendor/bin/pap watch live # Watch and sync to live stage
+./vendor/bin/pap watch live         # Watch and sync to live stage
 ```
 
 **Lint files:**
@@ -222,7 +233,12 @@ Somme common tasks are:
 
 **Examine:**
 ```bash
-./vendor/bin/pap view -s live # Opens the live stage URL in default browser
+./vendor/bin/pap view live # Opens the live stage URL in default browser
+```
+
+**Verify:**
+```bash
+./vendor/bin/pap show stages # Show all configured stages and their details
 ```
 
 ### Commands
@@ -243,7 +259,8 @@ publish (Complete release workflow)
 └── test:integration (Run integration tests against deployed app)
 
 Common standalone tasks:
-├── show stages (get a list of all configured stages)
+├── init (Generate configuration interactively)
+├── show stages (Get a list of all configured stages)
 ├── sync (Quick file sync without rebuilding)
 ├── watch (Auto-sync on file changes)
 ├── lint:fix (Auto-fix code style issues)
@@ -264,6 +281,7 @@ composer:command  Execute Composer command in working directory on target stage
 composer:install  Install packages with Composer
 deploy            Run full deployment stack (build, sync, composer command)
 help              Display help for a command
+init              Generate configuration interactively
 lint              Alias to run »lint:check«
 lint:check        Lint files (Check only)
 lint:fix          Lint files (Fix)
