@@ -14,6 +14,9 @@ namespace Pixelbrackets\PhpAppPublication;
  */
 use Robo\Contract\VerbosityThresholdInterface;
 use Robo\Robo;
+use Symfony\Component\Console\Helper\ProgressIndicator;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\Process;
 
 class RoboFile extends \Robo\Tasks
 {
@@ -66,6 +69,8 @@ class RoboFile extends \Robo\Tasks
     /**
      * Run a set of command-line executable commands
      *
+     * Shows a spinner at normal verbosity, full output at verbose (-v).
+     *
      * @param array $scripts List of commands
      * @param string $workingDirectory
      * @throws \Robo\Exception\TaskException
@@ -74,15 +79,30 @@ class RoboFile extends \Robo\Tasks
     {
         $workingDirectory = $workingDirectory ?? $this->getBuildProperty('repository-path');
 
-        $commandRunner = $this->taskExecStack()
-            ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE)
-            ->dir($workingDirectory);
         foreach ($scripts as $script) {
-            $commandRunner->exec($script);
-        }
+            $process = Process::fromShellCommandline($script, $workingDirectory);
+            $process->setTimeout(null);
 
-        if ($commandRunner->run()->wasSuccessful() !== true) {
-            throw new \Robo\Exception\TaskException($this, 'Script execution failed');
+            if ($this->output()->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE) {
+                $process->run(function ($type, $buffer) {
+                    $this->output()->write($buffer);
+                });
+            } else {
+                $indicator = new ProgressIndicator($this->output());
+                $indicator->start($script);
+
+                $process->start();
+                while ($process->isRunning()) {
+                    $indicator->advance();
+                    usleep(100000);
+                }
+
+                $indicator->finish($script);
+            }
+
+            if (!$process->isSuccessful()) {
+                throw new \Robo\Exception\TaskException($this, 'Script execution failed');
+            }
         }
     }
 
@@ -439,7 +459,9 @@ class RoboFile extends \Robo\Tasks
         }
 
         if ((bool)$options['remote'] !== true || $options['stage'] === 'local') {
-            if ($composer->run()->wasSuccessful() !== true) {
+            try {
+                $this->runScripts([$composer->getCommand()]);
+            } catch (\Robo\Exception\TaskException $e) {
                 throw new \Robo\Exception\TaskException($this, 'Composer install failed');
             }
         } else {

@@ -7,6 +7,8 @@ settings:
       - src/
     scripts:
       - echo "my lint check script"
+      - sleep 3
+      - echo "lint check script done"
     fix:
       scripts:
         - echo "my lint fix script"
