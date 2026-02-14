@@ -80,8 +80,8 @@ Before we start configuring PAP, here are some helpful tips for working with PAP
 - Add `--help` to each task command, to see all available options
 - Add `--simulate` to each task command, to run in dry-mode first
 - Most tasks have a stage as target, passed as argument (eg. `deploy live`) or with `--stage <stagename>`
-- If no stagename is passed, the name "local" is used as default - use this
-  for development on your local machine
+- If no stagename is passed, the default stage is used — by default this is "local",
+  but you can change it with `default-stage` in `pap.local.yml` (see [Configuration](configuration.md))
 - Run `./vendor/bin/pap show` to see a pretty print of your configuration for debugging
 
 ## Stages
@@ -396,5 +396,8 @@ Useful standalone commands for development:
     is aliased as `./vendor/bin/pap composer test "clear-cache"`
 - When you switch a lot between projects, you may consider installing PAP globally
   → See [Global Installation](../README.md#global-installation) for details
+- Set `default-stage` in `pap.local.yml` to change the default target stage per machine.
+  This way `pap deploy` does the right thing on every machine — a developer deploys
+  to `local`, while CI deploys to `live`, without passing `--stage` every time
 
 You missed something or spotted an error? [Contributions](../CONTRIBUTING.md) are welcome!

@@ -75,7 +75,8 @@ mirrored to GitLab)
 
 ### New Projects
 
-The recommend way to add PAP to a new project is to use the provided skeleton package.
+The recommend way to add PAP to a new project is to use the provided
+[skeleton package](https://github.com/pixelbrackets/pap-skeleton).
 This creates a `build/` directory with all required configuration files and
 the PAP executable in one command.
 

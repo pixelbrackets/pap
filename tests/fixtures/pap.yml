@@ -1,4 +1,5 @@
 settings:
+  default-stage: local
   assets:
     scripts:
       - echo "buildassets script"

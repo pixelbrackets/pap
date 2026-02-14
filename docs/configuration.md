@@ -269,12 +269,16 @@ stages:
 All settings of the distribution file may be overriden with a local file named
 `pap.local.yml`. Add this file to your `.gitignore`.
 
-Best practice is to configure the local stage in this file only.
+Best practice is to configure the local stage and the default stage in this file only.
 
 ```yaml
 ### All settings are inherited from the distributon file,
 ### use the same keys to overwrite any setting
 settings:
+  ### Default stage used when no --stage option is passed
+  ### Falls back to »local« when not configured
+  ### default-stage: (string, name of a configured stage)
+  default-stage: local
   composer:
     phar: /home/acme/composer/bin/composer
 
