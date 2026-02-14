@@ -24,6 +24,8 @@ No coupling with your app code, works as standalone build directory.
 **👥 Team and CI-friendly** - New teammates and CI robots can deploy
 without understanding the internals. Just one command: `pap publish`.
 
+![Screenshot](./docs/screenshot.png)
+
 ## What it does
 
 - Build Assets - Minify & concat CSS, JavaScript, SVG assets
@@ -33,8 +35,6 @@ without understanding the internals. Just one command: `pap publish`.
 - Deploy - Sync files to configurable target stages (local, test, live, …)
 - Verify - Do a smoke test to verify that the app is still working
 - Test - Run integration tests against deployed app
-
-![Screenshot](./docs/screenshot.png)
 
 ## Design Principles
 

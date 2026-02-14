@@ -1,9 +1,9 @@
 <?php
 
-use Pixelbrackets\PhpAppPublication\RoboFile;
 use PHPUnit\Framework\TestCase;
 
 require __DIR__ . '/src/CommandTesterTrait.php';
+require __DIR__ . '/src/TestRoboFile.php';
 
 class PapCommandsTest extends TestCase
 {
@@ -17,7 +17,7 @@ class PapCommandsTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->commandClass = [ \Pixelbrackets\PhpAppPublication\RoboFile::class ];
+        $this->commandClass = [ TestRoboFile::class ];
         $this->setupCommandTester('TestFixtureApp', '1.0.1');
     }
 
@@ -76,7 +76,7 @@ class PapCommandsTest extends TestCase
                 'buildassets',
             ],
             [
-                'Installing Packages',
+                'Installing packages',
                 0,
                 'buildapp',
             ],
@@ -188,8 +188,9 @@ class PapCommandsTest extends TestCase
         // Change working directory to load fixture files
         chdir(__DIR__ . '/../fixtures/');
 
-        // Create Robo arguments and execute a runner instance
+        // Create Robo arguments and execute a runner instance (verbose to capture task output)
         $argv = $this->argv(func_get_args());
+        $argv[] = '-v';
         list($actualOutput, $statusCode) = $this->execute($argv, $this->commandClass);
 
         // Confirm that our output and status code match expectations

@@ -12,6 +12,7 @@ namespace Pixelbrackets\PhpAppPublication;
  *   /some/path/robo.phar --load-from ~/git/repository/build/ sync
  *
  */
+use Robo\Contract\VerbosityThresholdInterface;
 use Robo\Robo;
 
 class RoboFile extends \Robo\Tasks
@@ -74,6 +75,7 @@ class RoboFile extends \Robo\Tasks
         $workingDirectory = $workingDirectory ?? $this->getBuildProperty('repository-path');
 
         $commandRunner = $this->taskExecStack()
+            ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE)
             ->dir($workingDirectory);
         foreach ($scripts as $script) {
             $commandRunner->exec($script);
@@ -102,6 +104,7 @@ class RoboFile extends \Robo\Tasks
         $repositoryPath = $this->getBuildProperty('repository-path');
         $lintSettings = $this->getBuildProperty('settings.lint');
         if (false === empty($lintSettings['scripts'])) {
+            $this->say('Linting files');
             return $this->runScripts($lintSettings['scripts']);
         }
         if (true === empty($lintSettings['lint-paths'])) {
@@ -109,6 +112,7 @@ class RoboFile extends \Robo\Tasks
             return;
         }
 
+        $this->say('Linting files');
         // Run PHPs internal linter
         $finder = new \Symfony\Component\Finder\Finder();
         $finder->files()->name('*.php')->in(preg_filter('/^/', $repositoryPath, $lintSettings['lint-paths']));
@@ -131,6 +135,7 @@ class RoboFile extends \Robo\Tasks
         $repositoryPath = $this->getBuildProperty('repository-path');
         $lintSettings = $this->getBuildProperty('settings.lint');
         if (false === empty($lintSettings['fix']['scripts'])) {
+            $this->say('Fixing lint issues');
             return $this->runScripts($lintSettings['fix']['scripts']);
         }
     }
@@ -167,6 +172,7 @@ class RoboFile extends \Robo\Tasks
         $unittestSettings = $this->getBuildProperty('settings.unit-test');
         if (false === empty($unittestSettings['scripts'])) {
             // use external task runner instead
+            $this->say('Running unit tests');
             return $this->runScripts($unittestSettings['scripts']);
         }
 
@@ -229,6 +235,7 @@ class RoboFile extends \Robo\Tasks
             ?? $this->getBuildProperty('settings.test');
         if (false === empty($testSettings['scripts'])) {
             // use external task runner instead
+            $this->say('Running integration tests');
             return $this->runScripts($testSettings['scripts']);
         }
 
@@ -291,6 +298,7 @@ class RoboFile extends \Robo\Tasks
         $assetSettings = $this->getBuildProperty('settings.assets');
         if (false === empty($assetSettings['scripts'])) {
             // use external task runner instead
+            $this->say('Building assets');
             return $this->runScripts($assetSettings['scripts']);
         }
         if (empty($assetSettings)) {
@@ -298,16 +306,19 @@ class RoboFile extends \Robo\Tasks
             return;
         }
 
+        $this->say('Building assets');
+
         if (false === empty($assetSettings['mirror'])) {
             $this->taskMirrorDir([
                 $repositoryPath . $assetSettings['mirror']['source'] => $repositoryPath . $assetSettings['mirror']['target']
-            ])->run();
+            ])->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE)->run();
         }
 
         if (false === empty($assetSettings['minify-css'])) {
             foreach ($assetSettings['minify-css'] as $minifyPaths) {
                 $this->taskMinify($repositoryPath . $minifyPaths['source'])
                     ->to($repositoryPath . $minifyPaths['target'])
+                    ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE)
                     ->run();
             }
         }
@@ -316,6 +327,7 @@ class RoboFile extends \Robo\Tasks
             foreach ($assetSettings['minify-js'] as $minifyPaths) {
                 $this->taskMinify($repositoryPath . $minifyPaths['source'])
                     ->to($repositoryPath . $minifyPaths['target'])
+                    ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE)
                     ->run();
             }
         }
@@ -325,6 +337,7 @@ class RoboFile extends \Robo\Tasks
                 // prefix path to each source item
                 $this->taskConcat(preg_filter('/^/', $repositoryPath, $concatPaths['sources']))
                     ->to($repositoryPath . $concatPaths['target'])
+                    ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE)
                     ->run();
             }
         }
@@ -333,6 +346,7 @@ class RoboFile extends \Robo\Tasks
             foreach ($assetSettings['minify-img'] as $minifyPaths) {
                 $this->taskImageMinify($repositoryPath . $minifyPaths['source'])
                     ->to($repositoryPath . $minifyPaths['target'])
+                    ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE)
                     ->run();
             }
         }
@@ -416,8 +430,10 @@ class RoboFile extends \Robo\Tasks
             $composerWorkingDirectory = $stageProperties['working-directory'];
         }
 
+        $this->say('Installing packages');
         $composer = $this->taskComposerInstall($composerPath);
         $composer->workingDir($composerWorkingDirectory);
+        $composer->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE);
         if ($options['stage'] !== 'local') {
             $composer->noDev();
         }
@@ -506,6 +522,7 @@ class RoboFile extends \Robo\Tasks
             return;
         }
 
+        $this->say('Preparing sync paths');
         foreach ((array)$syncPaths as $syncPath) {
             $this->taskRsync()
                 ->recursive()
@@ -514,6 +531,7 @@ class RoboFile extends \Robo\Tasks
                 ->fromPath($this->getBuildProperty('repository-path') . $syncPath['source'])
                 ->toPath($this->getBuildProperty('repository-path') . $syncPath['target'])
                 ->delete()
+                ->setVerbosityThreshold(VerbosityThresholdInterface::VERBOSITY_VERBOSE)
                 ->run();
         }
     }
@@ -540,6 +558,7 @@ class RoboFile extends \Robo\Tasks
             return;
         }
 
+        $this->say('Syncing files to stage ' . $options['stage']);
         $syncPort = (false === empty($stageProperties['port']))? '-e "ssh -p ' . (int)$stageProperties['port'] . '"' : '';
         $syncOptions = $stageProperties['rsync']['options']?? '';
         $syncPaths = $this->getBuildProperty('settings.sync-paths');
@@ -726,6 +745,16 @@ class RoboFile extends \Robo\Tasks
     }
 
     /**
+     * Create HTTP client for smoke tests
+     *
+     * @return \GuzzleHttp\Client
+     */
+    protected function createHttpClient()
+    {
+        return new \GuzzleHttp\Client();
+    }
+
+    /**
      * Run a build verification test against target stage
      *
      * @param string $stage Target stage (eg. local or live)
@@ -743,7 +772,7 @@ class RoboFile extends \Robo\Tasks
         }
 
         try {
-            $ping = (new \GuzzleHttp\Client())->get($stageOrigin);
+            $ping = $this->createHttpClient()->get($stageOrigin);
         } catch (\GuzzleHttp\Exception\TransferException $e) {
             throw new \Robo\Exception\TaskException($this, 'Smoke test failed');
         }

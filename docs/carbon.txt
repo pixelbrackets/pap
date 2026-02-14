@@ -1,8 +1,12 @@
-acme-project$ cd build && ls
-composer.json composer.lock pap.yml README.md vendor/
+$ vim pap.yml   # Configure once
 
-acme-project/build$ ./vendor/bin/pap deploy live
-[Assets\Minify]
-[Composer\Install]
-[Remote\Rsync]
+$ ./vendor/bin/pap publish live
+➜  Linting files
+➜  Running unit tests
+➜  Building assets
+➜  Installing packages
+➜  Syncing files to stage live
+➜  Installing packages
+➜  Smoke test successful for https://app.example.com/
+➜  Running integration tests
 Done
