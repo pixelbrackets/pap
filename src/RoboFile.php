@@ -23,23 +23,76 @@ class RoboFile extends \Robo\Tasks
 {
     public function __construct()
     {
+        $configDirectory = $this->findConfigDirectory();
+
         Robo::loadConfiguration([
-            realpath('build.common.properties.yml'), // Keep for backwards compatibility
-            realpath('build.local.properties.yml'), // Keep for backwards compatibility
-            realpath('pap.yml'),
-            realpath('pap.local.yml')
+            realpath($configDirectory . 'build.common.properties.yml'), // Keep for backwards compatibility
+            realpath($configDirectory . 'build.local.properties.yml'), // Keep for backwards compatibility
+            realpath($configDirectory . 'pap.yml'),
+            realpath($configDirectory . 'pap.local.yml')
         ]);
 
         // Calculate absolute path to repository if not set already
         if (true === empty(Robo::config()->get('repository-path'))) {
-            $repositoryPath = exec('git rev-parse --show-toplevel 2>/dev/null', $output, $resultCode);
-            if ($resultCode === 0) {
+            $repositoryPath = $this->getGitRootPath();
+            if ($repositoryPath !== null) {
                 Robo::config()->set('repository-path', $repositoryPath . '/');
             } else {
                 Robo::output()->writeln('<error>[ERROR] PAP must be run from within a Git repository </error>');
                 exit(1);
             }
         }
+    }
+
+    /**
+     * Auto-discover configuration file directory
+     *
+     * Searches for PAP configuration in this order (first match wins):
+     * 1. Current working directory
+     * 2. Git repository root
+     * 3. build/ subdirectory relative to Git root
+     *
+     * @return string Path to the config directory with trailing slash
+     */
+    private function findConfigDirectory()
+    {
+        $cwd = getcwd();
+
+        // Check current working directory
+        if (file_exists($cwd . '/pap.yml')) {
+            return $cwd . '/';
+        }
+
+        // Check Git repository root and its build/ subdirectory
+        $gitRoot = $this->getGitRootPath();
+        if ($gitRoot !== null) {
+            if (file_exists($gitRoot . '/pap.yml')) {
+                Robo::output()->writeln('<info>Using configuration from ' . $gitRoot . '/</info>');
+                return $gitRoot . '/';
+            }
+
+            if (file_exists($gitRoot . '/build/pap.yml')) {
+                Robo::output()->writeln('<info>Using configuration from ' . $gitRoot . '/build/</info>');
+                return $gitRoot . '/build/';
+            }
+        }
+
+        // Fall back to current working directory (e.g. for init command)
+        return $cwd . '/';
+    }
+
+    /**
+     * Get the absolute path to the Git repository root
+     *
+     * @return string|null Path to Git root, or null if not in a Git repository
+     */
+    private function getGitRootPath()
+    {
+        $repositoryPath = exec('git rev-parse --show-toplevel 2>/dev/null', $output, $resultCode);
+        if ($resultCode === 0) {
+            return $repositoryPath;
+        }
+        return null;
     }
 
     /**
