@@ -213,6 +213,7 @@ settings:
 ### Settings for each stage
 ### Add all shared stages here, all stages used on a local machine only
 ### should be configured in »pap.local.yml« instead
+### A stage without a »host« will skip file synchronization
 ### stages: (dictionary)
 stages:
   ### Name of the stage - used in commands as argument
@@ -283,12 +284,9 @@ settings:
     phar: /home/acme/composer/bin/composer
 
 ### Stages have the same structure as in the distribution file as well
+### When no »host« is configured, PAP will skip file synchronization.
+### This is useful when the app is served directly from the Git checkout.
 stages:
   local:
-    user:
-    host:
     origin: http://localhost:8000
-    working-directory: /var/www/
-    rsync:
-      options: -razc
 ```

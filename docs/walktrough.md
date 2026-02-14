@@ -117,6 +117,17 @@ Throughout this walkthrough we'll use the `test` stage in our examples now.
 You may replace it with `live` when you want to publish to the live stage
 or omit the stage to use the default local stage.
 
+If your dev environment serves the app directly from the Git checkout,
+your local stage does not need `user`, `host` or `working-directory` —
+when no `host` is configured, PAP skips file synchronization.
+A minimal local stage looks like this:
+
+```yaml
+stages:
+  local:
+    origin: http://localhost:8000
+```
+
 ## Synchronization
 
 Now we set up the file synchronization. We don't need to sync documentation

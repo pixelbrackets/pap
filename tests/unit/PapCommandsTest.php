@@ -176,10 +176,10 @@ class PapCommandsTest extends TestCase
                 'composer:install', '-s', 'not-existing-stage'
             ],
 
-            // Publish workflow (runs through lint and unit tests, exits with 1 at deploy step)
+            // Publish workflow (runs through lint, unit tests, deploy with sync skipped, smoke and integration tests)
             [
                 'unit test script',
-                1,
+                0,
                 'publish',
             ],
         ];

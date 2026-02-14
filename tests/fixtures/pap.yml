@@ -29,12 +29,7 @@ settings:
 
 stages:
   local:
-    user:
-    host:
     origin: http://localhost:8000
-    working-directory: /var/www/
-    rsync:
-      options: -razc
   faulty:
     user: nada
     host: zilch

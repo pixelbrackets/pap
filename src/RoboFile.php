@@ -226,15 +226,15 @@ class RoboFile extends \Robo\Tasks
         file_put_contents($targetDir . 'pap.yml', $header . Yaml::dump($config, 5, 2));
 
         $template = '# Copy this file to pap.local.yml and adapt to your local setup' . PHP_EOL
-            . '# pap.local.yml is gitignored and not committed' . PHP_EOL . PHP_EOL;
+            . '# pap.local.yml is gitignored and not committed' . PHP_EOL
+            . '# When no host is configured, PAP skips file synchronization on this stage' . PHP_EOL . PHP_EOL;
         $localConfig = [
+            'settings' => [
+                'default-stage' => 'local',
+            ],
             'stages' => [
                 'local' => [
-                    'user' => '',
-                    'host' => '',
                     'origin' => 'http://localhost:8000',
-                    'working-directory' => '/var/www/',
-                    'rsync' => ['options' => '-razc'],
                 ],
             ],
         ];
@@ -593,6 +593,11 @@ class RoboFile extends \Robo\Tasks
             return;
         }
 
+        // Skip remote composer install when no host is configured
+        if (true === (bool)$options['remote'] && true === empty($stageProperties['host'])) {
+            return;
+        }
+
         if ((bool)$options['remote'] !== true) {
             // run composer in locally in repository
             $composerPath = $composerSettings['phar'] ?? 'composer';
@@ -730,6 +735,11 @@ class RoboFile extends \Robo\Tasks
         $stageProperties = $this->getBuildProperty('stages.' . $options['stage']);
         if (true === empty($stageProperties)) {
             $this->io()->error('Stage not configured');
+            return;
+        }
+
+        if (true === empty($stageProperties['host'])) {
+            $this->say('Skipping sync (no host configured for stage "' . $options['stage'] . '")');
             return;
         }
 
