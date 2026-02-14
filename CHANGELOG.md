@@ -2,6 +2,13 @@
 
 2026-02-14 Dan Kleine <mail@pixelbrackets.de>
 
+  * 9.3.0
+  * FEATURE Skip file synchronization for missing hosts
+  * FEATURE Add configurable default stage → `settings.default-stage` in `pap.local.yml`
+  * FEATURE Auto-discover configuration files → Find PAP config in current, root, or build folder
+
+2026-02-14 Dan Kleine <mail@pixelbrackets.de>
+
   * 9.2.0
   * FEATURE Add init command to generate config interactively
   * FEATURE Be less verbose by default and show spinner instead
