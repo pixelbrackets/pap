@@ -1,5 +1,12 @@
 # Changelog
 
+2026-02-14 Dan Kleine <mail@pixelbrackets.de>
+
+  * 9.2.0
+  * FEATURE Add init command to generate config interactively
+  * FEATURE Be less verbose by default and show spinner instead
+  * FEATURE Shorter syntax for all commands → `pap deploy live` instead of `pap deploy -s live`
+
 2026-02-04 Dan Kleine <mail@pixelbrackets.de>
 
   * 9.1.0
