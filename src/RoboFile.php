@@ -3,7 +3,7 @@
 namespace Pixelbrackets\PhpAppPublication;
 
 /**
- * Robo command configuration
+ * Robo command configuration for PAP
  *
  * Usage:
  *   ./robo.phar sync --stage local
@@ -11,6 +11,8 @@ namespace Pixelbrackets\PhpAppPublication;
  * If Robo is installed somewhere else then load the project like this
  *   /some/path/robo.phar --load-from ~/git/repository/build/ sync
  *
+ * Note: This is a default Robo config - PAP itself is bundled with Robo
+ * and auto-discovers its own config within Git repositories.
  */
 use Robo\Contract\VerbosityThresholdInterface;
 use Robo\Robo;
@@ -21,9 +23,12 @@ use Symfony\Component\Yaml\Yaml;
 
 class RoboFile extends \Robo\Tasks
 {
+    private $configDirectory = '';
+
     public function __construct()
     {
-        $configDirectory = $this->findConfigDirectory();
+        $this->configDirectory = $this->findConfigDirectory();
+        $configDirectory = $this->configDirectory;
 
         Robo::loadConfiguration([
             realpath($configDirectory . 'build.common.properties.yml'), // Keep for backwards compatibility
@@ -773,12 +778,12 @@ class RoboFile extends \Robo\Tasks
      */
     protected function syncIsAllowed(string $stage)
     {
-        if (false === is_file('.pap.lock')) {
+        if (false === is_file($this->configDirectory . '.pap.lock')) {
             $this->io()->note('»lock« file not present');
             return true;
         }
 
-        $lock = file_get_contents('.pap.lock');
+        $lock = file_get_contents($this->configDirectory . '.pap.lock');
         if (false === $lock) {
             $this->io()->note('»lock« file not readable');
             return true;
@@ -872,7 +877,7 @@ class RoboFile extends \Robo\Tasks
     protected function setLockFile(string $stage)
     {
         $lock = $stage . ',' . $this->getCurrentGitBranch() . ',' . time();
-        file_put_contents('.pap.lock', $lock);
+        file_put_contents($this->configDirectory . '.pap.lock', $lock);
     }
 
     /**
