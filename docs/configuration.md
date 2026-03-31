@@ -42,6 +42,11 @@ Skip this step when using the skeleton.
 ### General settings of PAP, used for all stages
 ### settings: (dictionary)
 settings:
+  ### Absolute path to the Git repository root. It is auto-detected by PAP,
+  ### override only if auto-detection fails (non-standard Git setups such as
+  ### worktrees, bare repos, or environments without a git binary)
+  ### repository-path: (string, absolute path with trailing slash)
+  #repository-path: /home/acme/git/myproject/
   ### Name of the apps web directory - usually »public« or »web«
   ### web-directory: (string, with trailing slash, relative to working directory)
   web-directory: public/

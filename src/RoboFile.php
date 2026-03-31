@@ -27,17 +27,19 @@ class RoboFile extends \Robo\Tasks
 
     public function __construct()
     {
+        // Calculate path to configuration directory
         $this->configDirectory = $this->findConfigDirectory();
-        $configDirectory = $this->configDirectory;
 
         Robo::loadConfiguration([
-            realpath($configDirectory . 'build.common.properties.yml'), // Keep for backwards compatibility
-            realpath($configDirectory . 'build.local.properties.yml'), // Keep for backwards compatibility
-            realpath($configDirectory . 'pap.yml'),
-            realpath($configDirectory . 'pap.local.yml')
+            realpath($this->configDirectory . 'build.common.properties.yml'), // Keep for backwards compatibility
+            realpath($this->configDirectory . 'build.local.properties.yml'), // Keep for backwards compatibility
+            realpath($this->configDirectory . 'pap.yml'),
+            realpath($this->configDirectory . 'pap.local.yml')
         ]);
 
-        // Calculate absolute path to repository if not set already
+        // Calculate absolute path to Git repository root if not set already
+        // Can be overridden via »repository-path« in pap.yml as a fallback
+        // for non-standard Git setups (worktrees, bare repos, missing git binary)
         if (true === empty(Robo::config()->get('repository-path'))) {
             $repositoryPath = $this->getGitRootPath();
             if ($repositoryPath !== null) {
@@ -61,14 +63,14 @@ class RoboFile extends \Robo\Tasks
      */
     private function findConfigDirectory()
     {
-        $cwd = getcwd();
-
         // Check current working directory
+        $cwd = getcwd();
         if (file_exists($cwd . '/pap.yml')) {
+            Robo::output()->writeln('<info>Using configuration from ' . $cwd . '/</info>');
             return $cwd . '/';
         }
 
-        // Check Git repository root and its build/ subdirectory
+        // Try to auto-detect the Git repository root and its build/ subdirectory
         $gitRoot = $this->getGitRootPath();
         if ($gitRoot !== null) {
             if (file_exists($gitRoot . '/pap.yml')) {
