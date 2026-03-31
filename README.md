@@ -26,6 +26,14 @@ without understanding the internals. Just one command: `pap publish`.
 
 ![Screenshot](./docs/screenshot.png)
 
+## Quickstart
+
+```bash
+composer require pixelbrackets/pap # install via Composer
+./vendor/bin/pap init              # generate pap.yml config file interactively
+./vendor/bin/pap deploy live       # build + sync + verify to live stage
+```
+
 ## What it does
 
 - Build Assets - Minify & concat CSS, JavaScript, SVG assets

@@ -1,17 +1,29 @@
 {
     "name": "pixelbrackets/pap",
-    "type": "library",
     "description": "PHP App Publication",
     "license": "GPL-2.0-or-later",
+    "type": "library",
+    "keywords": [
+        "build",
+        "cli",
+        "deploy",
+        "deployment",
+        "devops",
+        "minimal",
+        "php",
+        "publish",
+        "rsync",
+        "sync"
+    ],
     "require": {
         "php": "^7.2 || ^8.0",
         "consolidation/robo": "^3.0 || ^4.0 || ^5.0",
+        "cweagans/composer-patches": "^1.0",
         "guzzlehttp/guzzle": "^6.0 || ^7.0",
         "jean85/pretty-package-versions": "^1.5 || ^2.0",
         "natxet/cssmin": "^3.0",
         "patchwork/jsqueeze": "^2.0",
-        "totten/lurkerlite": "^1.3",
-        "cweagans/composer-patches": "^1.0"
+        "totten/lurkerlite": "^1.3"
     },
     "require-dev": {
         "phpunit/phpunit": "^8.0 || ^9.6 || ^10.0 || ^11.0"
@@ -29,14 +41,6 @@
     "bin": [
         "bin/pap"
     ],
-    "scripts": {
-        "test": [
-            "phpunit tests/unit/"
-        ],
-        "build:phar": "php --define phar.readonly=0 build-phar.php",
-        "build:binary": "./build-binary.sh",
-        "build:executables": "./build-executables.sh"
-    },
     "config": {
         "allow-plugins": {
             "cweagans/composer-patches": true
@@ -48,5 +52,13 @@
                 "Symfony Console 7.4 compatibility": "https://patch-diff.githubusercontent.com/raw/consolidation/robo/pull/1185.diff"
             }
         }
+    },
+    "scripts": {
+        "build:binary": "./build-binary.sh",
+        "build:executables": "./build-executables.sh",
+        "build:phar": "php --define phar.readonly=0 build-phar.php",
+        "test": [
+            "phpunit tests/unit/"
+        ]
     }
 }
