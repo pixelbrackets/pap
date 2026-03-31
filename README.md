@@ -270,7 +270,7 @@ publish (Complete release workflow)
 Common standalone tasks:
 ├── init (Generate configuration interactively)
 ├── show stages (Get a list of all configured stages)
-├── sync (Quick file sync without rebuilding)
+├── sync (Quick file synchronisation without rebuilding)
 ├── watch (Auto-sync on file changes)
 ├── lint:fix (Auto-fix code style issues)
 ├── ssh:connect (SSH into stage)

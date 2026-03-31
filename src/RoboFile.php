@@ -802,8 +802,9 @@ class RoboFile extends \Robo\Tasks
             return false;
         }
 
-        // last deployment > 3 days
-        if (((int)$lock[2] + 259200) < time()) {
+        // Last deployment > configured timeout (default 3 days)
+        $lockTimeout = (int)($this->getBuildProperty('sync-lock-timeout') ?: 259200);
+        if (((int)$lock[2] + $lockTimeout) < time()) {
             $this->io()->warning('The last deployment is too long ago');
             return false;
         }

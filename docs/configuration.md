@@ -71,6 +71,9 @@ settings:
       target: src/
     - source: public/assets/
       target: public/assets/
+  ### Timeout in seconds after which »sync« requires a full deployment again
+  ### sync-lock-timeout: (integer, optional, default: 259200 = 3 days)
+  sync-lock-timeout: 259200
   ### The »watch« task watches for any file changes in the Git repository
   ### starts a synchronisation to the »local« stage right away
   ### watch: (dictionary)
