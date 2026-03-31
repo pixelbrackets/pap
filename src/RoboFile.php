@@ -594,7 +594,7 @@ class RoboFile extends \Robo\Tasks
         }
         $stageProperties = $this->getBuildProperty('stages.' . $options['stage']);
         if (true === empty($stageProperties)) {
-            $this->io()->error('Stage not configured');
+            $this->io()->error('Stage not configured. Hint: Run »pap show stages« to view available stages');
             return;
         }
 
@@ -668,7 +668,7 @@ class RoboFile extends \Robo\Tasks
 
         $stageProperties = $this->getBuildProperty('stages.' . $options['stage']);
         if (true === empty($stageProperties)) {
-            $this->io()->error('Stage not configured');
+            $this->io()->error('Stage not configured. Hint: Run »pap show stages« to view available stages');
             return;
         }
 
@@ -739,7 +739,7 @@ class RoboFile extends \Robo\Tasks
         $options['stage'] = $options['stage'] ?: $this->getDefaultStage();
         $stageProperties = $this->getBuildProperty('stages.' . $options['stage']);
         if (true === empty($stageProperties)) {
-            $this->io()->error('Stage not configured');
+            $this->io()->error('Stage not configured. Hint: Run »pap show stages« to view available stages');
             return;
         }
 
@@ -831,7 +831,7 @@ class RoboFile extends \Robo\Tasks
         $options['stage'] = $stage ?: $options['stage'] ?: $this->getDefaultStage();
         $stageProperties = $this->getBuildProperty('stages.' . $options['stage']);
         if (true === empty($stageProperties)) {
-            $this->io()->error('Stage not configured');
+            $this->io()->error('Stage not configured. Hint: Run »pap show stages« to view available stages');
             return;
         }
 
@@ -984,7 +984,7 @@ class RoboFile extends \Robo\Tasks
         $options['stage'] = $stage ?: $options['stage'] ?: $this->getDefaultStage();
         $stageProperties = $this->getBuildProperty('stages.' . $options['stage']);
         if (true === empty($stageProperties)) {
-            $this->io()->error('Stage not configured');
+            $this->io()->error('Stage not configured. Hint: Run »pap show stages« to view available stages');
             return;
         }
 
@@ -1019,7 +1019,7 @@ class RoboFile extends \Robo\Tasks
         $options['stage'] = $stage ?: $options['stage'] ?: $this->getDefaultStage();
         $stageProperties = $this->getBuildProperty('stages.' . $options['stage']);
         if (true === empty($stageProperties)) {
-            $this->io()->error('Stage not configured - Skip');
+            $this->io()->error('Stage not configured - Skip. Hint: Run »pap show stages« to view available stages');
             return;
         }
 
@@ -1046,7 +1046,7 @@ class RoboFile extends \Robo\Tasks
         $options['command'] = $cmd ?: $options['command'];
         $stageProperties = $this->getBuildProperty('stages.' . $options['stage']);
         if (true === empty($stageProperties)) {
-            $this->io()->error('Stage not configured - Skip');
+            $this->io()->error('Stage not configured - Skip. Hint: Run »pap show stages« to view available stages');
             return;
         }
 
