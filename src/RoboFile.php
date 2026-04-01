@@ -1093,6 +1093,8 @@ class RoboFile extends \Robo\Tasks
                 $stages
             );
 
+            $this->say('Default stage: ' . $this->getDefaultStage());
+            $this->io()->newLine();
             $this->say('Hint: Use command »ssh <stage>« to SSH connect to one of the above stages right away, use »view <stage>« to open the public URL of target stage in the browser.');
 
             return;
