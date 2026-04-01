@@ -196,7 +196,7 @@ class RoboFile extends \Robo\Tasks
         $host = $this->io()->ask('SSH host', 'example.com');
         $workingDir = $this->io()->ask('Remote working directory', '/var/www/');
         $origin = $this->io()->ask('Public URL of the stage', 'https://www.example.com/');
-        $syncInput = $this->io()->ask('Paths to sync (comma-separated)', 'src/, web/, config/, composer.json, composer.lock');
+        $syncInput = $this->io()->ask('Paths to sync (comma-separated)', 'src/, config/, public/, vendor/, composer.json, composer.lock');
         $enableLint = $this->io()->confirm('Enable linting?', true);
 
         $syncPaths = [];
