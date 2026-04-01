@@ -121,12 +121,12 @@ class PapCommandsTest extends TestCase
             ],
             [
                 'Stage origin not configured',
-                0,
+                1,
                 'test:smoke', '-s', 'not-existing-stage'
             ],
             [
                 'Stage origin not configured',
-                0,
+                1,
                 'test:smoke', '-s', 'faulty'
             ],
             [
@@ -143,7 +143,7 @@ class PapCommandsTest extends TestCase
             // Deploy commands (test error messages without actual SSH)
             [
                 'Stage not configured',
-                0,
+                1,
                 'sync', '-s', 'not-existing-stage'
             ],
             [
@@ -155,19 +155,19 @@ class PapCommandsTest extends TestCase
             // SSH commands (test error messages)
             [
                 'Stage not configured',
-                0,
+                1,
                 'ssh:connect', '-s', 'not-existing-stage'
             ],
             [
                 'No command specified',
-                0,
+                1,
                 'ssh:exec', '-s', 'live'
             ],
 
             // Composer commands (test error messages)
             [
                 'Stage not configured',
-                0,
+                1,
                 'composer:command', '-s', 'not-existing-stage'
             ],
             [

@@ -14,6 +14,8 @@ namespace Pixelbrackets\PhpAppPublication;
  * Note: This is a default Robo config - PAP itself is bundled with Robo
  * and auto-discovers its own config within Git repositories.
  */
+
+use Consolidation\AnnotatedCommand\CommandError;
 use Robo\Contract\VerbosityThresholdInterface;
 use Robo\Robo;
 use Symfony\Component\Console\Helper\ProgressIndicator;
@@ -287,7 +289,7 @@ class RoboFile extends \Robo\Tasks
             return $this->runScripts($lintSettings['scripts']);
         }
         if (true === empty($lintSettings['lint-paths'])) {
-            $this->say('Lint not configured');
+            $this->say('Lint not configured - Nothing to do');
             return;
         }
 
@@ -358,7 +360,7 @@ class RoboFile extends \Robo\Tasks
         // Run PHPUnit
         $phpunitWorkingDirectory = $this->getBuildProperty('settings.unit-test.phpunit.working-directory');
         if (true === empty($phpunitWorkingDirectory)) {
-            $this->say('Unit test framework not configured');
+            $this->say('Unit test framework not configured - Nothing to do');
             return;
         }
         $repositoryPath = $this->getBuildProperty('repository-path');
@@ -401,6 +403,7 @@ class RoboFile extends \Robo\Tasks
      *
      * @param string $stage Target stage (eg. local or live)
      * @param array $options
+     * @return CommandError|void
      * @throws \Robo\Exception\TaskException Reports failed tests
      * @option $stage Target stage (eg. local or live)
      * @option $group Use a specific test group (default: run all tests, with and without groups)
@@ -423,7 +426,7 @@ class RoboFile extends \Robo\Tasks
         $codeceptionDirectory = $this->getBuildProperty('settings.integration-test.codeception.working-directory')
             ?? $this->getBuildProperty('settings.test.codeception.working-directory');
         if (true === empty($codeceptionDirectory)) {
-            $this->say('Test framework not configured');
+            $this->say('Test framework not configured - Nothing to do');
             return;
         }
         $repositoryPath = $this->getBuildProperty('repository-path');
@@ -432,7 +435,8 @@ class RoboFile extends \Robo\Tasks
         $stageOrigin = $this->getBuildProperty('stages.' . $options['stage'] . '.origin');
         if (true === empty($stageOrigin)) {
             $this->io()->error('Stage origin not configured');
-            return;
+            $this->say('Hint: Set »stages.' . $options['stage'] . '.origin« in pap.yml');
+            return new CommandError();
         }
 
         // Install Codeception in working directory
@@ -591,12 +595,13 @@ class RoboFile extends \Robo\Tasks
         $options['stage'] = $stage ?: $options['stage'] ?: $this->getDefaultStage();
         $composerSettings = $this->getBuildProperty('settings.composer');
         if (true === empty($composerSettings)) {
-            $this->say('Composer not configured');
+            $this->say('Composer not configured - Nothing to do');
             return;
         }
         $stageProperties = $this->getBuildProperty('stages.' . $options['stage']);
         if (true === empty($stageProperties)) {
-            $this->io()->error('Stage not configured. Hint: Run »pap show stages« to view available stages');
+            $this->io()->warning('Stage not configured - Skip');
+            $this->say('Hint: Run »pap show stages« to view available stages');
             return;
         }
 
@@ -648,6 +653,7 @@ class RoboFile extends \Robo\Tasks
      * @param array $options
      * @option $stage Target stage (eg. local or live), leave empty to run in repository working directory
      * @option $command Name of the Command to execute (eg. dump-autoload)
+     * @return CommandError|void
      * @throws \Robo\Exception\TaskException Reports failed commands
      */
     public function composerCommand($stage = '', $cmd = '', array $options = ['stage|s' => null, 'command|c' => null])
@@ -655,7 +661,7 @@ class RoboFile extends \Robo\Tasks
         $options['stage'] = $stage ?: $options['stage'] ?: $this->getDefaultStage();
         $options['command'] = $cmd ?: $options['command'];
         if (true === empty($this->getBuildProperty('settings.composer'))) {
-            $this->say('Composer not configured');
+            $this->say('Composer not configured - Nothing to do');
             return;
         }
 
@@ -670,8 +676,9 @@ class RoboFile extends \Robo\Tasks
 
         $stageProperties = $this->getBuildProperty('stages.' . $options['stage']);
         if (true === empty($stageProperties)) {
-            $this->io()->error('Stage not configured. Hint: Run »pap show stages« to view available stages');
-            return;
+            $this->io()->error('Stage not configured');
+            $this->say('Hint: Run »pap show stages« to view available stages');
+            return new CommandError();
         }
 
         $composerPath = $this->getBuildProperty('stages.' . $options['stage'] . '.composer.phar') ?? 'composer';
@@ -741,12 +748,13 @@ class RoboFile extends \Robo\Tasks
         $options['stage'] = $options['stage'] ?: $this->getDefaultStage();
         $stageProperties = $this->getBuildProperty('stages.' . $options['stage']);
         if (true === empty($stageProperties)) {
-            $this->io()->error('Stage not configured. Hint: Run »pap show stages« to view available stages');
+            $this->io()->warning('Stage not configured - Skip');
+            $this->say('Hint: Run »pap show stages« to view available stages');
             return;
         }
 
         if (true === empty($stageProperties['host'])) {
-            $this->say('Skipping sync (no host configured for stage "' . $options['stage'] . '")');
+            $this->say('Skipping synchronisation - No host configured for stage »' . $options['stage'] . '«');
             return;
         }
 
@@ -826,7 +834,7 @@ class RoboFile extends \Robo\Tasks
      * @param string $stage Target stage (eg. local or live)
      * @param array $options
      * @option $stage Target stage (eg. local or live)
-     * @return void
+     * @return CommandError|void
      * @throws \Robo\Exception\TaskException
      */
     public function sync($stage = '', array $options = ['stage|s' => null])
@@ -834,13 +842,14 @@ class RoboFile extends \Robo\Tasks
         $options['stage'] = $stage ?: $options['stage'] ?: $this->getDefaultStage();
         $stageProperties = $this->getBuildProperty('stages.' . $options['stage']);
         if (true === empty($stageProperties)) {
-            $this->io()->error('Stage not configured. Hint: Run »pap show stages« to view available stages');
-            return;
+            $this->io()->error('Stage not configured');
+            $this->say('Hint: Run »pap show stages« to view available stages');
+            return new CommandError();
         }
 
         if (false === $this->syncIsAllowed($options['stage'])) {
             $this->io()->error('Sync currently not allowed, please run deploy task instead');
-            return;
+            return new CommandError();
         }
 
         $this->prepareSyncPaths();
@@ -889,6 +898,7 @@ class RoboFile extends \Robo\Tasks
      * @param string $stage Target stage (eg. local or live)
      * @param array $options
      * @option $stage Target stage (eg. local or live)
+     * @return CommandError|void
      * @throws \Robo\Exception\TaskException
      */
     public function deploy($stage = '', array $options = ['stage|s' => null])
@@ -896,7 +906,7 @@ class RoboFile extends \Robo\Tasks
         $options['stage'] = $stage ?: $options['stage'] ?: $this->getDefaultStage();
         if (false === $this->deployIsAllowed($options['stage'])) {
             $this->io()->error('Deployment is not allowed');
-            return;
+            return new CommandError();
         }
 
         $this->build('', ['stage' => $options['stage']]);
@@ -953,6 +963,7 @@ class RoboFile extends \Robo\Tasks
      * @param string $stage Target stage (eg. local or live)
      * @param array $options
      * @option $stage Target stage (eg. local or live)
+     * @return CommandError|void
      * @throws \Robo\Exception\TaskException
      */
     public function testSmoke($stage = '', array $options = ['stage|s' => null])
@@ -960,8 +971,9 @@ class RoboFile extends \Robo\Tasks
         $options['stage'] = $stage ?: $options['stage'] ?: $this->getDefaultStage();
         $stageOrigin = $this->getBuildProperty('stages.' . $options['stage'] . '.origin');
         if (true === empty($stageOrigin)) {
-            $this->io()->error('Stage origin not configured - Nothing to do');
-            return;
+            $this->io()->error('Stage origin not configured');
+            $this->say('Hint: Set »stages.' . $options['stage'] . '.origin« in pap.yml');
+            return new CommandError();
         }
 
         try {
@@ -981,20 +993,22 @@ class RoboFile extends \Robo\Tasks
      * @param string $stage Target stage (eg. local or live)
      * @param array $options
      * @option $stage Target stage (eg. local or live)
+     * @return CommandError|void
      */
     public function view($stage = '', array $options = ['stage|s' => null])
     {
         $options['stage'] = $stage ?: $options['stage'] ?: $this->getDefaultStage();
         $stageProperties = $this->getBuildProperty('stages.' . $options['stage']);
         if (true === empty($stageProperties)) {
-            $this->io()->error('Stage not configured. Hint: Run »pap show stages« to view available stages');
-            return;
+            $this->io()->error('Stage not configured');
+            $this->say('Hint: Run »pap show stages« to view available stages');
+            return new CommandError();
         }
 
         $url = $stageProperties['origin'] ?? '';
         if (true === empty($url)) {
-            $this->say('No origin configured');
-            return;
+            $this->io()->error('No origin configured');
+            return new CommandError();
         }
 
         $this->taskOpenBrowser($url)->run();
@@ -1007,7 +1021,7 @@ class RoboFile extends \Robo\Tasks
     public function ssh($stage = '', array $options = ['stage|s' => null])
     {
         $options['stage'] = $stage ?: $options['stage'] ?: $this->getDefaultStage();
-        $this->sshConnect('', $options);
+        return $this->sshConnect('', $options);
     }
 
     /**
@@ -1015,6 +1029,7 @@ class RoboFile extends \Robo\Tasks
      *
      * @param string $stage Target stage (eg. local or live)
      * @param array $options
+     * @return CommandError|void
      * @option $stage Target stage (eg. local or live)
      */
     public function sshConnect($stage = '', array $options = ['stage|s' => null])
@@ -1022,8 +1037,9 @@ class RoboFile extends \Robo\Tasks
         $options['stage'] = $stage ?: $options['stage'] ?: $this->getDefaultStage();
         $stageProperties = $this->getBuildProperty('stages.' . $options['stage']);
         if (true === empty($stageProperties)) {
-            $this->io()->error('Stage not configured - Skip. Hint: Run »pap show stages« to view available stages');
-            return;
+            $this->io()->error('Stage not configured');
+            $this->say('Hint: Run »pap show stages« to view available stages');
+            return new CommandError();
         }
 
         $sshConnection = $stageProperties['user'] . '@' . $stageProperties['host'];
@@ -1042,6 +1058,7 @@ class RoboFile extends \Robo\Tasks
      * @param array $options
      * @option $stage Target stage (eg. local or live)
      * @option $command Command to execute on remote stage
+     * @return CommandError|void
      */
     public function sshExec($stage = '', $cmd = '', array $options = ['stage|s' => null, 'command|c' => null])
     {
@@ -1049,13 +1066,14 @@ class RoboFile extends \Robo\Tasks
         $options['command'] = $cmd ?: $options['command'];
         $stageProperties = $this->getBuildProperty('stages.' . $options['stage']);
         if (true === empty($stageProperties)) {
-            $this->io()->error('Stage not configured - Skip. Hint: Run »pap show stages« to view available stages');
-            return;
+            $this->io()->error('Stage not configured');
+            $this->say('Hint: Run »pap show stages« to view available stages');
+            return new CommandError();
         }
 
         if (true === empty($options['command'])) {
             $this->io()->error('No command specified. Use ssh:exec <stage> "your command here"');
-            return;
+            return new CommandError();
         }
 
         $sshConnection = $stageProperties['user'] . '@' . $stageProperties['host'];
