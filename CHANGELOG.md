@@ -1,5 +1,15 @@
 # Changelog
 
+2026-06-08 Dan Kleine <mail@pixelbrackets.de>
+
+  * 9.4.0
+  * FEATURE Return non-zero exit code on error in all commands
+  * FEATURE Show configured default stage in stage list
+  * FEATURE Change suggested default sync paths
+  * FEATURE Make sync timeout configurable
+  * FEATURE Add command suggestion on missing stage
+  * BUGFIX Write lock file next to configuration file
+
 2026-02-14 Dan Kleine <mail@pixelbrackets.de>
 
   * 9.3.0
