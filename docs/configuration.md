@@ -5,295 +5,298 @@ All general settings and shared stages are configured in the distribution file `
 PAP always uses the root directory of the Git repository for all configurable paths.
 This allows storing the configuration file in any subdirectory.
 
-## Manual Setup
+## Minimal Example
 
-**Note:** Most users should use the Skeleton package running
-`composer create-project pixelbrackets/pap-skeleton build` instead.
-This section is for users who want to set up PAP manually without the skeleton package.
-Skip this step when using the skeleton.
-
-1. Create a build directory:
-   ```bash
-   mkdir build
-   cd build
-   ```
-1. Initialize Composer and install PAP:
-   ```bash
-   composer require pixelbrackets/pap
-   ```
-1. Generate configuration files using the init wizard:
-   ```bash
-   ./vendor/bin/pap init
-   ```
-   This creates a `pap.yml` and `pap.local.template.yml` file interactively.
-   You can also create these files manually (see Configuration reference below).
-1. Add files to `.gitignore`:
-   ```
-   /build/pap.local.yml
-   /build/.pap.lock
-   /build/vendor/
-   ```
-1. Review and adjust the generated configuration
-   - Edit `pap.yml` (see Configuration reference below)
-
-## Configuration Reference
+This is roughly what `pap init` generates. It deploys the `src/` directory
+to one stage and installs Composer packages there.
 
 ```yaml
-### General settings of PAP, used for all stages
-### settings: (dictionary)
 settings:
-  ### Absolute path to the Git repository root. It is auto-detected by PAP,
-  ### override only if auto-detection fails (non-standard Git setups such as
-  ### worktrees, bare repos, or environments without a git binary)
-  ### repository-path: (string, absolute path with trailing slash)
-  #repository-path: /home/acme/git/myproject/
-  ### Name of the apps web directory - usually »public« or »web«
-  ### web-directory: (string, with trailing slash, relative to working directory)
-  web-directory: public/
-  ### Prepare the folder structure in the Git repository before the 
-  ### synchronisation to the target stage starts. For example to move newly
-  ### build assets to a view folder or rearange packages in a monorepo.
-  ### Uses Rsync, so be aware of trailing slashes
-  ### prepare-sync-paths: (list)
-  prepare-sync-paths:
-    ### source: (string, with trailing slash, relative to git root directory)
-    ### target: (string, with trailing slash, relative to git root directory)
-    ### exclude: (list, optional)
-    ###   - (string, with trailing slash, relative to »target« directory)
-    - source: theme/build/assets/
-      target: public/assets/
-      exclude:
-        - sandbox.html
-  ### Synchronize files from Git repository to target stage
-  ### Uses Rsync, so be aware of trailing slashes
-  ### sync-paths: (list)
   sync-paths:
-    ### source: (string, with trailing slash, relative to git root directory)
-    ### target: (string, with trailing slash, relative to stage working directory)
-    ### exclude: (list, optional)
-    ###   - (string, with trailing slash, relative to »target« directory)
     - source: src/
       target: src/
-    - source: public/assets/
-      target: public/assets/
-  ### Timeout in seconds after which »sync« requires a full deployment again
-  ### sync-lock-timeout: (integer, optional, default: 259200 = 3 days)
-  sync-lock-timeout: 259200
-  ### The »watch« task watches for any file changes in the Git repository
-  ### starts a synchronisation to the »local« stage right away
-  ### watch: (dictionary)
-  watch:
-    ### Git directory to watch for files changes 
-    ### Dont use target directories from the prepare-sync option,
-    ### since this would cause an infinite loop
-    ### working-directory: (string, with trailing slash, relative to git root directory)
-    working-directory: src/
-  ### The »view« task opens the public URL of a target stage in a browser
-  ### The URL is set up in »stages.<stagename>.origin«
-  ### view: (dictionary)
-  #view:
-  ### Build assets, either with existings task options or custom bash commands
-  ### assets: (dictionary)
-  assets:
-    ### Copy assets to a directory, which should be in the .gitignore file
-    ### mirror: (dictionary)
-    mirror:
-      ### source: (string, with trailing slash, relative to git root directory)
-      ### target: (string, with trailing slash, relative to git root directory)
-      source: theme/assets/
-      target: theme/build/assets/
-    ### Minify stylesheets
-    ### minify-css: (list)
-    minify-css:
-      ### source: (string, with filename, relative to git root directory)
-      ### target: (string, with filename, relative to git root directory)
-      - source: theme/build/assets/css/stylesheet.css
-        target: theme/build/assets/css/stylesheet.css
-    ### Minify JavaScripts
-    ### minify-js: (list)
-    minify-js:
-      ### source: (string, with filename, relative to git root directory)
-      ### target: (string, with filename, relative to git root directory)
-      - source: theme/build/assets/js/bootstrap.js
-        target: theme/build/assets/js/bootstrap.js
-    ### Concat files
-    ### concat: (list)
-    concat:
-      ### sources: (list)
-      ###   - (string, with filename, relative to git root directory)
-      ### target: (string, with filename, relative to git root directory)
-      - sources:
-          - theme/build/assets/css/features.css
-          - theme/build/assets/css/fonts.css
-        target: theme/build/assets/css/zen-garden.css
-    ### Minify images - allows asterisks
-    ### minify-img: (list)
-    minify-img:
-      ### source: (string, with trailing slash, relative to git root directory)
-      ### target: (string, with trailing slash, relative to git root directory)
-      - source: theme/build/assets/img/*
-        target: theme/build/assets/img/
-    ### Run any CLI commands instead to build assets, for example starting
-    ### npm, yarn, grunt, gulp etc
-    ### When this option is configured, then all other options of this task 
-    ### (mirror, concat, minify*) are ignored
-    ### scripts: (list)
-    ###   - (string, bash command, relative to git root directory)
-    #scripts:
-    #  - npm ci
-  ### Composer is used to fetch packages during the build process
-  ### composer: (dictionary)
   composer:
-    ### The working directory is usually the root directory, but in a monorepo
-    ### is might be located somewhere else
-    ### working-directory: (string, with trailing slash, relative to git root directory)
     working-directory: ./
-    ### Path to composer if not installed as globaly
-    ### phar: (string, with filename, absolute path on local machine)
-    phar: /usr/local/bin/composer
-  ### Validate app files
-  ### lint: (dictionary)
-  lint:
-    ### Ruleset for PHP-Codestyle Fixer
-    ### php-cs-rules: (string)
-    php-cs-rules: '@PSR2'
-    ### working directories for the lint scripts
-    ### lint-paths: (list)
-    ###   - (string, with trailing slash, relative to git root directory)
-    lint-paths:
-      - src/
-    ### Run any CLI commands instead to lint files
-    ### When this option is configured, then all other options of this task 
-    ### (php-cs-fixer etc) are ignored
-    ### scripts: (list)
-    ###   - (string, bash command, relative to git root directory)
-    #scripts:
-    #  - composer lint
-    ### Action to fix files automatically
-    ### fix: (dictionary)
-    fix:
-      ### Any CLI commands to fix files
-      ### scripts: (list)
-      ###   - (string, bash command, relative to git root directory)
-      #scripts:
-      #  - ./vendor/bin/php-cs-fixer fix src
-  ### Run unit tests against local code
-  ### unit-test: (dictionary)
-  unit-test:
-    ### PHPUnit testing framework
-    ### phpunit: (dictionary)
-    phpunit:
-      ### Working directory of the test framework
-      ### working-directory: (string, with trailing slash, relative to git root directory)
-      working-directory: ./
-      ### PHPUnit configuration file (optional)
-      ### config: (string, with filename, relative to working directory)
-      config: phpunit.xml
-    ### Run any CLI commands instead to run unit tests
-    ### When this option is configured, then all other options of this task
-    ### (phpunit etc) are ignored
-    ### scripts: (list)
-    ###   - (string, bash command, relative to git root directory)
-    #scripts:
-    #  - ./vendor/bin/phpunit
-    #  - ./vendor/bin/pest
-  ### Run integration tests against deployed app
-  ### integration-test: (dictionary)
-  ### Backwards compatible: 'test' config key still works
-  integration-test:
-    ### Codeception testing framework
-    ### codeception: (dictionary)
-    codeception:
-      ### Working directory of the test framework, usually »test«
-      ### working-directory: (string, with trailing slash, relative to git root directory)
-      working-directory: test/
-      ### Test suite to start
-      ### suite: (string, one of unit, acceptance or functional)
-      suite: acceptance
-    ### Run any CLI commands instead to test files
-    ### When this option is configured, then all other options of this task 
-    ### (codeception etc) are ignored
-    ### scripts: (list)
-    ###   - (string, bash command, relative to git root directory)
-    #scripts:
-    #  - composer test
 
-### Settings for each stage
-### Add all shared stages here, all stages used on a local machine only
-### should be configured in »pap.local.yml« instead
-### A stage without a »host« will skip file synchronization
-### stages: (dictionary)
 stages:
-  ### Name of the stage - used in commands as argument
-  ### <stagename>: (dictionary)
-  test:
-    ### Username to start the SSH connection with
-    ### The current machines needs to be authorized to to use this username
-    ### user: (string)
-    user: johndoe
-    ### Port to start the SSH connection with (22 if empty)
-    ### port: (integer, SSH port)
-    #port: 22
-    ### The server host to connect to
-    ### host: (string, domain or ip address)
-    host: example.com
-    ### URL of the app installed on the stage
-    ### origin: (string, HTTP/HTTPS)
-    origin: https://test.example.com
-    ### Working directory on the host
-    ### host: (string, with trailing slash, absolute path on host machine)
-    working-directory: /var/dev/
-    ### Rsync options
-    ### rsync: (dictionary)
-    rsync:
-      ### Rsync command arguments
-      options: -razc
-    ### Composer options
-    ### composer: (dictionary)
-    composer:
-      ### Path to composer if not installed as globaly
-      ### phar: (string, with filename, absolute path on host machine)
-      phar: ${stages.test.working-directory}composer.phar
-    ### Stop the »deploy« task if the currently checked out branch of the Git
-    ### repository is not listed in this option
-    ### Avoids deploying unwanted branches on a target stage
-    ### lock-branches: (list)
-    ###   - (string, local branch names)
-    lock-branches:
-      - test
-    ### Test options
-    ### test: (dictionary)
-    test:
-      ### Group to exclude in Codeception tests against this stage
-      deny-groups:
-        - dataflow
-  ### Add as many more stages as you like…
   live:
     user: johndoe
     host: example.com
     origin: https://www.example.com
     working-directory: /var/www/
+    rsync:
+      options: -razc
 ```
 
-All settings of the distribution file may be overriden with a local file named
-`pap.local.yml`. Add this file to your `.gitignore`.
+Start with this and add only the sections you need from the reference below.
+Every section is optional - a task without configuration does nothing.
+
+## Path Conventions
+
+- Local paths are relative to the Git root directory, unless stated otherwise
+- Directory paths end with a trailing slash (`src/`, not `src`)
+- Sync tasks use rsync, so the trailing slash matters: `src/` copies the
+  contents of the directory, `src` copies the directory itself
+- Sync tasks delete files in the target which do not exist in the source
+
+## Configuration Reference
+
+### `settings`
+
+General settings, used for all stages.
+
+| Key                 | Type    | Default            | Description                                                                                                                       |
+|---------------------|---------|--------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| `repository-path`   | string  | auto-detected      | Absolute path to the Git root directory. Override only if auto-detection fails (worktrees, bare repos, no git binary available). |
+| `default-stage`     | string  | `local`            | Stage used when a command is called without a stage. Usually set in `pap.local.yml`.                                              |
+| `sync-lock-timeout` | integer | `259200` (3 days)  | Seconds after the last deployment until `sync` requires a full `deploy` again.                                                    |
+
+### `settings.sync-paths`
+
+Directories to synchronize from the Git repository to the stage
+(used by `deploy` and `sync`). List of entries:
+
+| Key       | Type            | Default    | Description                                                  |
+|-----------|-----------------|------------|--------------------------------------------------------------|
+| `source`  | string          | (required) | Directory, relative to the Git root directory                |
+| `target`  | string          | (required) | Directory, relative to the `working-directory` of the stage  |
+| `exclude` | list of strings | -          | Rsync exclude patterns, eg. `cache/` or `*.log`              |
+
+```yaml
+settings:
+  sync-paths:
+    - source: src/
+      target: src/
+    - source: public/
+      target: public/
+      exclude:
+        - uploads/
+```
+
+### `settings.prepare-sync-paths`
+
+Rearrange files inside the Git repository before the synchronization starts,
+for example to move built assets into the web directory or to rearrange
+packages in a monorepo. Same keys as `sync-paths`, but `target` is relative
+to the Git root directory as well.
+
+```yaml
+settings:
+  prepare-sync-paths:
+    - source: theme/build/assets/
+      target: public/assets/
+      exclude:
+        - sandbox.html
+```
+
+### `settings.composer`
+
+Composer fetches packages during `build` and `deploy`.
+Composer tasks are skipped if this section is missing.
+
+| Key                 | Type   | Default    | Description                                                           |
+|---------------------|--------|------------|-----------------------------------------------------------------------|
+| `working-directory` | string | (required) | Directory with the `composer.json`, relative to the Git root directory |
+| `phar`              | string | `composer` | Path to the Composer binary on the local machine                      |
+
+### `settings.assets`
+
+Build assets with `buildassets`. Built-in tasks run in this order:
+`mirror`, `minify-css`, `minify-js`, `concat`, `minify-img`.
+
+| Key          | Type       | Default | Description                                                                                      |
+|--------------|------------|---------|--------------------------------------------------------------------------------------------------|
+| `mirror`     | dictionary | -       | Copy directory `source` to directory `target`, eg. into a build directory listed in `.gitignore` |
+| `minify-css` | list       | -       | Minify CSS file `source` and write it to file `target`                                           |
+| `minify-js`  | list       | -       | Minify JavaScript file `source` and write it to file `target`                                    |
+| `concat`     | list       | -       | Concat a list of files `sources` into file `target`                                              |
+| `minify-img` | list       | -       | Minify images `source` (wildcards allowed) into directory `target`                               |
+| `scripts`    | list       | -       | Run these shell commands instead (eg. npm, gulp) - **all other asset options are ignored**       |
+
+```yaml
+settings:
+  assets:
+    mirror:
+      source: theme/assets/
+      target: theme/build/assets/
+    minify-css:
+      - source: theme/build/assets/css/stylesheet.css
+        target: theme/build/assets/css/stylesheet.css
+    minify-js:
+      - source: theme/build/assets/js/bootstrap.js
+        target: theme/build/assets/js/bootstrap.js
+    concat:
+      - sources:
+          - theme/build/assets/css/features.css
+          - theme/build/assets/css/fonts.css
+        target: theme/build/assets/css/zen-garden.css
+    minify-img:
+      - source: theme/build/assets/img/*
+        target: theme/build/assets/img/
+```
+
+Or with an external task runner:
+
+```yaml
+settings:
+  assets:
+    scripts:
+      - npm ci
+      - npm run build
+```
+
+### `settings.lint`
+
+Validate files with `lint`.
+
+| Key           | Type | Default | Description                                                    |
+|---------------|------|---------|----------------------------------------------------------------|
+| `lint-paths`  | list | -       | Directories to check with the PHP linter (`php -l`)            |
+| `scripts`     | list | -       | Run these shell commands instead - **`lint-paths` is ignored** |
+| `fix.scripts` | list | -       | Shell commands to fix files automatically, used by `lint:fix`  |
+
+```yaml
+settings:
+  lint:
+    lint-paths:
+      - src/
+    fix:
+      scripts:
+        - ./vendor/bin/php-cs-fixer fix src
+```
+
+Or with Composer scripts defined in the `composer.json` of the app:
+
+```yaml
+settings:
+  lint:
+    scripts:
+      - composer lint
+    fix:
+      scripts:
+        - composer fix
+```
+
+### `settings.unit-test`
+
+Run unit tests against the local code with `test:unit`.
+
+| Key                         | Type   | Default    | Description                                                   |
+|-----------------------------|--------|------------|---------------------------------------------------------------|
+| `phpunit.working-directory` | string | (required) | Directory to run PHPUnit in                                   |
+| `phpunit.config`            | string | -          | PHPUnit configuration file, relative to the working directory |
+| `scripts`                   | list   | -          | Run these shell commands instead - **`phpunit` is ignored**   |
+
+```yaml
+settings:
+  unit-test:
+    phpunit:
+      working-directory: ./
+      config: phpunit.xml
+```
+
+Or with a Composer script defined in the `composer.json` of the app:
+
+```yaml
+settings:
+  unit-test:
+    scripts:
+      - composer test
+```
+
+### `settings.integration-test`
+
+Run Codeception tests against a deployed stage with `test`.
+The `origin` of the stage is passed to the tests as `$_ENV['BASEURL']`.
+The legacy key `settings.test` still works.
+
+| Key                             | Type   | Default    | Description                                                     |
+|---------------------------------|--------|------------|-----------------------------------------------------------------|
+| `codeception.working-directory` | string | (required) | Directory with the Codeception setup, usually `test/`           |
+| `codeception.suite`             | string | -          | Test suite to run, eg. `acceptance`                             |
+| `scripts`                       | list   | -          | Run these shell commands instead - **`codeception` is ignored** |
+
+```yaml
+settings:
+  integration-test:
+    codeception:
+      working-directory: test/
+      suite: acceptance
+```
+
+### `settings.watch`
+
+The `watch` task syncs changed files to a stage right away.
+
+| Key                 | Type   | Default    | Description                                                                                                  |
+|---------------------|--------|------------|--------------------------------------------------------------------------------------------------------------|
+| `working-directory` | string | (required) | Directory to watch. Must not contain a `target` of `prepare-sync-paths`, since this causes an infinite loop. |
+
+```yaml
+settings:
+  watch:
+    working-directory: src/
+```
+
+### `stages`
+
+Each key below `stages` is the name of a stage, used as command argument
+(eg. `pap deploy live`). Configure shared stages in `pap.yml` and
+stages for the local machine only in `pap.local.yml`.
+
+| Key                 | Type    | Default    | Description                                                                                             |
+|---------------------|---------|------------|---------------------------------------------------------------------------------------------------------|
+| `user`              | string  | -          | SSH user, the local machine must be authorized to log in with it                                         |
+| `host`              | string  | -          | SSH host (domain or IP address). Without a host, file synchronization is skipped (app runs from the Git checkout) |
+| `port`              | integer | `22`       | SSH port                                                                                                |
+| `working-directory` | string  | -          | Absolute path on the host, with trailing slash                                                          |
+| `origin`            | string  | -          | Public URL of the app, used by `view`, `smoketest` and `test`                                           |
+| `rsync.options`     | string  | (none)     | Rsync arguments, eg. `-razc`                                                                            |
+| `composer.phar`     | string  | `composer` | Path to the Composer binary on the host                                                                 |
+| `lock-branches`     | list    | -          | `deploy` stops if the current Git branch is not listed here                                             |
+| `test.deny-groups`  | list    | -          | Codeception groups to exclude when testing this stage                                                   |
+
+Values may reference other values with `${…}`, eg. `${stages.test.working-directory}`.
+
+```yaml
+stages:
+  test:
+    user: johndoe
+    host: example.com
+    port: 2222
+    origin: https://test.example.com
+    working-directory: /var/dev/
+    rsync:
+      options: -razc
+    composer:
+      phar: ${stages.test.working-directory}composer.phar
+    lock-branches:
+      - test
+    test:
+      deny-groups:
+        - dataflow
+  live:
+    user: johndoe
+    host: example.com
+    origin: https://www.example.com
+    working-directory: /var/www/
+    rsync:
+      options: -razc
+```
+
+## Local Overrides
+
+All settings of `pap.yml` may be overridden with a local file named `pap.local.yml`.
+Add this file to your `.gitignore`. Use the same keys to override a setting.
 
 Best practice is to configure the local stage and the default stage in this file only.
 
 ```yaml
-### All settings are inherited from the distributon file,
-### use the same keys to overwrite any setting
 settings:
-  ### Default stage used when no --stage option is passed
-  ### Falls back to »local« when not configured
-  ### default-stage: (string, name of a configured stage)
   default-stage: local
   composer:
     phar: /home/acme/composer/bin/composer
 
-### Stages have the same structure as in the distribution file as well
-### When no »host« is configured, PAP will skip file synchronization.
-### This is useful when the app is served directly from the Git checkout.
 stages:
   local:
     origin: http://localhost:8000

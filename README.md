@@ -110,17 +110,6 @@ then generates the according `pap.yml` file.
 **📚 New to PAP?** Follow the [step-by-step walkthrough tutorial](./docs/walkthrough.md) to
 learn how to set up PAP and publish your PHP webapp or website (~15 minutes).
 
-### Existing Projects
-
-If your project already has a `build/` directory with PAP configuration files,
-then all you need to do is fetching PAP using Composer, no additional setup required.
-
-```bash
-cd build
-composer install
-./vendor/bin/pap list
-```
-
 ### Global Installation (Advanced)
 
 For special use cases like global installation, team consistency, or CI environments,
@@ -189,7 +178,6 @@ in any subdirectory (typically `build/`) and are still good to go.
 
 - 📖 [Walkthrough: Publish your first app](./docs/walkthrough.md) - Complete beginner guide with example app (15 min)
 - 📝 [Reference: All available configuration options](./docs/configuration.md)
-- 🛠️ [Tutorial: Manual setup without skeleton package](./docs/configuration.md#manual-setup) (advanced)
 
 ## Updates
 
@@ -198,6 +186,19 @@ See [Upgrade Guide](./docs/upgrade-guide.md)
 ## Usage
 
 This section gives a brief overview of available commands and common tasks.
+
+### Preparations
+
+If the project already uses PAP, then all you need to do on your machine is fetching PAP using Composer,
+no additional steps required.
+
+```bash
+# cd <path where pap is configured eg. build/>
+composer install
+./vendor/bin/pap list
+```
+
+### Common Tasks
 
 **Quick Tips:**
 - Run `./vendor/bin/pap` to see all available tasks
