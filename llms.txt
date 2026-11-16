@@ -1,0 +1,112 @@
+# PAP - PHP App Publication
+
+> PAP is a CLI toolchain to build, lint, deploy and test PHP applications,
+> configured solely with YAML files (mandatory `pap.yml`, optional `pap.local.yml`).
+> It has a fixed command set and no custom task names. PAP runs anywhere
+> inside a Git repository and resolves all configured paths from the repository root.
+
+Install with `composer require pixelbrackets/pap`. Write `pap.yml` directly
+using the reference below, or run `./vendor/bin/pap init` for an interactive
+wizard. New projects may start from the skeleton instead.
+
+## Docs
+
+- [README](https://github.com/pixelbrackets/pap/blob/master/README.md): Overview, requirements, installation and usage
+- [Configuration](https://github.com/pixelbrackets/pap/blob/master/docs/configuration.md): Full annotated reference of all `pap.yml` options
+- [Walkthrough](https://github.com/pixelbrackets/pap/blob/master/docs/walkthrough.md): Step-by-step setup of a project from scratch
+
+## Commands
+
+Every command that takes a stage accepts it as argument or `--stage`. Without
+one, `settings.default-stage` is used, falling back to `local`.
+
+- `pap init` - interactive wizard to generate `pap.yml`
+- `pap publish [stage]` - full stack: lint, test:unit, deploy, test:smoke, test:integration
+- `pap deploy [stage]` - build, sync files, run `composer install` on the stage, write `.pap.lock`; refused if the branch is not in `lock-branches`
+- `pap build [stage]` - run `buildassets` and `buildapp`
+- `pap buildassets` - mirror, concat and minify CSS/JS/images
+- `pap buildapp [stage]` - run `composer install` locally
+- `pap sync [stage]` - rsync files only, no build
+- `pap watch [stage]` - watch for changes and auto-sync
+- `pap lint` / `pap lint:fix` - check or fix files (built-in: `php -l` on `lint-paths`)
+- `pap test:unit` - run PHPUnit against the local code
+- `pap test:smoke [stage]` (alias `smoketest`) - HTTP request against the stage `origin`
+- `pap test [stage]` / `pap test:integration [stage]` - run Codeception tests against the deployed stage
+- `pap composer:command [stage] [cmd]` - run a Composer command on the stage
+- `pap ssh [stage]` / `pap ssh:exec [stage] [cmd]` - open SSH session or run a command on the stage
+- `pap view [stage]` - open the stage `origin` in the browser
+- `pap show [section]` - show the merged configuration
+- `pap list` - list all available commands
+
+## Config
+
+Files are merged in this order, later overrides earlier: `pap.yml`
+(version controlled), `pap.local.yml` (gitignored, local stage and
+`default-stage` belong here).
+
+Minimal `pap.yml`:
+
+```yaml
+settings:
+  sync-paths:
+    - source: public/
+      target: public/
+    - source: vendor/
+      target: vendor/
+  composer:
+    working-directory: ./
+
+stages:
+  live:
+    user: deployer
+    host: example.com
+    origin: https://www.example.com/
+    working-directory: /var/www/myapp/
+    rsync:
+      options: -razc
+```
+
+Minimal `pap.local.yml`:
+
+```yaml
+settings:
+  default-stage: local
+stages:
+  local:
+    origin: http://localhost:8000
+```
+
+Settings:
+
+- `settings.default-stage` - stage used when none is given (default: `local`)
+- `settings.sync-paths` - list of `{source, target}` paths to rsync
+- `settings.prepare-sync-paths` - list of `{source, target}` paths to rearrange inside the repository before sync
+- `settings.composer.working-directory` - directory of `composer.json`
+- `settings.composer.phar` - path to Composer, if not installed globally
+- `settings.assets` - asset pipeline: `mirror`, `concat`, `minify-css`, `minify-js`, `minify-img`
+- `settings.lint.lint-paths` - directories to lint
+- `settings.unit-test.phpunit.working-directory`, `settings.unit-test.phpunit.config` - PHPUnit setup
+- `settings.test.codeception.working-directory`, `settings.test.codeception.suite` - Codeception setup
+- `settings.watch.working-directory` - directory to watch
+
+The sections `assets`, `lint`, `lint.fix`, `unit-test` and `test` accept a
+`scripts:` list instead, which replaces the built-in implementation with
+custom shell commands.
+
+Stages (`stages.<name>`):
+
+- `user` - SSH user
+- `host` - SSH host; omit to skip file sync (app served from the Git checkout)
+- `port` - SSH port (default: 22)
+- `origin` - public URL, used by smoke tests, integration tests and `view`
+- `working-directory` - absolute path on the host, with trailing slash
+- `rsync.options` - rsync flags (no default, `init` writes `-razc`)
+- `composer.phar` - path to Composer on the host
+- `lock-branches` - list of Git branches allowed to deploy to this stage
+- `test.deny-groups` - Codeception groups to exclude for this stage
+
+## Optional
+
+- [Upgrade guide](https://github.com/pixelbrackets/pap/blob/master/docs/upgrade-guide.md): Breaking changes between major versions
+- [pap-skeleton](https://github.com/pixelbrackets/pap-skeleton): Project template for `composer create-project`
+- [pap-dist](https://github.com/pixelbrackets/pap-dist/releases): Pre-built PHAR and Linux binaries
