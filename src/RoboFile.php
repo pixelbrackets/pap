@@ -249,16 +249,23 @@ class RoboFile extends \Robo\Tasks
         ];
         file_put_contents($targetDir . 'pap.local.template.yml', $template . Yaml::dump($localConfig, 5, 2));
 
+        $this->io()->success('Created pap.yml and pap.local.template.yml');
+
         $gitignorePath = $targetDir . '.gitignore';
         $gitignore = file_exists($gitignorePath) ? file_get_contents($gitignorePath) : '';
-        if (strpos($gitignore, 'pap.local.yml') === false) {
-            file_put_contents($gitignorePath, 'pap.local.yml' . PHP_EOL, FILE_APPEND);
+        $missingEntries = [];
+        foreach (['pap.local.yml', '.pap.lock', 'vendor/'] as $entry) {
+            if (strpos($gitignore, $entry) === false) {
+                $missingEntries[] = $entry;
+            }
         }
-        if (strpos($gitignore, '.pap.lock') === false) {
-            file_put_contents($gitignorePath, '.pap.lock' . PHP_EOL, FILE_APPEND);
+        if (false === empty($missingEntries)) {
+            $question = 'Add ' . implode(', ', $missingEntries) . ' to .gitignore?';
+            if ($this->io()->confirm($question, true)) {
+                file_put_contents($gitignorePath, implode(PHP_EOL, $missingEntries) . PHP_EOL, FILE_APPEND);
+            }
         }
 
-        $this->io()->success('Created pap.yml and pap.local.template.yml');
         $this->io()->note([
             'Next steps:',
             '1. Review and adjust pap.yml',
