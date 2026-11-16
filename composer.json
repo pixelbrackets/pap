@@ -18,7 +18,6 @@
     "require": {
         "php": "^7.2 || ^8.0",
         "consolidation/robo": "^3.0 || ^4.0 || ^5.0",
-        "cweagans/composer-patches": "^1.0",
         "guzzlehttp/guzzle": "^6.0 || ^7.0",
         "jean85/pretty-package-versions": "^1.5 || ^2.0",
         "natxet/cssmin": "^3.0",
@@ -41,18 +40,6 @@
     "bin": [
         "bin/pap"
     ],
-    "config": {
-        "allow-plugins": {
-            "cweagans/composer-patches": true
-        }
-    },
-    "extra": {
-        "patches": {
-            "consolidation/robo": {
-                "Symfony Console 7.4 compatibility": "https://patch-diff.githubusercontent.com/raw/consolidation/robo/pull/1185.diff"
-            }
-        }
-    },
     "scripts": {
         "build:binary": "./build-binary.sh",
         "build:executables": "./build-executables.sh",
