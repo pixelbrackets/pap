@@ -1044,7 +1044,8 @@ class RoboFile extends \Robo\Tasks
 
         $sshConnection = $stageProperties['user'] . '@' . $stageProperties['host'];
         $sshPort = (false === empty($stageProperties['port']))? ' -p' . (int)$stageProperties['port'] : '';
-        passthru('ssh -t ' . $sshConnection . $sshPort . ' \'cd ' . $stageProperties['working-directory'] . ' && exec bash -l\'');
+        $remoteCommand = 'cd ' . $stageProperties['working-directory'] . ' && exec bash -l';
+        passthru('ssh -t ' . $sshConnection . $sshPort . ' ' . escapeshellarg($remoteCommand));
     }
 
     /**
@@ -1078,10 +1079,10 @@ class RoboFile extends \Robo\Tasks
 
         $sshConnection = $stageProperties['user'] . '@' . $stageProperties['host'];
         $sshPort = (false === empty($stageProperties['port']))? ' -p' . (int)$stageProperties['port'] : '';
-        $escapedCommand = escapeshellarg($options['command']);
+        $remoteCommand = 'cd ' . $stageProperties['working-directory'] . ' && ' . $options['command'];
 
         $this->io()->note('Executing on ' . $options['stage'] . ': ' . $options['command']);
-        passthru('ssh -t ' . $sshConnection . $sshPort . ' \'cd ' . $stageProperties['working-directory'] . ' && ' . $escapedCommand . '\'');
+        passthru('ssh -t ' . $sshConnection . $sshPort . ' ' . escapeshellarg($remoteCommand));
     }
 
     /**

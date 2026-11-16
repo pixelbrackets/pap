@@ -399,6 +399,8 @@ Useful standalone commands for development:
 
     Check disk space `pap ssh:exec live -c "df -h"`
 
+    Push a local SQL file to stage and import it `pap sync test && pap ssh:exec test -c "vendor/bin/typo3 database:import < ~/www/dump.sql"`
+
 …and some final tricks:
 
 - Some commands and most options have a short alias, run `./vendor/bin/pap --help` to see them
