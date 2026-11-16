@@ -1,0 +1,14 @@
+# Exclude development files from archives and Composer dist packages
+/.editorconfig export-ignore
+/.gitattributes export-ignore
+/.gitignore export-ignore
+/.gitlab-ci.yml export-ignore
+/.php-cs-fixer.dist.php export-ignore
+/.php-version export-ignore
+/build-binary.sh export-ignore
+/build-executables.sh export-ignore
+/build-pages.php export-ignore
+/build-phar.php export-ignore
+/phpacker.json export-ignore
+/phpunit.xml export-ignore
+/tests/ export-ignore
