@@ -107,7 +107,7 @@ composer require pixelbrackets/pap
 The wizard asks for stage name, SSH credentials, sync paths and more,
 then generates the according `pap.yml` file.
 
-**📚 New to PAP?** Follow the [step-by-step walkthrough tutorial](./docs/walktrough.md) to
+**📚 New to PAP?** Follow the [step-by-step walkthrough tutorial](./docs/walkthrough.md) to
 learn how to set up PAP and publish your PHP webapp or website (~15 minutes).
 
 ### Existing Projects
@@ -187,7 +187,7 @@ PAP is configured with YAML files:
 All configuration paths are relative to your Git repository root, so you can place the configuration
 in any subdirectory (typically `build/`) and are still good to go.
 
-- 📖 [Walkthrough: Publish your first app](./docs/walktrough.md) - Complete beginner guide with example app (15 min)
+- 📖 [Walkthrough: Publish your first app](./docs/walkthrough.md) - Complete beginner guide with example app (15 min)
 - 📝 [Reference: All available configuration options](./docs/configuration.md)
 - 🛠️ [Tutorial: Manual setup without skeleton package](./docs/configuration.md#manual-setup) (advanced)
 
