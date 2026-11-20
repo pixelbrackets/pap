@@ -1,5 +1,14 @@
 # Changelog
 
+2026-11-20 Dan Kleine <mail@pixelbrackets.de>
+
+  * 9.4.1
+  * FEATURE Docs: Make configuration docs better readable
+  * FEATURE Exclude development files from archives
+  * BUGFIX Ask before writing gitignore in init task
+  * BUGFIX Remove robo patch to hide deprecation messages
+  * BUGFIX Escape remote SSH command only once
+
 2026-06-08 Dan Kleine <mail@pixelbrackets.de>
 
   * 9.4.0
