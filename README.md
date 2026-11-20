@@ -28,10 +28,21 @@ without understanding the internals. Just one command: `pap publish`.
 
 ## Quickstart
 
+**Use PAP** - The project is configured already, you want to publish it:
+
 ```bash
-composer require pixelbrackets/pap # install via Composer
-./vendor/bin/pap init              # generate pap.yml config file interactively
-./vendor/bin/pap deploy live       # build + sync + verify to live stage
+cd build/                     # change to the directory where PAP is configured, eg. build/
+composer install              # fetch PAP
+./vendor/bin/pap publish live # run lint + test + deploy + verify tasks on live stage
+```
+
+**Add PAP** - You want to set up PAP for a project:
+
+```bash
+composer create-project pixelbrackets/pap-skeleton build # create build directory with PAP
+cd build/                                                # change to the directory where PAP is configured
+./vendor/bin/pap init                                    # edit the pap.yml or generate it interactively
+./vendor/bin/pap publish live                            # run lint + test + deploy + verify tasks on live stage
 ```
 
 ## What it does
@@ -76,116 +87,12 @@ perfect for small to medium projects where complexity isn't worth the overhead.
 
 https://gitlab.com/pixelbrackets/pap/
 
-Mirror https://github.com/pixelbrackets/pap/ (Issues & Pull Requests
-mirrored to GitLab)
-
-## Installation
-
-### New Projects
-
-The recommend way to add PAP to a new project is to use the provided
-[skeleton package](https://github.com/pixelbrackets/pap-skeleton).
-This creates a `build/` directory with all required configuration files and
-the PAP executable in one command.
-
-```bash
-composer create-project pixelbrackets/pap-skeleton build
-cd build
-./vendor/bin/pap list
-```
-
-Now edit `pap.yml` to configure your deployment stages.
-
-Alternatively, add PAP to an existing directory and use the built-in init wizard
-to generate configuration files interactively:
-
-```bash
-composer require pixelbrackets/pap
-./vendor/bin/pap init
-```
-
-The wizard asks for stage name, SSH credentials, sync paths and more,
-then generates the according `pap.yml` file.
-
-**📚 New to PAP?** Follow the [step-by-step walkthrough tutorial](./docs/walkthrough.md) to
-learn how to set up PAP and publish your PHP webapp or website (~15 minutes).
-
-### Global Installation (Advanced)
-
-For special use cases like global installation, team consistency, or CI environments,
-you can install PAP as a phar executable or self-contained binary.
-
-Distribution repository: https://github.com/pixelbrackets/pap-dist/releases
-
-**Binary** (Linux):
-
-```bash
-wget https://github.com/pixelbrackets/pap-dist/releases/latest/download/pap-linux-x64
-sudo mv pap-linux-x64 /usr/local/bin/pap
-sudo chmod +x /usr/local/bin/pap
-pap list
-```
-
-The binary bundles a specific PHP version, so it works independent of your projects PHP version.
-**Security Note:** The bundled PHP version may lag behind security updates. For production deployments
-within public CI workflows, prefer the standard Composer installation to control PHP updates via system updates.
-
-**PHAR** (all platforms):
-
-```bash
-wget https://github.com/pixelbrackets/pap-dist/releases/latest/download/pap.phar
-php pap.phar list
-```
-
-### CI/CD Usage
-
-**GitLab CI example:**
-
-```yaml
-deploy:
-  stage: deploy
-  image: composer:latest
-  script:
-    - cd build && composer install  # Installs PAP via Composer
-    - vendor/bin/pap deploy live # Deploy app to live stage using the versioned configuration files
-```
-
-**GitHub Actions example:**
-
-```yaml
-- name: Install dependencies
-  run: cd build && composer install
-
-- name: Deploy
-  run: cd build && vendor/bin/pap deploy live
-```
-
-## Configuration
-
-PAP is configured with YAML files:
-
-- **`pap.yml`** - Shared settings and stages (committed to Git)
-- **`pap.local.yml`** - Local overrides (add to `.gitignore`)
-
-**The skeleton package provides these files as templates.** Just edit `pap.yml` to configure:
-- Deployment stages (local, test, live)
-- Sync paths (which files to deploy)
-- Build tasks (assets, dependencies)
-- Lint and test commands
-
-All configuration paths are relative to your Git repository root, so you can place the configuration
-in any subdirectory (typically `build/`) and are still good to go.
-
-- 📖 [Walkthrough: Publish your first app](./docs/walkthrough.md) - Complete beginner guide with example app (15 min)
-- 📝 [Reference: All available configuration options](./docs/configuration.md)
-
-## Updates
-
-See [Upgrade Guide](./docs/upgrade-guide.md)
+Mirror https://github.com/pixelbrackets/pap/ (Issues & Pull Requests mirrored to GitLab)
 
 ## Usage
 
-This section gives a brief overview of available commands and common tasks.
+This section gives a brief overview of available commands and common tasks,
+when PAP is already set up for a project. For new projects, see [Installation](#installation).
 
 ### Preparations
 
@@ -207,9 +114,14 @@ composer install
 - Most tasks have a stage as target, passed as argument (eg. `deploy live`) or with `--stage <stagename>`
   - If no stagename is passed, the name "local" is used as default - use this for development on your local machine
 
-Somme common tasks are:
+Some common tasks are:
 
-**Deploy to live stage:**
+**Publish to live stage (full chain - lint, test, deploy, verify):**
+```bash
+./vendor/bin/pap publish live
+```
+
+**Deploy to live stage (without lint and tests):**
 ```bash
 ./vendor/bin/pap deploy live
 ```
@@ -309,6 +221,114 @@ test:unit         Run unit tests against local code
 view              Open the public URL of target stage in the browser
 watch             Sync changed files automatically to target stage
 ```
+
+## Installation
+
+Install PAP on your machine or in your CI environment, and configure it to suit your projects needs.
+
+**📚 Prefer a guided tour?** Instead of the quick steps below, follow the
+[step-by-step walkthrough tutorial](./docs/walkthrough.md). It explains each step in detail,
+from setting up PAP to publishing your PHP webapp or website (~15 minutes).
+
+### New Projects
+
+The recommend way to add PAP to a new project is to use the provided
+[skeleton package](https://github.com/pixelbrackets/pap-skeleton).
+This creates a `build/` directory with all required configuration files and the PAP executable in one command.
+This keeps the build configuration apart from your project code.
+
+```bash
+composer create-project pixelbrackets/pap-skeleton build
+cd build
+./vendor/bin/pap list
+```
+
+Now edit the shipped example `pap.yml` to configure your deployment stages,
+or run `./vendor/bin/pap init` to replace it with a configuration generated interactively.
+
+Alternatively, add PAP to an existing directory and use the built-in init wizard
+to generate configuration files interactively:
+
+```bash
+composer require pixelbrackets/pap
+./vendor/bin/pap init
+```
+
+The wizard asks for stage name, SSH credentials, sync paths and more,
+then generates the according `pap.yml` file.
+
+### Configuration
+
+PAP is configured with YAML files:
+
+- **`pap.yml`** - Mandatory, shared settings and stages (committed to Git)
+- **`pap.local.yml`** - Optional, local overrides (add to `.gitignore`)
+
+The skeleton package provides these files as templates. Just edit `pap.yml` to configure:
+- Deployment stages (local, test, live)
+- Sync paths (which files to deploy)
+- Build tasks (assets, dependencies)
+- Lint and test commands
+
+All configuration paths are relative to your Git repository root, so you can place the configuration
+in any subdirectory (typically `build/`) and are still good to go.
+
+- 📝 [Reference: All available configuration options](./docs/configuration.md)
+- 📖 [Walkthrough: Publish your first app](./docs/walkthrough.md) - Complete beginner guide with example app (15 min)
+
+### Global Installation (Advanced)
+
+When you want to run PAP in multiple projects of your machine,
+you can install it globally as a phar executable or self-contained binary.
+
+Distribution repository: https://github.com/pixelbrackets/pap-dist/releases
+
+**Binary** (Linux):
+
+```bash
+wget https://github.com/pixelbrackets/pap-dist/releases/latest/download/pap-linux-x64
+sudo mv pap-linux-x64 /usr/local/bin/pap
+sudo chmod +x /usr/local/bin/pap
+pap list
+```
+
+The binary bundles a specific PHP version, so it works independent of your projects PHP version.
+**Security Note:** The bundled PHP version may lag behind security updates. For production deployments
+within public CI workflows, prefer the standard Composer installation to control PHP updates via system updates.
+
+**PHAR** (all platforms):
+
+```bash
+wget https://github.com/pixelbrackets/pap-dist/releases/latest/download/pap.phar
+php pap.phar list
+```
+
+### CI/CD Usage
+
+**GitLab CI example:**
+
+```yaml
+deploy:
+  stage: deploy
+  image: composer:latest
+  script:
+    - cd build && composer install  # Installs PAP via Composer
+    - vendor/bin/pap deploy live # Deploy app to live stage using the versioned configuration files
+```
+
+**GitHub Actions example:**
+
+```yaml
+- name: Install dependencies
+  run: cd build && composer install
+
+- name: Deploy
+  run: cd build && vendor/bin/pap deploy live
+```
+
+## Updates
+
+See [Upgrade Guide](./docs/upgrade-guide.md)
 
 ## License
 

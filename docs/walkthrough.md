@@ -4,6 +4,9 @@
 
 The goal of this walkthrough is to publish a complete example app with PAP from scratch.
 
+This tutorial is about setting up PAP for a project. To use PAP in a project
+which is configured already, see [Use PAP](../README.md#usage) instead.
+
 **What you'll learn:**
 - Setting up deployment stages
 - Configuring file synchronization
